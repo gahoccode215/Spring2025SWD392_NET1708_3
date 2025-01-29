@@ -11,7 +11,6 @@ A system for managing the sale of skin care products of company
 4. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [Installation](#installation)
-   - [Running the Application](#running-the-application)
 5. [Project Rules](#project-rules)
 6. [Commit Message Guidelines](#commit-message-guidelines)
    - [Type](#type)
@@ -58,7 +57,7 @@ A system for managing the sale of skin care products of company
 ### Installation
 1. **Clone the Repository**  
    Open your terminal and run the following command:  
-   git clone https://github.com/username/repository-name.git
+   git clone https://github.com/gahoccode215/Spring2025SWD392_NET1708_3.git
 2. **Build the Project**
    mvn clean install
    

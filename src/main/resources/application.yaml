@@ -1,0 +1,33 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1/skincare-products-sales-system
+spring:
+  datasource:
+    url: "jdbc:mysql://localhost:3306/swd392-skincare-products-sales-system"
+    username: root
+    password: 12345
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
+open:
+  api:
+    title: API document
+    version: v1.0.0
+    description: API Service
+    serverUrl: http://localhost:8080/api/v1/skincare-products-sales-system
+    serverName: Server
+    license: https://github.com/swp39d/skincare-products-sales-system
