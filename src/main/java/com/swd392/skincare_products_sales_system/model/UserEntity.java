@@ -9,15 +9,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity(name = "tbl_user")
 @Slf4j(topic = "UserEntity")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserEntity extends AbstractEntity<String>{
+public class UserEntity extends AbstractEntity<String> implements UserDetails {
     @Column(name = "first_name", length = 255)
     String firstName;
 
@@ -41,4 +45,28 @@ public class UserEntity extends AbstractEntity<String>{
     String password;
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
 }
