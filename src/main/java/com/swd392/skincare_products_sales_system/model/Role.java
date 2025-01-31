@@ -11,14 +11,14 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @Getter
 @Entity
-@Table(name = "tbl_permission")
+@Table(name = "tbl_role")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Permission extends AbstractEntity<Integer>{
+public class Role extends AbstractEntity<Integer>{
     @Column(name = "name")
     String name;
 
     @Column(name = "description")
     String description;
 
-
+    
 }
