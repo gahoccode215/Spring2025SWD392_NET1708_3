@@ -28,6 +28,6 @@ open:
     title: API document
     version: v1.0.0
     description: API Service
-    serverUrl: http://localhost:8080/api/v1/skincare-products-sales-system
+    serverUrl: http://localhost:8080/api/v1/swd392-skincare-products-sales-system
     serverName: Server
-    license: https://github.com/swp39d/skincare-products-sales-system
+    license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3
