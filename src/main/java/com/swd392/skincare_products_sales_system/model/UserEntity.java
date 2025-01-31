@@ -22,7 +22,7 @@ import java.util.*;
 @Entity(name = "tbl_user")
 @Slf4j(topic = "UserEntity")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserEntity extends AbstractEntity<String> implements UserDetails {
+public class UserEntity extends AbstractEntity<Long> implements UserDetails {
     @Column(name = "first_name", length = 255)
     String firstName;
 
@@ -30,7 +30,7 @@ public class UserEntity extends AbstractEntity<String> implements UserDetails {
     String lastName;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "gender")
     Gender gender;
 
@@ -51,7 +51,7 @@ public class UserEntity extends AbstractEntity<String> implements UserDetails {
     String password;
 
     @Enumerated(EnumType.STRING)
-    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", length = 255)
     UserStatus status;
 

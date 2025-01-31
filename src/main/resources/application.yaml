@@ -14,15 +14,21 @@ spring:
     properties:
       hibernate:
         globally_quoted_identifiers: true
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
-        type:
-          descriptor:
-            sql:
-              BasicBinder: trace
+        dialect: org.hibernate.dialect.MySQL8Dialect
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: debug
+#        type:
+#          descriptor:
+#            sql:
+#              BasicBinder: trace
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 open:
   api:
     title: API document

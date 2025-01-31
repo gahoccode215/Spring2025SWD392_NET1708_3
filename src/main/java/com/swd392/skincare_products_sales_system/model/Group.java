@@ -1,8 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,4 +18,8 @@ public class Group extends AbstractEntity<Integer>{
 
     @Column(name = "description")
     String description;
+
+    @OneToOne
+    @JoinColumn(name = "role_id")
+    Role role;
 }
