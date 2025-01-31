@@ -26,4 +26,7 @@ public abstract class AbstractEntity<T> {
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
     private Date updatedAt;
+
+    @Column(name = "is_deleted")
+    boolean isDeleted;
 }
