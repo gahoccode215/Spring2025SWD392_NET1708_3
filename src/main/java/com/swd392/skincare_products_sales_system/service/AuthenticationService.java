@@ -11,4 +11,5 @@ public interface AuthenticationService {
     IntrospectResponse introspect(IntrospectRequest request);
 
     AuthenticationResponse authenticate(AuthenticationRequest request);
+    void logout(LogoutRequest request);
 }
