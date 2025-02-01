@@ -16,7 +16,7 @@ public interface UserService {
 
     UserResponse findByEmail(String email);
 
-    long save(UserCreationRequest req);
+    UserResponse createUser(UserCreationRequest request);
 
     void update(UserUpdateRequest req);
 

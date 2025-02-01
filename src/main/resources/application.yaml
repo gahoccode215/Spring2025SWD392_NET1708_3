@@ -1,9 +1,10 @@
 server:
   port: 8080
   servlet:
-    context-path: /api/v1/skincare-products-sales-system
+    context-path: /api/v1/swd392-skincare-products-sales-system
 spring:
   datasource:
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
     url: "jdbc:mysql://localhost:3306/swd392-skincare-products-sales-system"
     username: root
     password: 12345
@@ -11,19 +12,6 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        SQL: debug
-#        type:
-#          descriptor:
-#            sql:
-#              BasicBinder: trace
 springdoc:
   api-docs:
     enabled: true
@@ -38,7 +26,6 @@ open:
     serverName: Server
     license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3
 jwt:
-  expiryMinutes: ${JWT_EXPIRY_MINUTES:60}
-  expiryDay: ${JWT_EXPIRY_DAY:14}
-  accessKey: ${JWT_ACCESS_KEY:IIwLeRIVsznVTPFEYmA6HiVVBrlKkKqC36OpWzqw8mk=}
-  refreshKey: ${JWT_REFRESH_KEY:tvszknimPZQEdy3c9TCERBLAkOyoCc2ZvOmGcHsRJgg=}
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 # in second
+  refreshable-duration: 36000 # in seconds

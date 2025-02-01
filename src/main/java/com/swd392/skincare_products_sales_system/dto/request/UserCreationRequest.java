@@ -4,6 +4,7 @@ import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.UserType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,7 +23,8 @@ public class UserCreationRequest {
     private Gender gender;
     private Date birthday;
     private String username;
-
+    @NotNull(message = "password can not null")
+    private String password;
     @Email(message = "Email invalid")
     private String email;
     private String phone;

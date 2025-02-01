@@ -1,28 +1,23 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.io.IOException;
 
+@Data
 @Builder
-@Getter
-@Setter
-public class ApiResponse {
-    private int status;
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ApiResponse<T> {
+    @Builder.Default
+    private int code = 1000;
+
     private String message;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Object data;
+    private T result;
 
-    private void writeObject(java.io.ObjectOutputStream stream)
-            throws IOException {
-        stream.defaultWriteObject();
-    }
 
-    private void readObject(java.io.ObjectInputStream stream)
-            throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-    }
 }

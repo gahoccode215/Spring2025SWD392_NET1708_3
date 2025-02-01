@@ -1,30 +1,34 @@
 package com.swd392.skincare_products_sales_system.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-@Setter
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "tbl_permission")
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class Permission extends AbstractEntity<Integer>{
+public class Permission extends AbstractEntity{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Integer id;
+
     @Column(name = "name")
     String name;
 
     @Column(name = "description")
     String description;
 
-    @OneToMany(mappedBy = "permission")
-    Set<RoleHasPermission> permissions = new HashSet<>();
+    @ManyToMany(mappedBy = "permissions")
+    private Set<Role> roles;
 
 }

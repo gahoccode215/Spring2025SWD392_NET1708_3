@@ -1,19 +1,15 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.model.UserEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.swd392.skincare_products_sales_system.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
 
-    @Query("SELECT u FROM tbl_user u WHERE u.username LIKE %:keyword% OR u.email LIKE %:keyword%")
-    Page<UserEntity> searchByKeyword(String keyword, Pageable pageable);
+    boolean existsByUsername(String username);
 
-    UserEntity findByUsername(String username);
-
-    UserEntity findByEmail(String email);
+    Optional<User> findByUsername(String username);
 }

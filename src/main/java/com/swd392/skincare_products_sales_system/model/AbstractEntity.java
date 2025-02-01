@@ -11,22 +11,20 @@ import java.util.Date;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class AbstractEntity<T> {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private T id;
+public abstract class AbstractEntity {
 
     @Column(name = "created_at", length = 255)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp
-    private Date createdAt;
+    protected Date createdAt;
 
     @Column(name = "updated_at", length = 255)
     @Temporal(TemporalType.TIMESTAMP)
     @UpdateTimestamp
-    private Date updatedAt;
+    protected Date updatedAt;
 
     @Column(name = "is_deleted")
-    boolean isDeleted;
+    protected boolean isDeleted;
+
+
 }

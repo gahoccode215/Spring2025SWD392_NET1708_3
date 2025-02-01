@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public record UserServiceDetail(UserRepository userRepository) {
-    public UserDetailsService userDetailsService() {
-        return userRepository::findByUsername;
-    }
+//    public UserDetailsService userDetailsService() {
+//        return userRepository::findByUsername;
+//    }
 }
