@@ -1,9 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
-import com.swd392.skincare_products_sales_system.dto.request.UserCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.UserPasswordRequest;
-import com.swd392.skincare_products_sales_system.dto.request.UserUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
@@ -14,6 +12,7 @@ import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.UserService;
+import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,6 +29,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
@@ -167,6 +168,8 @@ public class UserServiceImpl implements UserService {
         user.setDeleted(true);
         userRepository.save(user);
     }
+
+
 
 
 }

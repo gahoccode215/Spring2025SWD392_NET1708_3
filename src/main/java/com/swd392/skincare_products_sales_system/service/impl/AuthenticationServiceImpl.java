@@ -3,27 +3,27 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
-import com.swd392.skincare_products_sales_system.dto.request.AuthenticationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.IntrospectRequest;
-import com.swd392.skincare_products_sales_system.dto.request.LogoutRequest;
-import com.swd392.skincare_products_sales_system.dto.request.RefreshTokenRequest;
+import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
+import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.AuthenticationResponse;
 import com.swd392.skincare_products_sales_system.dto.response.IntrospectResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
+import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
+import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -46,6 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    JwtUtil jwtUtil;
+    PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -60,23 +63,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     protected long REFRESHABLE_DURATION;
 
 
-    @Override
-    public IntrospectResponse introspect(IntrospectRequest request) {
-        var token = request.getToken();
-        boolean isValid = true;
-
-        try {
-            verifyToken(token, false);
-        } catch (AppException e) {
-            isValid = false;
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (JOSEException e) {
-            throw new RuntimeException(e);
-        }
-
-        return IntrospectResponse.builder().valid(isValid).build();
-    }
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -155,6 +141,34 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var token = generateToken(user);
 
         return AuthenticationResponse.builder().token(token).authenticated(true).build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Map<String, String> register(RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new RuntimeException("User already exists!");
+        }
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        // ✅ Fetch Role from Database instead of creating new one
+        Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
+                .orElseThrow(() -> new RuntimeException("Role USER not found!"));
+
+        user.setRoles(Set.of(userRole));
+
+        userRepository.save(user);
+
+        return Map.of(
+                "accessToken", jwtUtil.generateToken(user.getUsername(), user.getRoles(), false),
+                "refreshToken", jwtUtil.generateToken(user.getUsername(), user.getRoles(), true)
+        );
+    }
+
+    @Override
+    public Map<String, String> login(LoginRequest request) {
+        return Map.of();
     }
 
     private String generateToken(User user) {
