@@ -20,7 +20,7 @@ public interface UserService {
 
     UserResponse getUser(String userId);
 
-    void update(UserUpdateRequest req);
+    UserResponse update(UserUpdateRequest request, String userId);
 
     void changePassword(UserPasswordRequest req);
 

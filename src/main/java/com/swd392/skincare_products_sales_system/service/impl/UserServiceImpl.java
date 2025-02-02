@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -83,8 +84,17 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void update(UserUpdateRequest req) {
+    public UserResponse update(UserUpdateRequest req, String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
+        userMapper.updateUser(user, req);
+//        user.setPassword(passwordEncoder.encode(req.getPassword()));
+
+        var roles = roleRepository.findAllByNameIn(req.getRoles());
+        Set<Role> roleSet = new HashSet<>(roles);
+        user.setRoles(roleSet);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override

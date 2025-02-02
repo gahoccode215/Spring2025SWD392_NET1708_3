@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.request.UserCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.UserUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.service.UserService;
@@ -37,6 +38,15 @@ public class UserController {
                 .code(HttpStatus.OK.value())
                 .message("Get user successfully")
                 .result(userService.getUser(userId))
+                .build();
+    }
+    @PutMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .code(200)
+                .message("Update user successfully")
+                .result(userService.update(request, userId))
                 .build();
     }
 
