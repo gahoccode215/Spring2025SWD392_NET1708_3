@@ -20,9 +20,9 @@ public interface UserService {
 
     UserResponse getUser(String userId);
 
-    UserResponse update(UserUpdateRequest request, String userId);
+    UserResponse updateUser(UserUpdateRequest request, String userId);
 
     void changePassword(UserPasswordRequest req);
 
-    void delete(Long id);
+    void deleteUser(String userId);
 }

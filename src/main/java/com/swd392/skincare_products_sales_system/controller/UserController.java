@@ -26,9 +26,9 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.createUser(request))
                 .code(HttpStatus.CREATED.value())
                 .message("Create user successfully")
+                .result(userService.createUser(request))
                 .build();
     }
     @GetMapping("/{userId}")
@@ -44,10 +44,17 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
-                .code(200)
+                .code(HttpStatus.OK.value())
                 .message("Update user successfully")
-                .result(userService.update(request, userId))
+                .result(userService.updateUser(request, userId))
                 .build();
     }
-
+    @DeleteMapping("/{userId}")
+    ApiResponse<String> deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .result("User has been deleted")
+                .build();
+    }
 }

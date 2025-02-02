@@ -78,14 +78,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(String userId) {
+
         return userMapper.toUserResponse(
-                userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+                userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
 
     @Override
-    public UserResponse update(UserUpdateRequest req, String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    @Transactional(rollbackFor = Exception.class)
+    public UserResponse updateUser(UserUpdateRequest req, String userId) {
+        User user = userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, req);
 //        user.setPassword(passwordEncoder.encode(req.getPassword()));
@@ -103,7 +105,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Long id) {
-
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteUser(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 }
