@@ -9,10 +9,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -23,9 +22,21 @@ public class UserController {
     UserService userService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.createUser(request))
+                .code(HttpStatus.CREATED.value())
+                .message("Create user successfully")
+                .build();
+    }
+    @GetMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+        return ApiResponse.<UserResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get user successfully")
+                .result(userService.getUser(userId))
                 .build();
     }
 

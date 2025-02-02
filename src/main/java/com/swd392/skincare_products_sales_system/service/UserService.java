@@ -18,6 +18,8 @@ public interface UserService {
 
     UserResponse createUser(UserCreationRequest request);
 
+    UserResponse getUser(String userId);
+
     void update(UserUpdateRequest req);
 
     void changePassword(UserPasswordRequest req);
