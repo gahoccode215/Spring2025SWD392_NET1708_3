@@ -43,8 +43,9 @@ public class UserController {
                 .build();
     }
     @PutMapping("/{userId}")
+    @Operation(summary = "Update a user", description = "API retrieve value to change user attribute")
     @ResponseStatus(HttpStatus.OK)
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdateRequest request) {
+    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update user successfully")
@@ -59,7 +60,7 @@ public class UserController {
                 .result("User has been deleted")
                 .build();
     }
-    @Operation(summary = "Get user list", description = "API retrieve user from database")
+    @Operation(summary = "Get user list", description = "API retrieve users from database")
     @GetMapping
     public ApiResponse<Object> getList(@RequestParam(required = false) String keyword,
                                                  @RequestParam(required = false) String sort,

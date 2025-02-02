@@ -9,9 +9,6 @@ import java.util.Map;
 
 public interface AuthenticationService {
 
-    AuthenticationResponse authenticate(AuthenticationRequest request);
-    void logout(LogoutRequest request);
-    AuthenticationResponse refreshToken(RefreshTokenRequest request);
     Map<String, String> register(RegisterRequest request);
     Map<String, String> login(LoginRequest request);
 }

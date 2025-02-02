@@ -1,7 +1,9 @@
 package com.swd392.skincare_products_sales_system.exception;
 
-public class ResourceNotFoundException extends RuntimeException{
-    public ResourceNotFoundException(String message) {
-        super(message);
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+
+public class ResourceNotFoundException extends AppException {
+    public ResourceNotFoundException(ErrorCode errorCode) {
+        super(errorCode);
     }
 }

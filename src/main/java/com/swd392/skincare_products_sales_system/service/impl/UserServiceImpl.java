@@ -135,7 +135,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(String userId) {
-
         return userMapper.toUserResponse(
                 userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
@@ -143,16 +142,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public UserResponse updateUser(UserUpdateRequest req, String userId) {
-        User user = userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        userMapper.updateUser(user, req);
-//        user.setPassword(passwordEncoder.encode(req.getPassword()));
-
-        var roles = roleRepository.findAllByNameIn(req.getRoles());
+    public UserResponse updateUser(UserUpdateRequest request, String userId) {
+        User user = userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        userMapper.updateUser(user, request);
+        var roles = roleRepository.findAllByNameIn(request.getRoles());
         Set<Role> roleSet = new HashSet<>(roles);
         user.setRoles(roleSet);
-
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -164,12 +160,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteUser(String userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         user.setDeleted(true);
         userRepository.save(user);
     }
-
-
-
-
 }
