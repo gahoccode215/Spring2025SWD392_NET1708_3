@@ -10,12 +10,6 @@ import java.util.Map;
 public interface UserService {
     UserPageResponse findAll(String keyword, String sort, int page, int size);
 
-    UserResponse findById(Long id);
-
-    UserResponse findByUsername(String username);
-
-    UserResponse findByEmail(String email);
-
     UserResponse createUser(UserCreationRequest request);
 
     UserResponse getUser(String userId);
@@ -25,6 +19,7 @@ public interface UserService {
     void changePassword(UserPasswordRequest req);
 
     void deleteUser(String userId);
+
 
     
 }

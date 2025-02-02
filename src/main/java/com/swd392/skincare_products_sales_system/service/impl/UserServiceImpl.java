@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
         log.info("findAll start");
-
         // Sorting
         Sort.Order order = new Sort.Order(Sort.Direction.ASC, "id");
         if (StringUtils.hasLength(sort)) {
@@ -64,7 +63,6 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
-
 //         Xu ly truong hop FE muon bat dau voi page = 1
         int pageNo = 0;
         if (page > 0) {
@@ -100,31 +98,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findById(Long id) {
-        return null;
-    }
-
-    @Override
-    public UserResponse findByUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public UserResponse findByEmail(String email) {
-        return null;
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public UserResponse createUser(UserCreationRequest request) {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-
         HashSet<Role> roles = new HashSet<>();
         roleRepository.findByName(PredefinedRole.USER_ROLE).ifPresent(roles::add);
-
         user.setRoles(roles);
-
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
@@ -135,8 +115,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse getUser(String userId) {
-        return userMapper.toUserResponse(
-                userRepository.findByIdAndIsDeletedFalse(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userMapper.toUserResponse(userRepository.findByIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
 

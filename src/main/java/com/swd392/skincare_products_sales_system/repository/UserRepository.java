@@ -21,11 +21,11 @@ public interface UserRepository extends JpaRepository<User, String> {
             "or lower(u.email) like :keyword)")
     Page<User> searchByKeyword(String keyword, Pageable pageable);
 
-    boolean existsByUsername(String username);
-
     Optional<User> findByUsername(String username);
 
     Optional<User> findByIdAndIsDeletedFalse(String userId);
 
     Page<User> findAllByIsDeletedFalse(Pageable pageable);
+
+    Optional<User> findByUsernameOrEmail(String username, String email);
 }

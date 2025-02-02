@@ -2,6 +2,7 @@ package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.request.RegisterRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
 import lombok.AccessLevel;
@@ -21,10 +22,10 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<Map<String, String>> register(@RequestBody RegisterRequest request){
-        return ApiResponse.<Map<String, String>>builder()
+    public ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest request){
+        return ApiResponse.<RegisterResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Create user successfully")
+                .message("Register successfully")
                 .result(authenticationService.register(request))
                 .build();
     }

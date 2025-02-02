@@ -10,6 +10,7 @@ import com.swd392.skincare_products_sales_system.constant.Token;
 import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.AuthenticationResponse;
 import com.swd392.skincare_products_sales_system.dto.response.IntrospectResponse;
+import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
@@ -69,7 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Map<String, String> register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("User already exists!");
         }
@@ -81,10 +82,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new RuntimeException("Role USER not found!"));
         user.setRoles(Set.of(userRole));
         userRepository.save(user);
-        return Map.of(
-                Token.ACCESS_TOKEN, jwtUtil.generateToken(user.getUsername(), user.getRoles(), false),
-                Token.REFRESH_TOKEN, jwtUtil.generateToken(user.getUsername(), user.getRoles(), true)
-        );
+        return RegisterResponse.builder()
+                .username(request.getUsername())
+                .password(request.getPassword())
+                .build();
     }
 
     @Override
