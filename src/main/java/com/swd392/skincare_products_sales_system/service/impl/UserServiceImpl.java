@@ -19,12 +19,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +47,55 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {
-        return null;
+        log.info("findAll start");
+
+        // Sorting
+        Sort.Order order = new Sort.Order(Sort.Direction.ASC, "id");
+        if (StringUtils.hasLength(sort)) {
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)"); // tencot:asc|desc
+            Matcher matcher = pattern.matcher(sort);
+            if (matcher.find()) {
+                String columnName = matcher.group(1);
+                if (matcher.group(3).equalsIgnoreCase("asc")) {
+                    order = new Sort.Order(Sort.Direction.ASC, columnName);
+                } else {
+                    order = new Sort.Order(Sort.Direction.DESC, columnName);
+                }
+            }
+        }
+
+//         Xu ly truong hop FE muon bat dau voi page = 1
+        int pageNo = 0;
+        if (page > 0) {
+            pageNo = page - 1;
+        }
+//        int pageNo = Math.max(page - 1, 0);
+
+        // Paging
+        Pageable pageable = PageRequest.of(pageNo, size, Sort.by(order));
+
+        Page<User> entityPage;
+
+        if (StringUtils.hasLength(keyword)) {
+            keyword = "%" + keyword + "%";
+            entityPage = userRepository.searchByKeyword(keyword, pageable);
+        } else {
+            entityPage = userRepository.findAllByIsDeletedFalse(pageable);
+        }
+
+        // Convert to DTO list using MapStruct
+        List<UserResponse> userList = userMapper.toUserResponseList(entityPage.getContent());
+
+        // Populate response
+        UserPageResponse response = new UserPageResponse();
+        response.setPageNumber(page);
+        response.setPageSize(size);
+        response.setTotalElements(entityPage.getTotalElements());
+        response.setTotalPages(entityPage.getTotalPages());
+        response.setUsers(userList);
+
+        return response;
+
     }
 
     @Override
@@ -111,4 +167,6 @@ public class UserServiceImpl implements UserService {
         user.setDeleted(true);
         userRepository.save(user);
     }
+
+
 }
