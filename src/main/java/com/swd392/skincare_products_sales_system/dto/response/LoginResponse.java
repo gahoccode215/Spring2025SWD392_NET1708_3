@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.dto.request;
+package com.swd392.skincare_products_sales_system.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,7 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LoginRequest {
-    String username;
-    String password;
+public class LoginResponse {
+    String token;
+    boolean authenticated;
 }

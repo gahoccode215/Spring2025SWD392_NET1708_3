@@ -14,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 
 @RestController
 @RequestMapping("/users")
@@ -23,10 +25,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
     UserService userService;
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create user successfully")

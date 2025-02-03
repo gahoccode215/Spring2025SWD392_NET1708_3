@@ -10,9 +10,11 @@ import com.swd392.skincare_products_sales_system.constant.Token;
 import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.AuthenticationResponse;
 import com.swd392.skincare_products_sales_system.dto.response.IntrospectResponse;
+import com.swd392.skincare_products_sales_system.dto.response.LoginResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
+import com.swd392.skincare_products_sales_system.exception.ResourceNotFoundException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
@@ -47,25 +49,9 @@ import com.nimbusds.jose.*;
 public class AuthenticationServiceImpl implements AuthenticationService {
 
     UserRepository userRepository;
-    InvalidatedTokenRepository invalidatedTokenRepository;
-    JwtUtil jwtUtil;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
-
-    @NonFinal
-    @Value("${jwt.signerKey}")
-    protected String SIGNER_KEY;
-
-    @NonFinal
-    @Value("${jwt.valid-duration}")
-    protected long VALID_DURATION;
-
-    @NonFinal
-    @Value("${jwt.refreshable-duration}")
-    protected long REFRESHABLE_DURATION;
-
-
-
+    JwtUtil jwtUtil;
 
 
     @Override
@@ -74,9 +60,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("User already exists!");
         }
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
         //Fetch Role from Database instead of creating new one
         Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
                 .orElseThrow(() -> new RuntimeException("Role USER not found!"));
@@ -89,8 +76,17 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public Map<String, String> login(LoginRequest request) {
-        return Map.of();
+    public LoginResponse login(LoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.INVALID_LOGIN));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.INVALID_LOGIN);
+        }
+
+        return LoginResponse.builder()
+                .token(jwtUtil.generateToken(user))
+                .authenticated(true)
+                .build();
     }
 
 

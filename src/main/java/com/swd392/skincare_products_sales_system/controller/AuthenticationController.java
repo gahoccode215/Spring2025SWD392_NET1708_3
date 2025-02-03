@@ -1,7 +1,9 @@
 package com.swd392.skincare_products_sales_system.controller;
 
+import com.swd392.skincare_products_sales_system.dto.request.LoginRequest;
 import com.swd392.skincare_products_sales_system.dto.request.RegisterRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.LoginResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
@@ -27,6 +29,15 @@ public class AuthenticationController {
                 .code(HttpStatus.CREATED.value())
                 .message("Register successfully")
                 .result(authenticationService.register(request))
+                .build();
+    }
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<LoginResponse> register(@RequestBody LoginRequest request){
+        return ApiResponse.<LoginResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Login successfully")
+                .result(authenticationService.login(request))
                 .build();
     }
 
