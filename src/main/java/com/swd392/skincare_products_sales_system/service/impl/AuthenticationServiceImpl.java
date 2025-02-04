@@ -1,10 +1,14 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
+import java.text.ParseException;
 import java.util.*;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jwt.SignedJWT;
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.LoginResponse;
+import com.swd392.skincare_products_sales_system.dto.response.RefreshTokenResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -69,6 +73,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .token(jwtUtil.generateToken(user))
                 .authenticated(true)
                 .build();
+    }
+
+    @Override
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request)  {
+        SignedJWT signedJWT = null;
+        try {
+            signedJWT = jwtUtil.verifyToken(request.getToken(), true);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
+
+//        var jit = signedJWT.getJWTClaimsSet().getJWTID();
+//        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+//        InvalidatedToken invalidatedToken =
+//                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+
+//        invalidatedTokenRepository.save(invalidatedToken);
+
+        String username = null;
+        try {
+            username = signedJWT.getJWTClaimsSet().getSubject();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        var user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        var token = jwtUtil.generateToken(user);
+
+        return RefreshTokenResponse.builder().token(token).authenticated(true).build();
     }
 
 

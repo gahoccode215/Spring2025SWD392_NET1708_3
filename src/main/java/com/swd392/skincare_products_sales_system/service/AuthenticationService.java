@@ -9,4 +9,6 @@ public interface AuthenticationService {
 
     RegisterResponse register(RegisterRequest request);
     LoginResponse login(LoginRequest request);
+
+    RefreshTokenResponse refreshToken(RefreshTokenRequest request);
 }
