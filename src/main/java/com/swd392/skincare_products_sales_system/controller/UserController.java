@@ -27,6 +27,7 @@ public class UserController {
     UserService userService;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -36,6 +37,7 @@ public class UserController {
     }
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -46,6 +48,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @Operation(summary = "Update a user", description = "API retrieve value to change user attribute")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -54,6 +57,7 @@ public class UserController {
                 .build();
     }
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ApiResponse.<String>builder()
@@ -63,6 +67,7 @@ public class UserController {
     }
     @Operation(summary = "Get user list", description = "API retrieve users from database")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Object> getList(@RequestParam(required = false) String keyword,
                                                  @RequestParam(required = false) String sort,
                                                  @RequestParam(defaultValue = "0") @Min(0) int page,
