@@ -24,9 +24,13 @@ import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class UserController {
+
     UserService userService;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Create a user", description = "API retrieve value to create user")
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -34,8 +38,11 @@ public class UserController {
                 .result(userService.createUser(request))
                 .build();
     }
+
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get a user", description = "API retrieve an id to get user")
+    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -43,9 +50,11 @@ public class UserController {
                 .result(userService.getUser(userId))
                 .build();
     }
+
     @PutMapping("/{userId}")
     @Operation(summary = "Update a user", description = "API retrieve value to change user attribute")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -53,7 +62,11 @@ public class UserController {
                 .result(userService.updateUser(request, userId))
                 .build();
     }
+
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete a user", description = "API retrieve an id to delete user")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ApiResponse.<String>builder()
@@ -61,12 +74,15 @@ public class UserController {
                 .result("User has been deleted")
                 .build();
     }
+
     @Operation(summary = "Get user list", description = "API retrieve users from database")
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Object> getList(@RequestParam(required = false) String keyword,
-                                                 @RequestParam(required = false) String sort,
-                                                 @RequestParam(defaultValue = "0") @Min(0) int page,
-                                                 @RequestParam(defaultValue = "20") int size) {
+                                       @RequestParam(required = false) String sort,
+                                       @RequestParam(defaultValue = "0") @Min(0) int page,
+                                       @RequestParam(defaultValue = "20") int size) {
         log.info("Get user list");
 
         return ApiResponse.builder()

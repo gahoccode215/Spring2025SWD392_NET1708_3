@@ -5,8 +5,6 @@ import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 
-import java.util.Map;
-
 public interface UserService {
     UserPageResponse findAll(String keyword, String sort, int page, int size);
 

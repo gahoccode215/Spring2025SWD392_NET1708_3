@@ -1,4 +1,5 @@
 package com.swd392.skincare_products_sales_system.dto.response;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -7,7 +8,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AuthenticationResponse {
-    String token;
-    boolean authenticated;
+public class ProductResponse {
+    String name;
+    double price;
+    String description;
+    String brand;
+    long stock;
 }
