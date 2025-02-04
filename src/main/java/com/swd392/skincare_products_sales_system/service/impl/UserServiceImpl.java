@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
-    JwtUtil jwtUtil;
 
     @Override
     public UserPageResponse findAll(String keyword, String sort, int page, int size) {

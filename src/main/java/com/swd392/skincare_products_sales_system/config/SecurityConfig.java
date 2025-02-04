@@ -44,7 +44,8 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/users/**",
-            "/auth/**"
+            "/auth/**",
+            "/products/**"
     };
 
     @Autowired

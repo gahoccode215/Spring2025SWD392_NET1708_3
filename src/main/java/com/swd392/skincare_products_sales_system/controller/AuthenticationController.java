@@ -25,7 +25,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Register", description = "API retrieve users attribute to create account")
+    @Operation(summary = "Register", description = "API retrieve user attribute to create account")
     public ApiResponse<RegisterResponse> register(@RequestBody RegisterRequest request){
         return ApiResponse.<RegisterResponse>builder()
                 .code(HttpStatus.CREATED.value())
