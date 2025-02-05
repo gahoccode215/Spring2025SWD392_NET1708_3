@@ -1,7 +1,9 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
@@ -24,11 +26,21 @@ public class CategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a category", description = "API retrieve category attribute to create category")
-    public ApiResponse<CategoryResponse> createProduct(@RequestBody @Valid CategoryCreationRequest request) {
+    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryCreationRequest request) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create category successfully")
                 .result(categoryService.createCategory(request))
+                .build();
+    }
+    @PutMapping("/{categoryId}")
+    @Operation(summary = "Update a category", description = "API retrieve value to change category attribute")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId){
+        return ApiResponse.<CategoryResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Update product successfully")
+                .result(categoryService.updateCategory(request, categoryId))
                 .build();
     }
 }

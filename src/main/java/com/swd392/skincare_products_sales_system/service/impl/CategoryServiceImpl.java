@@ -2,7 +2,10 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.CategoryMapper;
 import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.repository.CategoryRepository;
@@ -35,6 +38,16 @@ public class CategoryServiceImpl implements CategoryService {
         log.info("{}", category);
         return categoryMapper.toCategoryResponse(category);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId) {
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        categoryMapper.updateCategory(category, request);
+        return categoryMapper.toCategoryResponse(category);
+    }
+
     // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);

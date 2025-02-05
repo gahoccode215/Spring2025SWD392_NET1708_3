@@ -60,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         productMapper.updateProduct(product, request);
+        log.info("{}", product);
         return productMapper.toProductResponse(productRepository.save(product));
     }
 
