@@ -24,7 +24,7 @@ public class Product extends AbstractEntity{
     @Column(name = "description")
     String description;
 
-    @Column(name = "slug")
+    @Column(name = "slug", nullable = false, unique = true)
     String slug;
 
     @Column(name = "stock")

@@ -14,4 +14,5 @@ public class ProductResponse {
     String description;
     String brand;
     long stock;
+    String slug;
 }
