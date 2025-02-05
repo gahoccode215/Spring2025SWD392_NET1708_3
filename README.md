@@ -53,14 +53,14 @@ A system for managing the sale of skin care products of company
 mvn clean package 
 ```
 
-2**Build application**
+2. **Build application**
 - Maven statement
 ```bash
 ./mvnw spring-boot:run
 ```
 - Jar statement
 ```bash
-java -jar target/backend-service.jar
+java -jar target/skincare-products-sales-system-api.jar
 ```
 
 - Docker
