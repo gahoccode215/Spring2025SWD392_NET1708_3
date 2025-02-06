@@ -21,5 +21,4 @@ public class Brand extends AbstractEntity{
     @Column(name = "title", length = 255)
     String name;
 
-
 }

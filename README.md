@@ -20,10 +20,9 @@ A system for managing the sale of skin care products of company
 ---
 
 ## Features
-- Highlight the main functionalities and features.
-  - RESTful API for CRUD operations.
-  - Authentication and role-based authorization.
-  - Integration with third-party services (e.g., payment gateways, cloud storage).
+- RESTful API for CRUD operations.
+- Authentication and role-based authorization.
+- Integration with third-party services (e.g., payment gateways, cloud storage).
 
 ---
 
@@ -44,35 +43,31 @@ A system for managing the sale of skin care products of company
 - Java Development Kit (JDK) 21
 - Maven
 - Database (MySQL)
-- (Optional) Docker
+- Docker
 
 ### Installation
 
-1. **Build application**
+1. **Maven build**
 ```bash
 mvn clean package 
 ```
-
-2. **Build application**
-- Maven statement
+--- 
+2. **Docker build**
 ```bash
-./mvnw spring-boot:run
-```
-- Jar statement
-```bash
-java -jar target/skincare-products-sales-system-api.jar
-```
-
-- Docker
-```bash
-docker build -t skincare-products-sales-system-api
-docker run -d skincare-products-sales-system-api:latest skincare-products-sales-system-api
-```
-
-## Package application
-```bash
-docker build -t skincare-products-sales-system-api
+docker build -t api-image . 
 ```
 ---
+```bash
+docker run -it -p 8080:8080 --name=api-container api-image
+```
+* Or:
+```bash
+docker-compose up -d api-service
+```
+---
+* Checklog:
+```bash
+docker-compose logs -tf api-service
+```
 
 

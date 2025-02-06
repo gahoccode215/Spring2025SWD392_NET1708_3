@@ -38,7 +38,7 @@ public class Product extends AbstractEntity{
     @JoinColumn(name = "category_id")
     Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "brand_id")
-    Brand brand;
+//    @ManyToOne
+//    @JoinColumn(name = "brand_id")
+//    Brand brand;
 }
