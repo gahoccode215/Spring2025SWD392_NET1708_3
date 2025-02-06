@@ -52,5 +52,15 @@ public class ProductController {
                 .result(productService.updateProduct(request, productId))
                 .build();
     }
+    @GetMapping("/{productId}")
+    @Operation(summary = "Get a product", description = "API retrieve id value to get product")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<ProductResponse> getProductById(@PathVariable String productId){
+        return ApiResponse.<ProductResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get product successfully")
+                .result(productService.getProductById(productId))
+                .build();
+    }
 
 }

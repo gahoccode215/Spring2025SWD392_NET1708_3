@@ -8,4 +8,5 @@ public interface ProductService {
     ProductResponse createProduct(ProductCreationRequest request);
     void deleteProduct(String productId);
     ProductResponse updateProduct(ProductUpdateRequest request, String productId);
+    ProductResponse getProductById(String productId);
 }
