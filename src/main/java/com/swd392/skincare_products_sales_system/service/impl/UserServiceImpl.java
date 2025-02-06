@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         // Sorting
         Sort.Order order = new Sort.Order(Sort.Direction.ASC, "id");
         if (StringUtils.hasLength(sort)) {
-            Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)"); // tencot:asc|desc
+            Pattern pattern = Pattern.compile("(\\w+?)(:)(.*)"); // Ten cot: asc|desc
             Matcher matcher = pattern.matcher(sort);
             if (matcher.find()) {
                 String columnName = matcher.group(1);
@@ -68,8 +68,6 @@ public class UserServiceImpl implements UserService {
         if (page > 0) {
             pageNo = page - 1;
         }
-//        int pageNo = Math.max(page - 1, 0);
-
         // Paging
         Pageable pageable = PageRequest.of(pageNo, size, Sort.by(order));
 

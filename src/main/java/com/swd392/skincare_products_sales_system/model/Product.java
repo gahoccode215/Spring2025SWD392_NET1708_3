@@ -6,6 +6,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -24,14 +25,11 @@ public class Product extends AbstractEntity{
     @Column(name = "description")
     String description;
 
-    @Column(name = "slug")
+    @Column(name = "slug", nullable = false, unique = true)
     String slug;
 
     @Column(name = "stock")
     long stock;
-
-    @Column(name = "brand")
-    String brand;
 
     @Column(name = "thumbnail")
     String thumbnail;
@@ -39,4 +37,8 @@ public class Product extends AbstractEntity{
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+//    @ManyToOne
+//    @JoinColumn(name = "brand_id")
+//    Brand brand;
 }
