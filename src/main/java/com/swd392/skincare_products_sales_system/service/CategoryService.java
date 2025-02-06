@@ -7,4 +7,5 @@ import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 public interface CategoryService {
     CategoryResponse createCategory(CategoryCreationRequest request);
     CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId);
+    CategoryResponse getCategory(String categoryId);
 }

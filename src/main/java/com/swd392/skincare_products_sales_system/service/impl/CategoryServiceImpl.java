@@ -48,6 +48,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryMapper.toCategoryResponse(category);
     }
 
+    @Override
+    public CategoryResponse getCategory(String categoryId) {
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId)
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        return categoryMapper.toCategoryResponse(category);
+    }
+
     // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);

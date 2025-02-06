@@ -43,4 +43,14 @@ public class CategoryController {
                 .result(categoryService.updateCategory(request, categoryId))
                 .build();
     }
+    @GetMapping("/{categoryId}")
+    @Operation(summary = "Get a category", description = "API retrieve id to get category")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId){
+        return ApiResponse.<CategoryResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get category successfully")
+                .result(categoryService.getCategory(categoryId))
+                .build();
+    }
 }
