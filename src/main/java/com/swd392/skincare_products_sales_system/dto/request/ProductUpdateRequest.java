@@ -1,19 +1,19 @@
 package com.swd392.skincare_products_sales_system.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import java.time.LocalDate;
-import java.util.List;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UserUpdateRequest {
-    String firstName;
-    String lastName;
-    List<String> roles;
+public class ProductUpdateRequest {
+    String name;
+    double price;
+    String description;
+    String brand;
+    long stock;
 }

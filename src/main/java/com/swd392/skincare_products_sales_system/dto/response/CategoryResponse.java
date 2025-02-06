@@ -1,7 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
-import java.io.Serializable;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -10,11 +9,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse implements Serializable {
-    String id;
-    String firstName;
-    String lastName;
-    String username;
-//    Date dob;
-//    Set<RoleResponse> roles;
+public class CategoryResponse {
+    String name;
+    String description;
+    String thumbnail;
+    String slug;
 }
