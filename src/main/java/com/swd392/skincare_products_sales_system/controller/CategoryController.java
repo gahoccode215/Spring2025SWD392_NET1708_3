@@ -33,24 +33,37 @@ public class CategoryController {
                 .result(categoryService.createCategory(request))
                 .build();
     }
+
     @PutMapping("/{categoryId}")
     @Operation(summary = "Update a category", description = "API retrieve value to change category attribute")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId){
+    public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update product successfully")
                 .result(categoryService.updateCategory(request, categoryId))
                 .build();
     }
+
     @GetMapping("/{categoryId}")
     @Operation(summary = "Get a category", description = "API retrieve id to get category")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId){
+    public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get category successfully")
+                .message("Delete category successfully")
                 .result(categoryService.getCategory(categoryId))
+                .build();
+    }
+
+    @DeleteMapping("/{categoryId}")
+    @Operation(summary = "Delete a category", description = "API retrieve id to delete category")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
+        categoryService.deleteCategory(categoryId);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Delete category successfully")
                 .build();
     }
 }
