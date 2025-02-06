@@ -31,13 +31,14 @@ public class Product extends AbstractEntity{
     @Column(name = "stock")
     long stock;
 
-    @Column(name = "brand")
-    String brand;
-
     @Column(name = "thumbnail")
     String thumbnail;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    Brand brand;
 }
