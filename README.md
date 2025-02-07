@@ -71,7 +71,7 @@ docker-compose logs -tf api-service
 ```
 
 ----
-* Guide CI/CD:
+3. **Guide CI/CD:**
 ```bash
 docker-compose up --build -d
 ```
