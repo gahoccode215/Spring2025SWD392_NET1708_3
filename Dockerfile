@@ -1,12 +1,3 @@
-#FROM openjdk:21
-#
-#ARG JAR_FILE=target/*.jar
-#
-#ADD ${JAR_FILE} api-service.jar
-#
-#ENTRYPOINT ["java","-jar","api-service.jar"]
-#
-#EXPOSE 8080
 
 # Stage 1: build
 # Start with a Maven image that includes JDK 21
