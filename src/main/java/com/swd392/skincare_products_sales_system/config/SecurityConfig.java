@@ -46,7 +46,8 @@ public class SecurityConfig {
             "/users/**",
             "/auth/**",
             "/products/**",
-            "/categories/**"
+            "/categories/**",
+            "/mock/**"
     };
 
     @Autowired

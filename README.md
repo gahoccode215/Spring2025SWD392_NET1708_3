@@ -70,4 +70,43 @@ docker-compose up -d api-service
 docker-compose logs -tf api-service
 ```
 
+----
+* Guide CI/CD:
+```bash
+docker-compose up --build -d
+```
+--build: Build lại image nếu có thay đổi.
+
+-d: Chạy dưới chế độ nền (detached mode).
+
+---
+```bash
+docker ps
+```
+Chạy lệnh kiểm tra (Option)
+
+---
+
+```bash
+docker logs -f "tên image"
+```
+Lệnh kiểm tra logs cho image (Option)
+
+---
+
+```bash
+docker-compose down 
+```
+Lệnh dừng toàn bộ hệ thống (Option)
+
+---
+
+```bash
+docker-compose down -v
+```
+Lệnh xóa container (Option)
+
+---
+
+
 
