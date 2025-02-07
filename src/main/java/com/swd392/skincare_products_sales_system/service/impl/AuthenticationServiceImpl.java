@@ -53,7 +53,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-        //Fetch Role from Database instead of creating new one
+        // Lấy Role từ Database gắn vào
         Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         user.setRoles(Set.of(userRole));
@@ -67,57 +67,60 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_LOGIN));
+        // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_LOGIN);
         }
-
+        // Trả về Token
         return LoginResponse.builder()
-                .token(jwtUtil.generateToken(user))
+                .token(jwtUtil.generateToken(user)) //Token được generate
                 .authenticated(true)
                 .build();
     }
 
     @Override
-    public RefreshTokenResponse refreshToken(RefreshTokenRequest request)  {
-        SignedJWT signedJWT = null;
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+        SignedJWT signedJWT;
         try {
             signedJWT = jwtUtil.verifyToken(request.getToken(), true);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (JOSEException e) {
+        } catch (ParseException | JOSEException e) {
             throw new RuntimeException(e);
         }
 
-        String jit = null;
-        try {
-            jit = signedJWT.getJWTClaimsSet().getJWTID();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        // Lấy thông tin JWT từ token đã xác thực
+        String tokenId = null;
         Date expiryTime = null;
-        try {
-            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        InvalidatedToken invalidatedToken =
-                InvalidatedToken.builder().token(jit).expiryTime(expiryTime).build();
-
-        invalidatedTokenRepository.save(invalidatedToken);
-
         String username = null;
+
         try {
+            tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             username = signedJWT.getJWTClaimsSet().getSubject();
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error processing the token claims");
         }
 
-        var user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        // Kiểm tra nếu token đã hết hạn
+        if (expiryTime.before(new Date())) {
+            throw new RuntimeException("Token has expired");
+        }
 
-        var token = jwtUtil.generateToken(user);
+        // Lưu token vào bảng invalidated_token để ngừng sử dụng
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .token(tokenId)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
 
-        return RefreshTokenResponse.builder().token(token).authenticated(true).build();
+        // Tạo lại token mới
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        String newToken = jwtUtil.generateToken(user);
+        return RefreshTokenResponse.builder()
+                .token(newToken)
+                .authenticated(true)
+                .build();
     }
 
     @Override
@@ -129,21 +132,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } catch (ParseException | JOSEException e) {
             throw new RuntimeException("Invalid Token!");
         }
+
+        // Lấy thông tin từ token
         String tokenId = null;
+        Date expiryTime = null;
+
         try {
             tokenId = signedJWT.getJWTClaimsSet().getJWTID();
-            log.info(tokenId);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Date expiryTime = null;
-        try {
             expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error extracting token information");
         }
 
-        // Lưu token vào danh sách đã logout
+        // Kiểm tra nếu token đã hết hạn
+        if (expiryTime.before(new Date())) {
+            throw new RuntimeException("Token has already expired");
+        }
+
+        // Lưu token vào danh sách invalidated token
         InvalidatedToken invalidatedToken = InvalidatedToken.builder()
                 .token(tokenId)
                 .expiryTime(expiryTime)

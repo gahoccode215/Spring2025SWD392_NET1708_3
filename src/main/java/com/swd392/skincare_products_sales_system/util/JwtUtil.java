@@ -113,9 +113,6 @@ public class JwtUtil {
         } catch (AppException e) {
             isValid = false;
         }
-
         return IntrospectResponse.builder().valid(isValid).build();
     }
-
-
 }
