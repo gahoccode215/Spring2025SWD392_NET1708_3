@@ -2,6 +2,8 @@ version: '3.8'
 
 services:
   api-service:
+    env_file:
+      - .env
     container_name: skincare-products-sales-system
     build:
       context: .
@@ -11,8 +13,8 @@ services:
     depends_on:
       - mysql
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/swd392-skincare-products-sales-system
-      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_URL=${DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
     restart: always
 
@@ -22,7 +24,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DATASOURCE_PASSWORD}  # Set root password
-      MYSQL_DATABASE: "swd392-skincare-products-sales-system"  # Auto-create database
+      MYSQL_DATABASE: ${DATASOURCE_URL}  # Auto-create database
     ports:
       - "3307:3306"
     volumes:

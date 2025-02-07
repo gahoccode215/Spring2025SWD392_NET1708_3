@@ -107,6 +107,12 @@ docker-compose down -v
 Lệnh xóa container (Option)
 
 ---
+```bash
+docker run -p xxxx:xxxx --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
+```
+
+Lệnh run image
+
 
 
 
