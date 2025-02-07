@@ -2,6 +2,7 @@ package com.swd392.skincare_products_sales_system.controller;
 
 import com.nimbusds.jose.JOSEException;
 import com.swd392.skincare_products_sales_system.dto.request.LoginRequest;
+import com.swd392.skincare_products_sales_system.dto.request.LogoutRequest;
 import com.swd392.skincare_products_sales_system.dto.request.RefreshTokenRequest;
 import com.swd392.skincare_products_sales_system.dto.request.RegisterRequest;
 import com.swd392.skincare_products_sales_system.dto.response.*;
@@ -52,6 +53,16 @@ public class AuthenticationController {
         return ApiResponse.<RefreshTokenResponse>builder()
                 .code(HttpStatus.OK.value())
                 .result(result).build();
+    }
+    @PostMapping("/logout")
+    @Operation(summary = "Logout", description = "Invalidate JWT token to logout user")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> logout(@RequestBody LogoutRequest request) {
+        authenticationService.logout(request);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Logout successful")
+                .build();
     }
 
 }

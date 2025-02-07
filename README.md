@@ -23,6 +23,8 @@ A system for managing the sale of skin care products of company
 - RESTful API for CRUD operations.
 - Authentication and role-based authorization.
 - Integration with third-party services (e.g., payment gateways, cloud storage).
+- Azure Cloud for MySQL, Render for Server API.
+- Docker, CI/CD GitHub Action
 
 ---
 
@@ -113,6 +115,11 @@ docker run -p xxxx:xxxx --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 
 Lệnh run image
 
+3. **Front end get api**
+```bash
+https://spring2025swd392-net1708-3.onrender.com/api/v1/swd392-skincare-products-sales-system/swagger-ui/index.html
+```
+Truy cập đường nhẫn đến Swagger
 
 
 

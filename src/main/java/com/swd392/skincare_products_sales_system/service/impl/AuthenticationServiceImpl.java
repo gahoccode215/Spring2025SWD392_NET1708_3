@@ -12,8 +12,10 @@ import com.swd392.skincare_products_sales_system.dto.response.RefreshTokenRespon
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
+import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
@@ -38,13 +40,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
     JwtUtil jwtUtil;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("User already exists!");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = User.builder()
                 .username(request.getUsername())
@@ -52,12 +55,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .build();
         //Fetch Role from Database instead of creating new one
         Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
-                .orElseThrow(() -> new RuntimeException("Role USER not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         user.setRoles(Set.of(userRole));
         userRepository.save(user);
         return RegisterResponse.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
+                .username(user.getUsername())
                 .build();
     }
 
@@ -86,13 +88,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new RuntimeException(e);
         }
 
-//        var jit = signedJWT.getJWTClaimsSet().getJWTID();
-//        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        String jit = null;
+        try {
+            jit = signedJWT.getJWTClaimsSet().getJWTID();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Date expiryTime = null;
+        try {
+            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
-//        InvalidatedToken invalidatedToken =
-//                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
+        InvalidatedToken invalidatedToken =
+                InvalidatedToken.builder().token(jit).expiryTime(expiryTime).build();
 
-//        invalidatedTokenRepository.save(invalidatedToken);
+        invalidatedTokenRepository.save(invalidatedToken);
 
         String username = null;
         try {
@@ -108,16 +120,35 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return RefreshTokenResponse.builder().token(token).authenticated(true).build();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void logout(LogoutRequest request) {
+        SignedJWT signedJWT;
+        try {
+            signedJWT = jwtUtil.verifyToken(request.getToken(), false);
+        } catch (ParseException | JOSEException e) {
+            throw new RuntimeException("Invalid Token!");
+        }
+        String tokenId = null;
+        try {
+            tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            log.info(tokenId);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Date expiryTime = null;
+        try {
+            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
-    private String buildScope(User user) {
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
-            });
-
-        return stringJoiner.toString();
+        // Lưu token vào danh sách đã logout
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .token(tokenId)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
     }
+
 }

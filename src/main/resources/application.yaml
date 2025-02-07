@@ -28,5 +28,5 @@ open:
     license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3
 jwt:
   signerKey: ${JWT_SIGNER_KEY:1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij}
-  valid-duration: ${JWT_VALID_DURATION:20} # in second
+  valid-duration: ${JWT_VALID_DURATION:3600} # in second
   refreshable-duration: ${JWT_REFRESHABLE_DURATION:36000} # in seconds

@@ -20,8 +20,8 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class InvalidatedToken {
     @Id
-    @Column(name = "id")
-    String id;
+    @Column(name = "token")
+    String token;
     @Column(name = "expiry_time")
     Date expiryTime;
 }
