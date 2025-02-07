@@ -5,8 +5,8 @@ server:
 spring:
   datasource:
     driver-class-name: "com.mysql.cj.jdbc.Driver"
-    url: ${DATASOURCE_URL:jdbc:mysql://swd392-mysql-skincare.mysql.database.azure.com.mysql.database.azure.com:3306/swd392-skincare-products-sales-system?useSSL=true&requireSSL=false&serverTimezone=UTC}
-    username: ${DATASOURCE_USERNAME:swd392-mysql-skincare.mysql.database.azure.com}
+    url: ${DATASOURCE_URL:jdbc:mysql://swd392-mysql-skincare.mysql.database.azure.com:3306/swd392-skincare-products-sales-system?useSSL=true&requireSSL=false&serverTimezone=UTC}
+    username: ${DATASOURCE_USERNAME:crosoficelldan}
     password: ${DATASOURCE_PASSWORD}
   jpa:
     hibernate:
