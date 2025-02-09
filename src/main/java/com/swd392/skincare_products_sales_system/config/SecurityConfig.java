@@ -52,11 +52,9 @@ public class SecurityConfig {
             "/**"
     };
 
-    @Autowired
-    CustomJwtDecoder customJwtDecoder;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity, CustomJwtDecoder customJwtDecoder) throws Exception {
         httpSecurity.authorizeHttpRequests(request
                 -> request.requestMatchers(PUBLIC_ENDPOINTS)
                 .permitAll()

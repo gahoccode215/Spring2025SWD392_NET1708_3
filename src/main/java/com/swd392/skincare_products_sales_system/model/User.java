@@ -5,12 +5,8 @@ import com.swd392.skincare_products_sales_system.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -35,7 +31,6 @@ public class User extends AbstractEntity {
     String lastName;
 
     @Enumerated(EnumType.STRING)
-//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "gender")
     Gender gender;
 
@@ -47,7 +42,7 @@ public class User extends AbstractEntity {
 
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
-    Date birthday;
+    LocalDate birthday;
 
     @Column(name = "username", unique = true, nullable = false, length = 255)
     String username;
@@ -56,7 +51,6 @@ public class User extends AbstractEntity {
     String password;
 
     @Enumerated(EnumType.STRING)
-//    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     @Column(name = "status", length = 255)
     UserStatus status;
 

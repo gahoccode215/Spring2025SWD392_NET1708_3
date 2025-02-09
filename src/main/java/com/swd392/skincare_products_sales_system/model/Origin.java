@@ -3,19 +3,19 @@ package com.swd392.skincare_products_sales_system.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
 import java.util.Set;
 
 @Entity
+@Table(name = "tbl_origin")
 @Getter
-@ToString
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@Table(name = "tbl_brand")
+@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Brand extends AbstractEntity{
+public class Origin extends AbstractEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -23,12 +23,6 @@ public class Brand extends AbstractEntity{
     @Column(name = "name")
     String name;
 
-    @Column(name = "description")
-    String description;
-
-    @Column(name = "thumbnail")
-    String thumbnail;
-
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "origin", fetch = FetchType.EAGER)
     Set<Product> products;
 }

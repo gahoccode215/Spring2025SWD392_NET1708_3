@@ -1,21 +1,22 @@
 package com.swd392.skincare_products_sales_system.model;
+import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
-
 @Entity
+@Table(name = "tbl_feature")
 @Getter
-@ToString
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@Table(name = "tbl_brand")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Brand extends AbstractEntity{
+@ToString
+public class Feature extends AbstractEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -23,12 +24,11 @@ public class Brand extends AbstractEntity{
     @Column(name = "name")
     String name;
 
-    @Column(name = "description")
-    String description;
-
-    @Column(name = "thumbnail")
-    String thumbnail;
-
-    @OneToMany(mappedBy = "brand")
+    @ManyToMany(mappedBy = "features", fetch = FetchType.EAGER)
+    @JsonIgnore
     Set<Product> products;
+
+    public Feature(Long id) {
+        this.id = id;
+    }
 }

@@ -20,6 +20,8 @@ import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,22 +46,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .gender(request.getGender())
+                .birthday(request.getBirthday())
                 .build();
         // Lấy Role từ Database gắn vào
-        Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        Role userRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         user.setRoles(Set.of(userRole));
         userRepository.save(user);
         return RegisterResponse.builder()
                 .username(user.getUsername())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
                 .build();
     }
 
@@ -79,12 +85,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
+    @Transactional
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
         SignedJWT signedJWT;
         try {
             signedJWT = jwtUtil.verifyToken(request.getToken(), true);
         } catch (ParseException | JOSEException e) {
-            throw new RuntimeException(e);
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
 
         // Lấy thông tin JWT từ token đã xác thực
@@ -97,25 +104,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             username = signedJWT.getJWTClaimsSet().getSubject();
         } catch (ParseException e) {
-            throw new RuntimeException("Error processing the token claims");
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
 
         // Kiểm tra nếu token đã hết hạn
         if (expiryTime.before(new Date())) {
-            throw new RuntimeException("Token has expired");
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
-
         // Lưu token vào bảng invalidated_token để ngừng sử dụng
         InvalidatedToken invalidatedToken = InvalidatedToken.builder()
                 .token(tokenId)
                 .expiryTime(expiryTime)
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
-
         // Tạo lại token mới
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
         String newToken = jwtUtil.generateToken(user);
         return RefreshTokenResponse.builder()
                 .token(newToken)
@@ -124,15 +128,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void logout(LogoutRequest request) {
         SignedJWT signedJWT;
         try {
             signedJWT = jwtUtil.verifyToken(request.getToken(), false);
         } catch (ParseException | JOSEException e) {
-            throw new RuntimeException("Invalid Token!");
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
-
         // Lấy thông tin từ token
         String tokenId = null;
         Date expiryTime = null;
@@ -141,20 +144,46 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             tokenId = signedJWT.getJWTClaimsSet().getJWTID();
             expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         } catch (ParseException e) {
-            throw new RuntimeException("Error extracting token information");
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
 
         // Kiểm tra nếu token đã hết hạn
         if (expiryTime.before(new Date())) {
-            throw new RuntimeException("Token has already expired");
+            throw new AppException(ErrorCode.INVALID_TOKEN);
         }
-
         // Lưu token vào danh sách invalidated token
         InvalidatedToken invalidatedToken = InvalidatedToken.builder()
                 .token(tokenId)
                 .expiryTime(expiryTime)
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Lấy username của người dùng hiện tại
+        log.info("username: {}", username);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // Kiểm tra mật khẩu cũ có đúng không
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new AppException(ErrorCode.INVALID_CHANGE_PASSWORD);
+        }
+
+        // Kiểm tra mật khẩu mới và xác nhận mật khẩu có khớp không
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.INVALID_CONFIRM_PASSWORD);
+        }
+
+        // Mã hóa mật khẩu mới
+        String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
+
+        // Cập nhật mật khẩu mới
+        user.setPassword(encodedNewPassword);
+        userRepository.save(user);
     }
 
 }

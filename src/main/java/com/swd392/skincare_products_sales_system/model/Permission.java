@@ -29,6 +29,6 @@ public class Permission extends AbstractEntity{
     String description;
 
     @ManyToMany(mappedBy = "permissions")
-    private Set<Role> roles;
+    Set<Role> roles;
 
 }

@@ -1,6 +1,5 @@
 package com.swd392.skincare_products_sales_system.dto.request;
-
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,10 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LoginRequest {
-
-    @Size(min = 6, message = "INVALID_USERNAME")
-    String username;
-    @Size(min = 6, message = "INVALID_PASSWORD")
-    String password;
+public class BrandCreationRequest {
+    @NotBlank(message = "brand name can not blank")
+    String name;
 }

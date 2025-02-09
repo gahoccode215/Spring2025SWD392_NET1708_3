@@ -3,24 +3,28 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.ProductSearchRequest;
 import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.ProductMapper;
-import com.swd392.skincare_products_sales_system.model.Product;
-import com.swd392.skincare_products_sales_system.repository.ProductRepository;
+import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -34,11 +38,32 @@ public class ProductServiceImpl implements ProductService {
     ProductRepository productRepository;
     ProductMapper productMapper;
     Slugify slugify;
+    BrandRepository brandRepository;
+    CategoryRepository categoryRepository;
+    SkinTypeRepository skinTypeRepository;
+    OriginRepository originRepository;
+    FeatureRepository featureRepository;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public ProductResponse createProduct(ProductCreationRequest request) {
         Product product = productMapper.toProduct(request);
+        Brand brand = brandRepository.findByIdAndIsDeletedFalse(request.getBrand_id())
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        Origin origin = originRepository.findByIdAndIsDeletedFalse(request.getOrigin_id())
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        SkinType skinType = skinTypeRepository.findByIdAndIsDeletedFalse(request.getSkin_type_id())
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id())
+                .orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        Set<Feature> features = new HashSet<>(featureRepository.findAllByIdAndIsDeletedFalse(request.getFeature_ids()));
+
+        product.setBrand(brand);
+        product.setOrigin(origin);
+        product.setSkinType(skinType);
+        product.setCategory(category);
+        product.setFeatures(features);
         product.setSlug(generateUniqueSlug(request.getName()));
         productRepository.save(product);
         return productMapper.toProductResponse(product);
@@ -59,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
         log.info("Attempting to find product with ID: {}", productId);
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        productMapper.updateProduct(product, request);
+//        productMapper.updateProduct(product, request);
         log.info("{}", product);
         return productMapper.toProductResponse(productRepository.save(product));
     }
@@ -69,6 +94,11 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId)
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         return productMapper.toProductResponse(product);
+    }
+
+    @Override
+    public Page<ProductResponse> searchProducts(ProductSearchRequest request) {
+        return null;
     }
 
     // Generate a unique slug

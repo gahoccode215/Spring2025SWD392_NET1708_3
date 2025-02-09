@@ -8,19 +8,27 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_KEY(1001, "Uncategorized error", HttpStatus.BAD_REQUEST),
-    USER_EXISTED(1002, "User existed", HttpStatus.BAD_REQUEST),
-    INVALID_USERNAME(1003, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
-    INVALID_PASSWORD(1004, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1005, "User not existed", HttpStatus.NOT_FOUND),
-    UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
-    INVALID_DOB(1008, "Your age must be at least {min}", HttpStatus.BAD_REQUEST),
-    INVALID_LOGIN(1009, "Username or password invalid", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_EXISTED(1010, "Product not existed", HttpStatus.BAD_REQUEST),
-    CATEGORY_NOT_EXISTED(1011, "Category not existed", HttpStatus.BAD_REQUEST),
-    ROLE_NOT_EXISTED(1012, "Role not existed", HttpStatus.BAD_REQUEST),
-    INVALID_TOKEN(1013, "Token invalid", HttpStatus.BAD_REQUEST)
+    //10XX
+    USERNAME_EXISTED(1001, "Username existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1002, "User not existed", HttpStatus.NOT_FOUND),
+    PRODUCT_NOT_EXISTED(1003, "Product not existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXISTED(1004, "Category not existed", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1005, "User existed", HttpStatus.BAD_REQUEST),
+    RESOURCE_NOT_FOUND(1006, "Resource not found", HttpStatus.BAD_REQUEST),
+    //11XX
+    INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
+    INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
+    INVALID_TOKEN(1102, "Token invalid", HttpStatus.UNAUTHORIZED),
+    INVALID_USERNAME(1103, "Username must be at least {min} characters", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1104, "Password must be at least {min} characters", HttpStatus.BAD_REQUEST),
+    INVALID_BIRTHDAY(1105, "Birthday must be at least {min} years", HttpStatus.BAD_REQUEST),
+    INVALID_CONFIRM_PASSWORD(1106, "Confirm password not match with password", HttpStatus.BAD_REQUEST),
+    INVALID_CHANGE_PASSWORD(1007, "Old password not correct", HttpStatus.BAD_REQUEST),
+    INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
+    // 12XX
+    UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+    // 13XX
+    REGISTER_ERROR(1301, "Register failed", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
