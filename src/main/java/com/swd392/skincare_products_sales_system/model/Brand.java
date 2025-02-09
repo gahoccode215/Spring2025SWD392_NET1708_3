@@ -26,6 +26,9 @@ public class Brand extends AbstractEntity{
     @Column(name = "description")
     String description;
 
+    @Column(name = "thumbnail")
+    String thumbnail;
+
     @OneToMany(mappedBy = "brand")
     Set<Product> products;
 }
