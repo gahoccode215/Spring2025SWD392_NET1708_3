@@ -7,9 +7,9 @@ import java.util.Map;
 
 public interface AuthenticationService {
 
-    RegisterResponse register(RegisterRequest request);
     LoginResponse login(LoginRequest request);
-
     RefreshTokenResponse refreshToken(RefreshTokenRequest request);
+    RegisterResponse register(RegisterRequest request);
     void logout(LogoutRequest request);
+    void changePassword(ChangePasswordRequest request);
 }

@@ -44,22 +44,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new AppException(ErrorCode.USER_EXISTED);
+            throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .gender(request.getGender())
+                .birthday(request.getBirthday())
                 .build();
         // Lấy Role từ Database gắn vào
-        Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+        Role userRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
+                .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         user.setRoles(Set.of(userRole));
         userRepository.save(user);
         return RegisterResponse.builder()
                 .username(user.getUsername())
+                .gender(user.getGender())
+                .birthday(user.getBirthday())
                 .build();
     }
 
@@ -155,6 +159,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .expiryTime(expiryTime)
                 .build();
         invalidatedTokenRepository.save(invalidatedToken);
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+
     }
 
 }

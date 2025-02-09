@@ -27,6 +27,7 @@ import java.util.Objects;
 
 @Component
 public class CustomJwtDecoder implements JwtDecoder {
+
     @Value("${jwt.signerKey}")
     private String signerKey;
 
@@ -39,10 +40,12 @@ public class CustomJwtDecoder implements JwtDecoder {
     @SneakyThrows
     @Override
     public Jwt decode(String token) throws JwtException {
+
         try {
             var response = jwtUtil.introspect(
                     IntrospectRequest.builder().token(token).build());
-            if (!response.isValid()) throw new AppException(ErrorCode.INVALID_TOKEN);
+
+            if (!response.isValid()) throw new JwtException("Token invalid");
         } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
         }

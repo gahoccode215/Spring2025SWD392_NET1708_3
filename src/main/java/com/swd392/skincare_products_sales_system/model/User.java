@@ -5,6 +5,8 @@ import com.swd392.skincare_products_sales_system.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 import java.util.*;
 
 @Getter
@@ -40,7 +42,7 @@ public class User extends AbstractEntity {
 
     @Column(name = "date_of_birth")
     @Temporal(TemporalType.DATE)
-    Date birthday;
+    LocalDate birthday;
 
     @Column(name = "username", unique = true, nullable = false, length = 255)
     String username;
