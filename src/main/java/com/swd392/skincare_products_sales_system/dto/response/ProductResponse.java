@@ -20,4 +20,5 @@ public class ProductResponse {
     String skinTypeType;
     Set<FeatureResponse> featureNames;
     String thumbnail;
+    String slug;
 }

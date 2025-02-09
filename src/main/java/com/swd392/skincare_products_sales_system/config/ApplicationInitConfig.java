@@ -54,6 +54,10 @@ public class ApplicationInitConfig {
                         .name(PredefinedRole.DELIVERY)
                         .description("Delivery role")
                         .build());
+                roleRepository.save(Role.builder()
+                        .name(PredefinedRole.EXPERT)
+                        .description("Expert role")
+                        .build());
                 Role adminRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.ADMIN_ROLE)
                         .description("Admin role")
