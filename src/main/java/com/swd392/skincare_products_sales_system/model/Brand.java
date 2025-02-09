@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Set;
+
 @Entity
 @Getter
 @ToString
@@ -15,10 +17,15 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Brand extends AbstractEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
 
-    @Column(name = "title", length = 255)
+    @Column(name = "name")
     String name;
 
+    @Column(name = "description")
+    String description;
+
+    @OneToMany(mappedBy = "brand")
+    Set<Product> products;
 }
