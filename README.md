@@ -23,6 +23,8 @@ A system for managing the sale of skin care products of company
 - RESTful API for CRUD operations.
 - Authentication and role-based authorization.
 - Integration with third-party services (e.g., payment gateways, cloud storage).
+- Azure Cloud for MySQL, Render for Server API.
+- Docker, CI/CD GitHub Action
 
 ---
 
@@ -112,6 +114,7 @@ docker run -p xxxx:xxxx --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 ```
 
 Lệnh run image
+
 
 
 

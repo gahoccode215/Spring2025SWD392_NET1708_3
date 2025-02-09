@@ -30,7 +30,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a user", description = "API retrieve value to create user")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a user", description = "API retrieve an id to get user")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -54,7 +54,7 @@ public class UserController {
     @PutMapping("/{userId}")
     @Operation(summary = "Update a user", description = "API retrieve value to change user attribute")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Delete a user", description = "API retrieve an id to delete user")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
@@ -78,7 +78,7 @@ public class UserController {
     @Operation(summary = "Get user list", description = "API retrieve users from database")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public ApiResponse<Object> getList(@RequestParam(required = false) String keyword,
                                        @RequestParam(required = false) String sort,
                                        @RequestParam(defaultValue = "0") @Min(0) int page,

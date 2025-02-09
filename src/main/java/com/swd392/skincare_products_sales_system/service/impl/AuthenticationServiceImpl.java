@@ -12,8 +12,10 @@ import com.swd392.skincare_products_sales_system.dto.response.RefreshTokenRespon
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
+import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
@@ -38,26 +40,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
     JwtUtil jwtUtil;
+    InvalidatedTokenRepository invalidatedTokenRepository;
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RegisterResponse register(RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("User already exists!");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-        //Fetch Role from Database instead of creating new one
+        // Lấy Role từ Database gắn vào
         Role userRole = roleRepository.findByName(PredefinedRole.USER_ROLE)
-                .orElseThrow(() -> new RuntimeException("Role USER not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
         user.setRoles(Set.of(userRole));
         userRepository.save(user);
         return RegisterResponse.builder()
-                .username(request.getUsername())
-                .password(request.getPassword())
+                .username(user.getUsername())
                 .build();
     }
 
@@ -65,59 +67,94 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_LOGIN));
+        // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_LOGIN);
         }
-
+        // Trả về Token
         return LoginResponse.builder()
-                .token(jwtUtil.generateToken(user))
+                .token(jwtUtil.generateToken(user)) //Token được generate
                 .authenticated(true)
                 .build();
     }
 
     @Override
-    public RefreshTokenResponse refreshToken(RefreshTokenRequest request)  {
-        SignedJWT signedJWT = null;
+    public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
+        SignedJWT signedJWT;
         try {
             signedJWT = jwtUtil.verifyToken(request.getToken(), true);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        } catch (JOSEException e) {
+        } catch (ParseException | JOSEException e) {
             throw new RuntimeException(e);
         }
 
-//        var jit = signedJWT.getJWTClaimsSet().getJWTID();
-//        var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-
-//        InvalidatedToken invalidatedToken =
-//                InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
-
-//        invalidatedTokenRepository.save(invalidatedToken);
-
+        // Lấy thông tin JWT từ token đã xác thực
+        String tokenId = null;
+        Date expiryTime = null;
         String username = null;
+
         try {
+            tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
             username = signedJWT.getJWTClaimsSet().getSubject();
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error processing the token claims");
         }
 
-        var user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        // Kiểm tra nếu token đã hết hạn
+        if (expiryTime.before(new Date())) {
+            throw new RuntimeException("Token has expired");
+        }
 
-        var token = jwtUtil.generateToken(user);
+        // Lưu token vào bảng invalidated_token để ngừng sử dụng
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .token(tokenId)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
 
-        return RefreshTokenResponse.builder().token(token).authenticated(true).build();
+        // Tạo lại token mới
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        String newToken = jwtUtil.generateToken(user);
+        return RefreshTokenResponse.builder()
+                .token(newToken)
+                .authenticated(true)
+                .build();
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void logout(LogoutRequest request) {
+        SignedJWT signedJWT;
+        try {
+            signedJWT = jwtUtil.verifyToken(request.getToken(), false);
+        } catch (ParseException | JOSEException e) {
+            throw new RuntimeException("Invalid Token!");
+        }
 
-    private String buildScope(User user) {
-        StringJoiner stringJoiner = new StringJoiner(" ");
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
-            });
+        // Lấy thông tin từ token
+        String tokenId = null;
+        Date expiryTime = null;
 
-        return stringJoiner.toString();
+        try {
+            tokenId = signedJWT.getJWTClaimsSet().getJWTID();
+            expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        } catch (ParseException e) {
+            throw new RuntimeException("Error extracting token information");
+        }
+
+        // Kiểm tra nếu token đã hết hạn
+        if (expiryTime.before(new Date())) {
+            throw new RuntimeException("Token has already expired");
+        }
+
+        // Lưu token vào danh sách invalidated token
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .token(tokenId)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
     }
+
 }

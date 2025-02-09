@@ -10,6 +10,7 @@ import com.swd392.skincare_products_sales_system.dto.response.IntrospectResponse
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ import java.util.*;
 @Component
 public class JwtUtil {
 
+    private final InvalidatedTokenRepository invalidatedTokenRepository;
     @Value("${jwt.signerKey}")
     private String SIGNER_KEY;
 
@@ -32,6 +34,10 @@ public class JwtUtil {
 
     @Value("${jwt.refreshable-duration}")
     private long REFRESHABLE_DURATION;
+
+    public JwtUtil(InvalidatedTokenRepository invalidatedTokenRepository) {
+        this.invalidatedTokenRepository = invalidatedTokenRepository;
+    }
 
 
     public String generateToken(User user) {
@@ -92,8 +98,8 @@ public class JwtUtil {
 
         if (!(verified && expiryTime.after(new Date()))) throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-//        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
-//            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        if (invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
     }
@@ -107,8 +113,6 @@ public class JwtUtil {
         } catch (AppException e) {
             isValid = false;
         }
-
         return IntrospectResponse.builder().valid(isValid).build();
     }
-
 }

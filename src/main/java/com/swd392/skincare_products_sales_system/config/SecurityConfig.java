@@ -31,6 +31,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +48,8 @@ public class SecurityConfig {
             "/auth/**",
             "/products/**",
             "/categories/**",
-            "/mock/**"
+            "/mock/**",
+            "/**"
     };
 
     @Autowired
@@ -83,6 +85,7 @@ public class SecurityConfig {
 
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
+
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
