@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -21,9 +22,6 @@ public class Product extends AbstractEntity{
     @Column(name = "name")
     String name;
 
-    @Column(name = "feature")
-    String feature; // Công dụng: Dưỡng ẩm, trị mụn, chống lão hóa
-
     @Column(name = "price")
     Double price;
 
@@ -36,7 +34,7 @@ public class Product extends AbstractEntity{
     @Column(name = "product_code")
     String productCode; // Mã sản phẩm
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT")
     String description; // Mô tả sản phẩm
 
     @Column(name = "thumbnail")
@@ -46,25 +44,25 @@ public class Product extends AbstractEntity{
     String usageInstruction; // Hướng dẫn sử dụng
 
     @Column(name = "expiry_date")
-    String expiryDate; // Ngày hết hạn
+    LocalDate expiryDate; // Ngày hết hạn
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id")
     Brand brand;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "origin_id")
     Origin origin;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "skin_type_id")
     SkinType skinType;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     Category category;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tbl_product_has_feature",
             joinColumns = @JoinColumn(name = "product_id"),

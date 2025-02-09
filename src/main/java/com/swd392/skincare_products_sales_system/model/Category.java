@@ -32,6 +32,6 @@ public class Category extends AbstractEntity{
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     List<Product> products;
 }

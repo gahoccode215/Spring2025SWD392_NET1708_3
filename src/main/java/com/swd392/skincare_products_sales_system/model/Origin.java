@@ -23,6 +23,6 @@ public class Origin extends AbstractEntity{
     @Column(name = "name")
     String name;
 
-    @OneToMany(mappedBy = "origin")
+    @OneToMany(mappedBy = "origin", fetch = FetchType.EAGER)
     Set<Product> products;
 }

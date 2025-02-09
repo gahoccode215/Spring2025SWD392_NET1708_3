@@ -23,6 +23,6 @@ public class SkinType extends AbstractEntity{
     @Column(name = "type")
     String type;
 
-    @OneToMany(mappedBy = "skinType")
+    @OneToMany(mappedBy = "skinType", fetch = FetchType.EAGER)
     Set<Product> products;
 }

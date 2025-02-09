@@ -24,7 +24,11 @@ public class Feature extends AbstractEntity{
     @Column(name = "name")
     String name;
 
-    @ManyToMany(mappedBy = "features")
+    @ManyToMany(mappedBy = "features", fetch = FetchType.EAGER)
     @JsonIgnore
     Set<Product> products;
+
+    public Feature(Long id) {
+        this.id = id;
+    }
 }

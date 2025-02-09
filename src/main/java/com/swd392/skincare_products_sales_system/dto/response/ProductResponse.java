@@ -18,7 +18,6 @@ public class ProductResponse {
     String categoryName;
     String originName;
     String skinTypeType;
-
     Set<FeatureResponse> featureNames;
     String thumbnail;
 }

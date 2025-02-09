@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,9 +16,23 @@ public class ProductCreationRequest {
     @NotBlank(message = "category name can not blank")
     String name;
 
+    Double price;
+
     String description;
+
+    String thumbnail;
+
+    String usageInstruction;
+
+    LocalDate expiryDate;
 
     Long brand_id;
 
+    Long origin_id;
+
+    Long skin_type_id;
+
     String category_id;
+
+    Set<Long> feature_ids;
 }
