@@ -59,6 +59,6 @@ public class User extends AbstractEntity {
     @JoinTable(name = "tbl_user_has_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    Set<Role> roles;
 
 }

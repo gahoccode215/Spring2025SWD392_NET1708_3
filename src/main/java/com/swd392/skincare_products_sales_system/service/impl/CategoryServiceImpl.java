@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
     public void deleteCategory(String categoryId) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        category.setDeleted(true);
+        category.setIsDeleted(true);
         categoryRepository.save(category);
     }
 
