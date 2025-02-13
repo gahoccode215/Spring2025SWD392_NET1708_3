@@ -10,6 +10,7 @@ import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/categories")
+@Tag(name = "Category Controller")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CategoryController {

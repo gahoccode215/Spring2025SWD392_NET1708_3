@@ -57,7 +57,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("https://spring2025swd392-net1708-3.onrender.com/api/v1/swp391-skincare-products-sales-system", "http://localhost:5173"));
+        corsConfiguration.setAllowedOrigins(List.of("https://spring2025swd392-net1708-3.onrender.com/api/v1/swd392-skincare-products-sales-system", "http://localhost:5173"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);

@@ -12,6 +12,6 @@ open:
     title: API document
     version: v1.0.0
     description: API Service
-    serverUrl: ${SWAGGER_SERVER_URL:https://spring2025swd392-net1708-3.onrender.com/api/v1/swp391-skincare-products-sales-system}
+    serverUrl: ${SWAGGER_SERVER_URL:https://spring2025swd392-net1708-3.onrender.com/api/v1/swd392-skincare-products-sales-system}
     serverName: Server
     license: https://github.com/gahoccode215/Spring2025SWD392_NET1708_3
