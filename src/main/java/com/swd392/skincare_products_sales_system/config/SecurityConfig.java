@@ -26,10 +26,6 @@ import java.util.List;
 @Slf4j
 public class SecurityConfig {
 
-    @Value("${jwt.signerKey}")
-    private String SIGNER_KEY;
-
-
     private final String[] PUBLIC_ENDPOINTS = {
             "/users/**",
             "/auth/**",
