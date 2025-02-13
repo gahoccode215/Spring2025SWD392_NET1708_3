@@ -74,7 +74,6 @@ public class GlobalExceptionHandler {
                 );
     }
 
-
     /**
      * Xử lý lỗi không có quyền truy cập (401 Unauthorized).
      */

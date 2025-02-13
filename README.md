@@ -1,3 +1,9 @@
+Template 2: https://docs.google.com/document/d/1zqnBfQ_C3PABda-w7-UIfBHxO90Bwe7V/edit?rtpof=true&tab=t.0
+
+Template 3: https://docs.google.com/document/d/1N3zBSnzzJLeeS4T6URGZ_en14nDGTG0R/edit
+
+Task sheet: https://docs.google.com/spreadsheets/d/1wgZBVmX8s249NvNJ1M5XdjsMbSslocAK/edit?rtpof=true&gid=2003181154#gid=2003181154
+
 # Skincare Products Sales System API
 
 A system for managing the sale of skin care products of company

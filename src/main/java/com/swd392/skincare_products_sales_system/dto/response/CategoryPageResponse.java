@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PROTECTED)
-public abstract class AbstractPageResponse {
-    Long totalElements;
-    Integer totalPages;
-    Integer pageNumber;
-    Integer pageSize;
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class CategoryPageResponse extends AbstractPageResponse{
+    List<CategoryResponse> categoryResponses;
 }

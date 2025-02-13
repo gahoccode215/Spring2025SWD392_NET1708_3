@@ -62,7 +62,6 @@ public class ApplicationInitConfig {
                         .name(PredefinedRole.ADMIN_ROLE)
                         .description("Admin role")
                         .build());
-
                 var roles = new HashSet<Role>();
                 roles.add(adminRole);
 

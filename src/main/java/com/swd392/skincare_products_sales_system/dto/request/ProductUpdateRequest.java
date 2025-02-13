@@ -10,10 +10,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductUpdateRequest {
     String name;
-    double price;
+    Double price;
     String description;
-    String brand;
-    long stock;
+    String category_id;
 }
