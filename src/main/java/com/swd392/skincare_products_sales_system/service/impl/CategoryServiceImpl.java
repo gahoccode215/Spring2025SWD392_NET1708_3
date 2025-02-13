@@ -98,6 +98,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void changeCategoryStatus(String categoryId, Status status) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         categoryRepository.updateCategoryStatus(category.getId(), status);

@@ -93,7 +93,7 @@ public class AdminProductController {
     @PutMapping("/change-status/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Change product status (ADMIN, MANAGER)", description = "API to change product status (ACTIVE/INACTIVE)")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> changeProductStatus(@PathVariable String productId, @RequestParam Status status){
         productService.changeProductStatus(productId, status);
         return ApiResponse.<Void>builder()
