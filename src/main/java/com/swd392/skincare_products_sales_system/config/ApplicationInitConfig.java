@@ -17,7 +17,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -38,23 +40,24 @@ public class ApplicationInitConfig {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
-                roleRepository.save(Role.builder()
+                List<User> listAccount = new ArrayList<>();
+                Role customerRole =roleRepository.save(Role.builder()
                         .name(PredefinedRole.CUSTOMER_ROLE)
                         .description("User role")
                         .build());
-                roleRepository.save(Role.builder()
+                Role managerRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.MANAGER_ROLE)
                         .description("Manager role")
                         .build());
-                roleRepository.save(Role.builder()
+                Role staffRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.STAFF)
                         .description("Staff role")
                         .build());
-                roleRepository.save(Role.builder()
+                Role deliveryRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.DELIVERY)
                         .description("Delivery role")
                         .build());
-                roleRepository.save(Role.builder()
+                Role expertRole = roleRepository.save(Role.builder()
                         .name(PredefinedRole.EXPERT)
                         .description("Expert role")
                         .build());
@@ -62,16 +65,58 @@ public class ApplicationInitConfig {
                         .name(PredefinedRole.ADMIN_ROLE)
                         .description("Admin role")
                         .build());
-                var roles = new HashSet<Role>();
-                roles.add(adminRole);
 
-                User user = User.builder()
+                var roleAdmin = new HashSet<Role>();
+                roleAdmin.add(adminRole);
+
+                User admin = User.builder()
                         .username(ADMIN_USER_NAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
-                        .roles(roles)
+                        .roles(roleAdmin)
                         .build();
+                listAccount.add(admin);
 
-                userRepository.save(user);
+                var roleCustomer = new HashSet<Role>();
+                roleCustomer.add(customerRole);
+                User customer = User.builder()
+                        .username("customer")
+                        .password(passwordEncoder.encode("customer"))
+                        .roles(roleCustomer)
+                        .build();
+                listAccount.add(customer);
+                var roleManager = new HashSet<Role>();
+                roleManager.add(managerRole);
+                User manager = User.builder()
+                        .username("manager")
+                        .password(passwordEncoder.encode("manager"))
+                        .roles(roleManager)
+                        .build();
+                listAccount.add(manager);
+                var roleStaff = new HashSet<Role>();
+                roleStaff.add(staffRole);
+                User staff = User.builder()
+                        .username("staff")
+                        .password(passwordEncoder.encode("staff"))
+                        .roles(roleStaff)
+                        .build();
+                listAccount.add(staff);
+                var roleDelivery = new HashSet<Role>();
+                roleDelivery.add(deliveryRole);
+                User delivery = User.builder()
+                        .username("delivery")
+                        .password(passwordEncoder.encode("delivery"))
+                        .roles(roleDelivery)
+                        .build();
+                listAccount.add(delivery);
+                var roleExpert = new HashSet<Role>();
+                roleExpert.add(expertRole);
+                User expert = User.builder()
+                        .username("expert")
+                        .password(passwordEncoder.encode("expert"))
+                        .roles(roleExpert)
+                        .build();
+                listAccount.add(expert);
+                userRepository.saveAll(listAccount);
                 log.warn("admin user has been created with default password: admin, please change it");
             }
             log.info("Application initialization completed .....");

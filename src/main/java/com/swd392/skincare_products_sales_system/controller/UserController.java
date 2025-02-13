@@ -7,6 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 
 @RestController
 @RequestMapping("/users")
+@Tag(name = "User Controller")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
@@ -27,17 +29,6 @@ public class UserController {
 
     UserService userService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a user", description = "API retrieve value to create user")
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .code(HttpStatus.CREATED.value())
-                .message("Create user successfully")
-                .result(userService.createUser(request))
-                .build();
-    }
 
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)

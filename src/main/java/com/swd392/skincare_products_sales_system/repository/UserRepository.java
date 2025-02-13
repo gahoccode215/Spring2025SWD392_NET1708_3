@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
+    boolean existsByUsername(String username);
     @Query(value = "select u from User u where u.isDeleted=false " +
             "and (lower(u.firstName) like :keyword " +
             "or lower(u.lastName) like :keyword " +

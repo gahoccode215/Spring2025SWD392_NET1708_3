@@ -93,19 +93,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public UserResponse createUser(UserCreationRequest request) {
-        User user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        HashSet<Role> roles = new HashSet<>();
-        roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE).ifPresent(roles::add);
-        user.setRoles(roles);
-        try {
-            user = userRepository.save(user);
-        } catch (DataIntegrityViolationException exception) {
+        if(userRepository.existsByUsername(request.getUsername())){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
-        return userMapper.toUserResponse(user);
+        log.info(request.getRoleName());
+        Role role = roleRepository.findByName(request.getRoleName()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        User user = User.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .gender(request.getGender())
+                .birthday(request.getBirthday())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .phone(request.getPhone())
+                .roles(roles)
+                .build();
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @Override
