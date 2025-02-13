@@ -35,4 +35,15 @@ public class AdminUserController {
                 .result(userService.createUser(request))
                 .build();
     }
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Delete a user", description = "API retrieve an id to delete user")
+        //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    ApiResponse<String> deleteUser(@PathVariable String userId) {
+        userService.deleteUser(userId);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .result("User has been deleted")
+                .build();
+    }
 }

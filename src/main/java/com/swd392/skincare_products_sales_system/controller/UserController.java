@@ -54,17 +54,7 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/{userId}")
-//    @PreAuthorize("hasRole('ADMIN')")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete a user", description = "API retrieve an id to delete user")
-    ApiResponse<String> deleteUser(@PathVariable String userId) {
-        userService.deleteUser(userId);
-        return ApiResponse.<String>builder()
-                .code(HttpStatus.OK.value())
-                .result("User has been deleted")
-                .build();
-    }
+
 
     @Operation(summary = "Get user list", description = "API retrieve users from database")
     @GetMapping
