@@ -68,12 +68,12 @@ public class AdminCategoryController {
     public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("get category successfully")
+                .message("get category detail successfully")
                 .result(categoryService.getCategoryById(categoryId))
                 .build();
     }
 
-    @PutMapping("/change-status/{categoryId}")
+    @PatchMapping("/change-status/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Change category status (ADMIN, MANAGER)", description = "API to change category status (ACTIVE/INACTIVE)")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

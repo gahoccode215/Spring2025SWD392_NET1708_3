@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.controller;
 import com.swd392.skincare_products_sales_system.dto.request.UserCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.UserUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.service.UserService;
@@ -29,47 +30,15 @@ public class UserController {
 
     UserService userService;
 
-
-    @GetMapping("/{userId}")
+    @GetMapping("/profile")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get a user", description = "API retrieve an id to get user")
-//    @PreAuthorize("hasRole('ADMIN')")
-    ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
+    @Operation(summary = "Get profile", description = "API to get profile")
+    ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get user successfully")
-                .result(userService.getUser(userId))
+                .message("Get profile successfully")
+                .result(userService.getUserProfile())
                 .build();
     }
 
-    @PutMapping("/{userId}")
-    @Operation(summary = "Update a user", description = "API retrieve value to change user attribute")
-    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ADMIN')")
-    ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
-        return ApiResponse.<UserResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message("Update user successfully")
-                .result(userService.updateUser(request, userId))
-                .build();
-    }
-
-
-
-    @Operation(summary = "Get user list", description = "API retrieve users from database")
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Object> getList(@RequestParam(required = false) String keyword,
-                                       @RequestParam(required = false) String sort,
-                                       @RequestParam(defaultValue = "0") @Min(0) int page,
-                                       @RequestParam(defaultValue = "20") int size) {
-        log.info("Get user list");
-
-        return ApiResponse.builder()
-                .code(HttpStatus.OK.value())
-                .message("users")
-                .result(userService.findAll(keyword, sort, page, size))
-                .build();
-    }
 }

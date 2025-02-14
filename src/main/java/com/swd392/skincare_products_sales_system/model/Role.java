@@ -30,6 +30,9 @@ public class Role extends AbstractEntity {
     @ManyToMany(mappedBy = "roles")
     Set<User> users;
 
+//    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
+//    Set<User> users;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tbl_role_has_permission",

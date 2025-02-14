@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
     //10XX
+    RESOURCE_NOT_FOUND(1000, "Resource not found", HttpStatus.NOT_FOUND),
     USERNAME_EXISTED(1001, "Username existed", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1002, "User not existed", HttpStatus.NOT_FOUND),
+    USER_NOT_EXISTED(1002, "User not existed", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED(1003, "Product not existed", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_EXISTED(1004, "Category not existed", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1005, "User existed", HttpStatus.BAD_REQUEST),
-    RESOURCE_NOT_FOUND(1006, "Resource not found", HttpStatus.BAD_REQUEST),
-    ROLE_NOT_FOUND(1007, "Role not found", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND(1006, "Role not found", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
