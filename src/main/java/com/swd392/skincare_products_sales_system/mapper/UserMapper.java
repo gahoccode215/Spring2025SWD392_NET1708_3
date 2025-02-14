@@ -22,9 +22,4 @@ public interface UserMapper {
 
     UserResponse toUserResponse(User user);
 
-    default Set<RoleResponse> mapRoles(Set<Role> roles) {
-        return roles.stream()
-                .map(role -> new RoleResponse(role.getName(), role.getDescription()))
-                .collect(Collectors.toSet());
-    }
 }

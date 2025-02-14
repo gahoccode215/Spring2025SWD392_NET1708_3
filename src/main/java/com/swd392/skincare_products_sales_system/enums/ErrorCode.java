@@ -26,6 +26,7 @@ public enum ErrorCode {
     INVALID_CONFIRM_PASSWORD(1106, "Confirm password not match with password", HttpStatus.BAD_REQUEST),
     INVALID_CHANGE_PASSWORD(1007, "Old password not correct", HttpStatus.BAD_REQUEST),
     INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
+    INVALID_ROLE(1008, "Role invalid", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     // 13XX

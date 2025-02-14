@@ -6,6 +6,7 @@ import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.validator.BirthdayConstraint;
 import com.swd392.skincare_products_sales_system.validator.GenderConstraint;
+import com.swd392.skincare_products_sales_system.validator.RoleConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,5 +39,6 @@ public class UserCreationRequest {
     String password;
     String phone;
 
+    @RoleConstraint(message = "INVALID_ROLE")
     String roleName;
 }

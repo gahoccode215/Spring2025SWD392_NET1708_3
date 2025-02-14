@@ -79,8 +79,6 @@ public class UserServiceImpl implements UserService {
         }
         log.info(request.getRoleName());
         Role role = roleRepository.findByName(request.getRoleName()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-        Set<Role> roles = new HashSet<>();
-        roles.add(role);
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -90,7 +88,7 @@ public class UserServiceImpl implements UserService {
                 .status(Status.ACTIVE)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
-                .roles(roles)
+                .role(role)
                 .build();
         user.setIsDeleted(false);
         return userMapper.toUserResponse(userRepository.save(user));
@@ -125,9 +123,7 @@ public class UserServiceImpl implements UserService {
         }
         if (request.getRoleName() != null) {
             Role role = roleRepository.findByName(request.getRoleName()).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
-            Set<Role> roleSet = new HashSet<>();
-            roleSet.add(role);
-            user.setRoles(roleSet);
+            user.setRole(role);
         }
         return userMapper.toUserResponse(user);
     }

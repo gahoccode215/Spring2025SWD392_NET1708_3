@@ -1,5 +1,7 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
@@ -54,10 +56,9 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tbl_user_has_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    Set<Role> roles;
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    Role role;
 
 }

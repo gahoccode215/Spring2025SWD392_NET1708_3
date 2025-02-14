@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             "x.username LIKE %:keyword% OR " +
             "x.email LIKE %:keyword%) " +
             "AND (:status IS NULL OR x.status = :status) " +
-            "AND (:role IS NULL OR :role MEMBER OF x.roles)")
+            "AND (:role IS NULL OR x.role = :role)")
     Page<User> findAllByFilters(
             @Param("keyword") String keyword,
             @Param("status") Status status,

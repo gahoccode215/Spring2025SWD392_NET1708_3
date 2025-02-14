@@ -1,23 +1,23 @@
 package com.swd392.skincare_products_sales_system.validator;
 
-import com.swd392.skincare_products_sales_system.enums.Gender;
+import com.swd392.skincare_products_sales_system.enums.Role;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class GenderValidator implements ConstraintValidator<GenderConstraint, Gender> {
+public class RoleValidator implements ConstraintValidator<RoleConstraint, String> {
 
     @Override
-    public void initialize(GenderConstraint constraintAnnotation) {
-        // Thực hiện khởi tạo nếu cần
+    public void initialize(RoleConstraint constraintAnnotation) {
     }
 
     @Override
-    public boolean isValid(Gender value, ConstraintValidatorContext context) {
+    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
         if (value == null) {
             return false;
         }
+
         try {
-            Gender.valueOf(value.name());
+            Role.valueOf(value);
             return true;
         } catch (IllegalArgumentException e) {
             return false;

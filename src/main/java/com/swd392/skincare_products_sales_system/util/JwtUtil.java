@@ -69,13 +69,16 @@ public class JwtUtil {
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
-        if (!CollectionUtils.isEmpty(user.getRoles()))
-            user.getRoles().forEach(role -> {
-                stringJoiner.add("ROLE_" + role.getName());
-//                stringJoiner.add(role.getName());
-                if (!CollectionUtils.isEmpty(role.getPermissions()))
-                    role.getPermissions().forEach(permission -> stringJoiner.add(permission.getName()));
-            });
+        if (user.getRole() != null) {
+            stringJoiner.add("ROLE_" + user.getRole().getName());
+
+            // Nếu Role có Permissions, thêm chúng vào phạm vi
+            if (!CollectionUtils.isEmpty(user.getRole().getPermissions())) {
+                user.getRole().getPermissions().forEach(permission -> {
+                    stringJoiner.add(permission.getName());
+                });
+            }
+        }
 
         return stringJoiner.toString();
     }

@@ -1,10 +1,13 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -27,11 +30,10 @@ public class Role extends AbstractEntity {
     @Column(name = "description")
     String description;
 
-    @ManyToMany(mappedBy = "roles")
-    Set<User> users;
 
-//    @OneToMany(mappedBy = "role", fetch = FetchType.EAGER)
-//    Set<User> users;
+    @JsonManagedReference  // Ngừng vòng lặp khi serialize các role
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    Set<User> users;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
