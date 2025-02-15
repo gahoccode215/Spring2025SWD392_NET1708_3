@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
+import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.UserMapper;
@@ -19,11 +19,13 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,8 +49,11 @@ public class CartServiceImpl implements CartService {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
 
-        UserResponse userResponse = userMapper.toUserResponse(user);
+//        UserResponse userResponse = userMapper.toUserResponse(user);
 
         Cart cart = getOrCreateCart(user);
 
@@ -76,9 +81,63 @@ public class CartServiceImpl implements CartService {
         // Cập nhật tổng giá trị giỏ hàng
         cart.updateTotalPrice();
         cartRepository.save(cart);
-
         return cart;
     }
+
+    @Override
+    public Cart getCart() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
+        return getOrCreateCart(user);
+    }
+
+    @Override
+    @Transactional
+    public void removeProductsFromCart(List<String> productIds) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        // Kiểm tra quyền của người dùng
+        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
+            throw new AppException(ErrorCode.FORBIDDEN);
+        }
+
+        // Tìm giỏ hàng của người dùng
+        Cart cart = cartRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+        productIds = productIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        // Lấy danh sách các sản phẩm cần xóa trong giỏ hàng
+        List<CartItem> itemsToRemove = cartItemRepository.findByCartIdAndProductIdIn(cart.getId(), productIds);
+
+        log.info("{}", itemsToRemove);
+        // Nếu không có sản phẩm nào cần xóa
+        if (itemsToRemove.isEmpty()) {
+            throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED_IN_CART);
+        }
+        cartItemRepository.flush();
+
+        // Xóa các sản phẩm ra khỏi giỏ hàng
+        cartItemRepository.deleteAll(itemsToRemove);
+
+        // Cập nhật tổng giá trị giỏ hàng sau khi xóa các sản phẩm
+        cart.updateTotalPrice();  // Hãy chắc chắn rằng phương thức `updateTotalPrice` không tham chiếu đến các đối tượng đã bị xóa
+        cartRepository.save(cart);
+    }
+
     private Cart getOrCreateCart(User user) {
         // Tìm giỏ hàng của người dùng
         return cartRepository.findByUser(user)

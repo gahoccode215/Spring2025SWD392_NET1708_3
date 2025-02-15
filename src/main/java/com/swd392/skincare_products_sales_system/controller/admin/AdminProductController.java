@@ -8,14 +8,21 @@ import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/products")
@@ -25,15 +32,16 @@ import org.springframework.web.bind.annotation.*;
 public class AdminProductController {
     ProductService productService;
 
-    @PostMapping
+    @PostMapping(consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Create a product (ADMIN, MANAGER)", description = "API retrieve product attribute to create product")
-    public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid ProductCreationRequest request) {
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Create a product (ADMIN, MANAGER) ĐANG BI LỖI", description = "API delete product by its id")
+    public ApiResponse<ProductResponse> createProduct(@RequestPart("request") @Valid  ProductCreationRequest request,
+                                                      @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create product successfully")
-                .result(productService.createProduct(request))
+                .result(productService.createProduct(request, file))
                 .build();
     }
 

@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/carts")
 @Tag(name = "Cart Controller")
@@ -27,7 +29,7 @@ public class CartController {
     @PostMapping
     @Operation(summary = "Add item to cart ", description = "Retrieve products to cart")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> getAllCategories(
+    public ApiResponse<Void> addItemToCart(
             @RequestParam String productId,
             @RequestParam Integer quantity) {
         cartService.addProductToCart(productId, quantity);
@@ -35,6 +37,26 @@ public class CartController {
                 .code(HttpStatus.OK.value())
                 .message("Product added to cart successfully")
 //                .result(cartService.addProductToCart(productId, quantity))
+                .build();
+    }
+    @GetMapping
+    @Operation(summary = "Get cart ", description = "Retrieve user id to get cart")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Cart> getCart() {
+        return ApiResponse.<Cart>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get cart successfully")
+                .result(cartService.getCart())
+                .build();
+    }
+    @DeleteMapping("/remove/{productIds}")
+    @Operation(summary = "Remove product from cart ", description = "Remove product from cart")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Void> removeProductFromCart(@RequestParam List<String> productIds) {
+        cartService.removeProductsFromCart(productIds);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Remove successfully")
                 .build();
     }
 }

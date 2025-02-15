@@ -70,9 +70,10 @@ public class JwtUtil {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
         if (user.getRole() != null) {
-            stringJoiner.add("ROLE_" + user.getRole().getName());
+            // Thêm tiền tố "ROLE_" vào tên của role
+            stringJoiner.add("ROLE_" + user.getRole().getName()); // Thêm ROLE_ vào trước tên quyền
 
-            // Nếu Role có Permissions, thêm chúng vào phạm vi
+            // Nếu role có permissions, thêm chúng vào phạm vi
             if (!CollectionUtils.isEmpty(user.getRole().getPermissions())) {
                 user.getRole().getPermissions().forEach(permission -> {
                     stringJoiner.add(permission.getName());

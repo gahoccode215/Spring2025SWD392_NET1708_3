@@ -4,7 +4,6 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.ProductSearchRequest;
 import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
@@ -14,24 +13,22 @@ import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.ProductMapper;
 import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.repository.*;
+import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.security.SecureRandom;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,15 +46,17 @@ public class ProductServiceImpl implements ProductService {
     SkinTypeRepository skinTypeRepository;
     CategoryRepository categoryRepository;
     FeatureRepository featureRepository;
+    CloudService cloudService;
 
     @Override
     @Transactional
-    public ProductResponse createProduct(ProductCreationRequest request) {
+    public ProductResponse createProduct(ProductCreationRequest request, MultipartFile file)  throws IOException {
         Product product = productMapper.toProduct(request);
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
             product.setCategory(category);
         }
+        product.setThumbnail(cloudService.uploadFile(file));
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);

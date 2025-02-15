@@ -35,8 +35,15 @@ public class Cart {
     Double totalPrice = 0.0;
 
     public void updateTotalPrice() {
-        this.totalPrice = items.stream()
-                .mapToDouble(CartItem::getTotalPrice)
-                .sum();
+        double totalPrice = 0;
+
+        // Lọc bỏ các sản phẩm đã bị xóa
+        for (CartItem cartItem : items) {
+            if (cartItem != null && cartItem.getProduct() != null) {
+                totalPrice += cartItem.getPrice() * cartItem.getQuantity();
+            }
+        }
+
+        this.totalPrice = totalPrice;
     }
 }
