@@ -31,11 +31,8 @@ public class CloudServiceImpl implements CloudService {
 
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
-        return cloudinary.uploader()
-                .upload(multipartFile.getBytes(),
-                        Map.of("public_id", UUID.randomUUID().toString()))
-                .get("url")
-                .toString();
+        Map<String, String> uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+        return uploadResult.get("url");  // Return the URL of the uploaded image
     }
 
 

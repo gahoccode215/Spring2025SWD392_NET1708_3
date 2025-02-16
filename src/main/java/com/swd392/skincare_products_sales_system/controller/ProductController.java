@@ -62,12 +62,5 @@ public class ProductController {
                 .build();
     }
 
-    @PostMapping("/upload")
-    public String uploadFile(@RequestParam("image")MultipartFile multipartFile,
-                             Model model) throws IOException {
-        String imageURL = cloudService.uploadFile(multipartFile);
-        model.addAttribute("imageURL",imageURL);
-        return "gallery";
-    }
 
 }

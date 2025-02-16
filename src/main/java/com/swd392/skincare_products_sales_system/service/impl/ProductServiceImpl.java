@@ -26,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -50,13 +49,17 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse createProduct(ProductCreationRequest request, MultipartFile file)  throws IOException {
-        Product product = productMapper.toProduct(request);
+    public ProductResponse createProduct(ProductCreationRequest request)  throws IOException {
+        Product product = Product.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .description(request.getDescription())
+                .build();
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
             product.setCategory(category);
         }
-        product.setThumbnail(cloudService.uploadFile(file));
+        product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);

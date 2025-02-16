@@ -8,17 +8,12 @@ import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,22 +27,23 @@ import java.io.IOException;
 public class AdminProductController {
     ProductService productService;
 
-    @PostMapping(consumes = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Create a product (ADMIN, MANAGER) ĐANG BI LỖI", description = "API delete product by its id")
-    public ApiResponse<ProductResponse> createProduct(@RequestPart("request") @Valid  ProductCreationRequest request,
-                                                      @RequestPart(value = "file", required = false) MultipartFile file) throws IOException {
+    public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid  ProductCreationRequest request,
+                                                      @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
+        request.setThumbnail(thumbnail);
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create product successfully")
-                .result(productService.createProduct(request, file))
+                .result(productService.createProduct(request))
                 .build();
     }
 
     @DeleteMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Delete a product (ADMIN, MANAGER)", description = "API delete product by its id")
     public ApiResponse<Void> deleteProduct(@PathVariable String productId) {
         productService.deleteProduct(productId);
@@ -59,7 +55,7 @@ public class AdminProductController {
 
     @PutMapping("{productId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Update a product (ADMIN, MANAGER)", description = "API update product by its id")
     public ApiResponse<ProductResponse> updateProduct(@RequestBody @Valid ProductUpdateRequest request, @PathVariable String productId) {
         return ApiResponse.<ProductResponse>builder()
@@ -72,7 +68,7 @@ public class AdminProductController {
     @GetMapping()
     @Operation(summary = "Get all products with options: search, pagination, sort, filter (ADMIN, MANAGER)  ", description = "Retrieve all products with search, pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<ProductPageResponse> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -93,7 +89,7 @@ public class AdminProductController {
     @GetMapping("/{productId}")
     @Operation(summary = "Get a product by id (ADMIN, MANAGER)", description = "Retrieve product id to get product detail")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<ProductResponse> getProductById(
             @PathVariable(required = false) String productId) {
         return ApiResponse.<ProductResponse>builder()
