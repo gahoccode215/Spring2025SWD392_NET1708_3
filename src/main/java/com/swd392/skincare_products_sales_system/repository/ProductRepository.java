@@ -17,6 +17,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String>, JpaSpecificationExecutor<Product> {
     Optional<Product> findByIdAndIsDeletedFalse(String productId);
+
     boolean existsBySlug(String slug);
 
     @Query("SELECT p FROM Product p WHERE p.isDeleted = false " +

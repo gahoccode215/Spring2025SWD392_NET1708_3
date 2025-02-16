@@ -1,7 +1,6 @@
 package com.swd392.skincare_products_sales_system.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -68,7 +67,7 @@ public class SecurityConfig {
 
 
     @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
@@ -77,7 +76,6 @@ public class SecurityConfig {
 
         return jwtAuthenticationConverter;
     }
-
 
     @Bean
     public WebSecurityCustomizer ignoreResources() {

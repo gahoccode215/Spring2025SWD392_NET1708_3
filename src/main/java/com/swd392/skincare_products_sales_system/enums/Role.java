@@ -1,8 +1,10 @@
 package com.swd392.skincare_products_sales_system.enums;
 
-public enum UserType {
+public enum Role {
     ADMIN,
+    STAFF,
     CUSTOMER,
-    STAFF
-
+    MANAGER,
+    DELIVERY,
+    EXPERT;
 }

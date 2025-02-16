@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class ProductCreationRequest {
     String name;
     Double price;
     String description;
-    //    MultipartFile thumbnail;
+    MultipartFile thumbnail;
     //    String thumbnail;
 //    String usageInstruction;
 //    LocalDate expiryDate;

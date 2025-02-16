@@ -8,5 +8,5 @@ import java.util.List;
 @Getter
 @Setter
 public class UserPageResponse extends AbstractPageResponse implements Serializable {
-    private List<UserResponse> users;
+    private List<UserResponse> userResponses;
 }
