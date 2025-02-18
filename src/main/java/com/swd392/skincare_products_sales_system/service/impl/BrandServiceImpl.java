@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
@@ -53,6 +54,7 @@ public class BrandServiceImpl implements BrandService {
                 .description(brand.getDescription())
                 .thumbnail(brand.getThumbnail())
                 .slug(brand.getSlug())
+                .status(brand.getStatus())
                 .build();
     }
 
@@ -83,6 +85,32 @@ public class BrandServiceImpl implements BrandService {
     public void changeBrandStatus(Long brandId, Status status) {
         Brand brand = brandRepository.findByIdAndIsDeletedFalse(brandId).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
         brandRepository.updateBrandStatus(brandId, status);
+
+    }
+
+    @Override
+    @Transactional
+    public BrandResponse updateBrand(BrandUpdateRequest request, Long id) throws IOException {
+        Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+
+        if(request.getName() != null){
+            brand.setName(request.getName());
+        }
+        if(request.getDescription() != null){
+            brand.setDescription(request.getDescription());
+        }
+        if(request.getThumbnail() != null){
+            brand.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        }
+        brandRepository.save(brand);
+        return BrandResponse.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .description(brand.getDescription())
+                .thumbnail(brand.getThumbnail())
+                .slug(brand.getSlug())
+                .status(brand.getStatus())
+                .build();
 
     }
 

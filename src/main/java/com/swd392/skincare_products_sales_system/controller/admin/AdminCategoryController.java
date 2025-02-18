@@ -49,7 +49,7 @@ public class AdminCategoryController {
     public ApiResponse<CategoryResponse> updateCategory(@RequestPart("request") @Valid CategoryUpdateRequest request, @PathVariable String categoryId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
         request.setThumbnail(thumbnail);
         return ApiResponse.<CategoryResponse>builder()
-                .code(HttpStatus.CREATED.value())
+                .code(HttpStatus.OK.value())
                 .message("Update category successfully")
                 .result(categoryService.updateCategory(request, categoryId))
                 .build();

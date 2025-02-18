@@ -1,8 +1,11 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
+import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -69,6 +72,18 @@ public class AdminBrandController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Change status successfully")
+                .build();
+    }
+    @PutMapping("/{brandId}")
+    @Operation(summary = "Update a brand (ADMIN, MANAGER)", description = "API retrieve brand id to update brand")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<BrandResponse> updateCategory(@RequestPart("request") @Valid BrandUpdateRequest request, @PathVariable Long brandId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
+        request.setThumbnail(thumbnail);
+        return ApiResponse.<BrandResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Update brand successfully")
+                .result(brandService.updateBrand(request, brandId))
                 .build();
     }
 }

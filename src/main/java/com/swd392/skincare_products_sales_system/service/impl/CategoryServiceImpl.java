@@ -64,6 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .description(category.getDescription())
                 .thumbnail(category.getThumbnail())
                 .slug(category.getSlug())
+                .status(category.getStatus())
                 .build();
     }
 
@@ -85,8 +86,9 @@ public class CategoryServiceImpl implements CategoryService {
                 .id(category.getId())
                 .name(category.getName())
                 .description(category.getDescription())
-                .slug(category.getSlug())
                 .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .status(category.getStatus())
                 .build();
     }
 
