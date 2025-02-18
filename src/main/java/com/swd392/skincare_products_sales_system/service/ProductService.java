@@ -11,7 +11,7 @@ import java.io.IOException;
 public interface ProductService {
     ProductResponse createProduct(ProductCreationRequest request) throws IOException;
     void deleteProduct(String productId);
-    ProductResponse updateProduct(ProductUpdateRequest request, String productId);
+    ProductResponse updateProduct(ProductUpdateRequest request, String productId) throws IOException;
     ProductPageResponse getProducts(boolean admin, String keyword, int page, int size, String categorySlug, String brandSlug, String originSlug, String sortBy, String order);
     ProductResponse getProductBySlug(String slug);
     ProductResponse getProductById(String id);

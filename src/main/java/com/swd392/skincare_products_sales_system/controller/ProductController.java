@@ -50,6 +50,4 @@ public class ProductController {
                 .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, originSlug, sortBy, order))
                 .build();
     }
-
-
 }

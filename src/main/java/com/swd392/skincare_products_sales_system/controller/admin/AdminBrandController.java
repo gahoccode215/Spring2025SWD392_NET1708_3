@@ -32,7 +32,9 @@ public class AdminBrandController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<BrandResponse> createBrand(@RequestPart("request") @Valid BrandCreationRequest request,
                                                         @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
-        request.setThumbnail(thumbnail);
+        if(thumbnail != null){
+            request.setThumbnail(thumbnail);
+        }
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create brand successfully")
@@ -77,7 +79,9 @@ public class AdminBrandController {
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<BrandResponse> updateCategory(@RequestPart("request") @Valid BrandUpdateRequest request, @PathVariable Long brandId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
-        request.setThumbnail(thumbnail);
+        if(thumbnail != null){
+            request.setThumbnail(thumbnail);
+        }
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update brand successfully")

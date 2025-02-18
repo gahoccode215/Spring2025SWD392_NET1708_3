@@ -23,11 +23,7 @@ public class ProductCreationRequest {
     Double price;
     String description;
     MultipartFile thumbnail;
-//    String usageInstruction;
-//    LocalDate expiryDate;
-//    Long brand_id;
-//    Long origin_id;
-//    Long skin_type_id;
+    Long brand_id;
     String category_id;
-//    Set<Long> feature_ids;
+
 }

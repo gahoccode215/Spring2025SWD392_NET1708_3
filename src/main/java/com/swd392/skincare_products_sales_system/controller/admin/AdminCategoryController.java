@@ -34,7 +34,9 @@ public class AdminCategoryController {
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<CategoryResponse> createCategory(@RequestPart("request") @Valid CategoryCreationRequest request,
                                                         @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
-        request.setThumbnail(thumbnail);
+        if(thumbnail != null){
+            request.setThumbnail(thumbnail);
+        }
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create category successfully")
@@ -47,7 +49,9 @@ public class AdminCategoryController {
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<CategoryResponse> updateCategory(@RequestPart("request") @Valid CategoryUpdateRequest request, @PathVariable String categoryId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
-        request.setThumbnail(thumbnail);
+        if(thumbnail != null){
+            request.setThumbnail(thumbnail);
+        }
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update category successfully")
