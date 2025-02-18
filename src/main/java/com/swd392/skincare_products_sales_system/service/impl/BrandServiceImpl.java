@@ -64,6 +64,20 @@ public class BrandServiceImpl implements BrandService {
         brandRepository.save(brand);
     }
 
+    @Override
+    public BrandResponse getBrandById(Long id) {
+        Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        return BrandResponse.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .description(brand.getDescription())
+                .thumbnail(brand.getThumbnail())
+                .slug(brand.getSlug())
+                .status(brand.getStatus())
+                .build();
+
+    }
+
     // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);

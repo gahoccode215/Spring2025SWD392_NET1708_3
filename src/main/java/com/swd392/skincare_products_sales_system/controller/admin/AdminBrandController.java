@@ -53,4 +53,15 @@ public class AdminBrandController {
                 .message("Delete brand successfully")
                 .build();
     }
+    @GetMapping("/{brandId}")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Get a brand (ADMIN, MANAGER)", description = "API get brand by its id")
+    public ApiResponse<BrandResponse> getCategory(@PathVariable Long brandId) {
+        return ApiResponse.<BrandResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("get brand detail successfully")
+                .result(brandService.getBrandById(brandId))
+                .build();
+    }
 }
