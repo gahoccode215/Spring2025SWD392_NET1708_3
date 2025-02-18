@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.swd392.skincare_products_sales_system.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,4 +16,5 @@ public class CategoryResponse {
     String description;
     String thumbnail;
     String slug;
+    Status status;
 }

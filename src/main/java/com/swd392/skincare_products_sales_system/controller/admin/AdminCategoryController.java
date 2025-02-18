@@ -57,7 +57,7 @@ public class AdminCategoryController {
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Delete a category (ADMIN, MANAGER)", description = "API delete category by its id")
     public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
         categoryService.deleteCategory(categoryId);
@@ -69,7 +69,7 @@ public class AdminCategoryController {
 
     @GetMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Get a category (ADMIN, MANAGER)", description = "API get category by its id")
     public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId) {
         return ApiResponse.<CategoryResponse>builder()
@@ -94,7 +94,7 @@ public class AdminCategoryController {
     @GetMapping
     @Operation(summary = "Get all categories (ADMIN, MANAGER)", description = "Retrieve all active categories with pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<CategoryPageResponse> getAllCategories(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size,

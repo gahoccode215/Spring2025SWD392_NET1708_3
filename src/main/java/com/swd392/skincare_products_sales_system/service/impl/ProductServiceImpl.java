@@ -130,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         ProductPageResponse response = new ProductPageResponse();
-//        response.setProductResponses(products.stream().map(productMapper::toProductResponse).collect(Collectors.toList()));
+
         List<ProductResponse> productResponses = new ArrayList<>();
 
         // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
@@ -138,14 +138,7 @@ public class ProductServiceImpl implements ProductService {
             ProductResponse productResponse = new ProductResponse();
             productResponse.setId(product.getId());
             productResponse.setName(product.getName());
-//            productResponse.setDescription(product.getDescription());
             productResponse.setPrice(product.getPrice());
-            // Cập nhật các thuộc tính khác tùy vào yêu cầu
-            // Ví dụ:
-            // productResponse.setCategoryName(product.getCategory().getName());
-            // productResponse.setBrandName(product.getBrand().getName());
-
-            // Thêm vào danh sách
             productResponses.add(productResponse);
         }
         response.setProductResponses(productResponses);
