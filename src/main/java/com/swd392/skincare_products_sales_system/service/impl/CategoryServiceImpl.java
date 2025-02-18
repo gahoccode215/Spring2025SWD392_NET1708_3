@@ -11,6 +11,7 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.CategoryMapper;
+import com.swd392.skincare_products_sales_system.model.Brand;
 import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.model.Product;
 import com.swd392.skincare_products_sales_system.repository.CategoryRepository;
@@ -52,6 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .description(request.getDescription())
                 .thumbnail(cloudService.uploadFile(request.getThumbnail()))
                 .build();
+
         category.setStatus(Status.ACTIVE);
         category.setIsDeleted(false);
         category.setSlug(generateUniqueSlug(category.getName()));
@@ -176,8 +178,8 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Kiểm tra trường sortBy và tạo Sort tương ứng
-        if (sortBy.equals(Query.PRICE)) {
-            return order.equals(Query.ASC) ? Sort.by(Query.PRICE).ascending() : Sort.by(Query.PRICE).descending();
+        if (sortBy.equals(Query.NAME)) {
+            return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
         }
         return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
     }

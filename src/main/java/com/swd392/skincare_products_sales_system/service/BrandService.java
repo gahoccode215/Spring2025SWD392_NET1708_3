@@ -6,5 +6,5 @@ import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
 import java.io.IOException;
 
 public interface BrandService {
-//    BrandResponse createBrand(BrandCreationRequest request) throws IOException;
+    BrandResponse createBrand(BrandCreationRequest request) throws IOException;
 }
