@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     Optional<Brand> findByIdAndIsDeletedFalse(Long brandId);
 
+    boolean existsBySlug(String slug);
+
     @Query("SELECT x FROM Brand x WHERE x.slug = :slug AND x.isDeleted = false AND x.status = com.swd392.skincare_products_sales_system.enums.Status.ACTIVE")
     Optional<Brand> findBySlugAndStatusAndIsDeletedFalse(@Param("slug") String slug);
 }

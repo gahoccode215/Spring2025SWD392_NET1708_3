@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -17,6 +18,5 @@ public class CategoryCreationRequest {
     @NotBlank(message = "category name can not blank")
     String name;
     String description;
-//    String thumbnail;
-
+    MultipartFile thumbnail;
 }

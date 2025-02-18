@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,9 +31,10 @@ public class AdminProductController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Create a product (ADMIN, MANAGER) ĐANG BI LỖI", description = "API delete product by its id")
-    public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid  ProductCreationRequest request,
-                                                      @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
+    @Operation(summary = "Create a product (ADMIN, MANAGER)", description = "API retrieve product attribute to create")
+    public ApiResponse<ProductResponse> createProduct(@RequestPart("request") @Valid  ProductCreationRequest request,
+                                                      @RequestPart("thumbnail") MultipartFile thumbnail
+    ) throws IOException {
         request.setThumbnail(thumbnail);
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.CREATED.value())

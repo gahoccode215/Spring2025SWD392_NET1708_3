@@ -16,6 +16,9 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/categories")
@@ -27,9 +30,11 @@ public class AdminCategoryController {
 
     @PostMapping
     @Operation(summary = "Create category (ADMIN, MANAGER)", description = "API retrieve attribute to create category")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryCreationRequest request) {
+    public ApiResponse<CategoryResponse> createCategory(@RequestPart("request") @Valid CategoryCreationRequest request,
+                                                        @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
+        request.setThumbnail(thumbnail);
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create category successfully")

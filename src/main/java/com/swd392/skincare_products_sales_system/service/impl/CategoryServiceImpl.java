@@ -13,6 +13,7 @@ import com.swd392.skincare_products_sales_system.mapper.CategoryMapper;
 import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.repository.CategoryRepository;
 import com.swd392.skincare_products_sales_system.service.CategoryService;
+import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,16 +38,28 @@ public class CategoryServiceImpl implements CategoryService {
     Slugify slugify;
     CategoryMapper categoryMapper;
     SlugUtil slugUtil;
+    CloudService cloudService;
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CategoryResponse createCategory(CategoryCreationRequest request) {
-        Category category = categoryMapper.toCategory(request);
+    @Transactional
+    public CategoryResponse createCategory(CategoryCreationRequest request) throws IOException {
+        Category category = Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .thumbnail(cloudService.uploadFile(request.getThumbnail()))
+                .build();
         category.setStatus(Status.ACTIVE);
         category.setIsDeleted(false);
         category.setSlug(generateUniqueSlug(category.getName()));
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+        categoryRepository.save(category);
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .build();
     }
 
     @Override

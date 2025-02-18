@@ -23,7 +23,6 @@ public class ProductCreationRequest {
     Double price;
     String description;
     MultipartFile thumbnail;
-    //    String thumbnail;
 //    String usageInstruction;
 //    LocalDate expiryDate;
 //    Long brand_id;

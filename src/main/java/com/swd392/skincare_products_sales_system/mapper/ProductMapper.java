@@ -15,6 +15,5 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-//    Product toProduct(ProductCreationRequest request);
-    ProductResponse toProductResponse(Product product);
+
 }

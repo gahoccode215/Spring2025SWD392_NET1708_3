@@ -9,5 +9,10 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BrandResponse {
+    Long id;
     String name;
+    String description;
+
+    String slug;
+    String thumbnail;
 }

@@ -6,8 +6,10 @@ import com.swd392.skincare_products_sales_system.dto.response.CategoryPageRespon
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 
+import java.io.IOException;
+
 public interface CategoryService {
-    CategoryResponse createCategory(CategoryCreationRequest request);
+    CategoryResponse createCategory(CategoryCreationRequest request) throws IOException;
 
     CategoryResponse updateCategory(CategoryUpdateRequest request, String id);
 

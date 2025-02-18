@@ -28,7 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -64,7 +65,15 @@ public class ProductServiceImpl implements ProductService {
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
         log.info("Product: {}", product);
-        return productMapper.toProductResponse(productRepository.save(product));
+        productRepository.save(product);
+
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+                .build();
     }
 
     @Override
@@ -92,7 +101,13 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
         }
-        return productMapper.toProductResponse(productRepository.save(product));
+        ProductResponse productResponse = ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
+        productRepository.save(product);
+        return productResponse;
     }
 
     @Override
@@ -115,7 +130,25 @@ public class ProductServiceImpl implements ProductService {
 
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         ProductPageResponse response = new ProductPageResponse();
-        response.setProductResponses(products.stream().map(productMapper::toProductResponse).collect(Collectors.toList()));
+//        response.setProductResponses(products.stream().map(productMapper::toProductResponse).collect(Collectors.toList()));
+        List<ProductResponse> productResponses = new ArrayList<>();
+
+        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
+        for (Product product : products.getContent()) {
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+//            productResponse.setDescription(product.getDescription());
+            productResponse.setPrice(product.getPrice());
+            // Cập nhật các thuộc tính khác tùy vào yêu cầu
+            // Ví dụ:
+            // productResponse.setCategoryName(product.getCategory().getName());
+            // productResponse.setBrandName(product.getBrand().getName());
+
+            // Thêm vào danh sách
+            productResponses.add(productResponse);
+        }
+        response.setProductResponses(productResponses);
         response.setTotalElements(products.getTotalElements());
         response.setTotalPages(products.getTotalPages());
         response.setPageNumber(products.getNumber());
@@ -124,16 +157,25 @@ public class ProductServiceImpl implements ProductService {
         return response;
     }
 
+
     @Override
     public ProductResponse getProductBySlug(String slug) {
         Product product = productRepository.findBySlugAndIsDeletedFalseAndStatus(slug).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return productMapper.toProductResponse(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
     }
 
     @Override
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return productMapper.toProductResponse(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
     }
 
     @Override
