@@ -78,6 +78,14 @@ public class BrandServiceImpl implements BrandService {
 
     }
 
+    @Override
+    @Transactional
+    public void changeBrandStatus(Long brandId, Status status) {
+        Brand brand = brandRepository.findByIdAndIsDeletedFalse(brandId).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        brandRepository.updateBrandStatus(brandId, status);
+
+    }
+
     // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);

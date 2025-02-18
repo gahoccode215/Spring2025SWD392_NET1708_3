@@ -1,12 +1,9 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
+import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +12,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,11 +53,22 @@ public class AdminBrandController {
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Get a brand (ADMIN, MANAGER)", description = "API get brand by its id")
-    public ApiResponse<BrandResponse> getCategory(@PathVariable Long brandId) {
+    public ApiResponse<BrandResponse> getBrand(@PathVariable Long brandId) {
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("get brand detail successfully")
                 .result(brandService.getBrandById(brandId))
+                .build();
+    }
+    @PatchMapping("/change-status/{brandId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Change brand status (ADMIN, MANAGER)", description = "API to change brand status (ACTIVE/INACTIVE)")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<Void> changeBrandStatus(@PathVariable Long brandId, @RequestParam Status status) {
+        brandService.changeBrandStatus(brandId, status);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Change status successfully")
                 .build();
     }
 }
