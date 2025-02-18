@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User toUser(UserCreationRequest request);
 
     UserResponse toUserResponse(User user);
 

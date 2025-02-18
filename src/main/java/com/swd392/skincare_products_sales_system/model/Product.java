@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -42,6 +43,10 @@ public class Product extends AbstractEntity{
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    List<Batch> batches;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "brand_id")

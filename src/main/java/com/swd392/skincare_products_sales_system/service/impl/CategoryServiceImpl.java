@@ -6,13 +6,17 @@ import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationReq
 import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.CategoryMapper;
+import com.swd392.skincare_products_sales_system.model.Brand;
 import com.swd392.skincare_products_sales_system.model.Category;
+import com.swd392.skincare_products_sales_system.model.Product;
 import com.swd392.skincare_products_sales_system.repository.CategoryRepository;
 import com.swd392.skincare_products_sales_system.service.CategoryService;
+import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +29,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,31 +41,59 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     CategoryRepository categoryRepository;
     Slugify slugify;
-    CategoryMapper categoryMapper;
     SlugUtil slugUtil;
+    CloudService cloudService;
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CategoryResponse createCategory(CategoryCreationRequest request) {
-        Category category = categoryMapper.toCategory(request);
+    @Transactional
+    public CategoryResponse createCategory(CategoryCreationRequest request) throws IOException {
+        Category category = Category.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .thumbnail(cloudService.uploadFile(request.getThumbnail()))
+                .build();
+
         category.setStatus(Status.ACTIVE);
         category.setIsDeleted(false);
         category.setSlug(generateUniqueSlug(category.getName()));
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+        categoryRepository.save(category);
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .status(category.getStatus())
+                .build();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId) {
+    @Transactional
+    public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId) throws IOException {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        category.setName(request.getName());
-        category.setDescription(request.getDescription());
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+        if(request.getName() != null){
+            category.setName(request.getName());
+        }
+        if(request.getDescription() != null){
+            category.setDescription(request.getDescription());
+        }
+        if(request.getThumbnail() != null){
+            category.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        }
+        categoryRepository.save(category);
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .status(category.getStatus())
+                .build();
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void deleteCategory(String categoryId) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
         category.setIsDeleted(true);
@@ -68,7 +103,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse getCategoryById(String id) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        return categoryMapper.toCategoryResponse(category);
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .status(category.getStatus())
+                .build();
     }
 
     @Override
@@ -89,7 +131,21 @@ public class CategoryServiceImpl implements CategoryService {
 
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         CategoryPageResponse response = new CategoryPageResponse();
-        response.setCategoryResponses(categories.stream().map(categoryMapper::toCategoryResponse).collect(Collectors.toList()));
+
+        List<CategoryResponse> categoryResponses = new ArrayList<>();
+
+        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
+        for (Category category : categories.getContent()) {
+            CategoryResponse categoryResponse = new CategoryResponse();
+            categoryResponse.setId(category.getId());
+            categoryResponse.setName(category.getName());
+            categoryResponse.setDescription(category.getDescription());
+            categoryResponse.setStatus(category.getStatus());
+            categoryResponse.setSlug(category.getSlug());
+            categoryResponse.setThumbnail(category.getThumbnail());
+            categoryResponses.add(categoryResponse);
+        }
+        response.setCategoryResponses(categoryResponses);
         response.setTotalElements(categories.getTotalElements());
         response.setTotalPages(categories.getTotalPages());
         response.setPageNumber(categories.getNumber());
@@ -124,8 +180,8 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         // Kiểm tra trường sortBy và tạo Sort tương ứng
-        if (sortBy.equals(Query.PRICE)) {
-            return order.equals(Query.ASC) ? Sort.by(Query.PRICE).ascending() : Sort.by(Query.PRICE).descending();
+        if (sortBy.equals(Query.NAME)) {
+            return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
         }
         return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
     }

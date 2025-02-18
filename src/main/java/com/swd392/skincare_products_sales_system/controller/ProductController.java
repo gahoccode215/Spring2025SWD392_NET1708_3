@@ -1,26 +1,16 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
-import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/products")
@@ -29,7 +19,6 @@ import java.io.IOException;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
     ProductService productService;
-    CloudService cloudService;
 
     @GetMapping("/{slug}")
     @Operation(summary = "Get a product by slug", description = "Retrieve product slug to get product detail")
@@ -61,6 +50,4 @@ public class ProductController {
                 .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, originSlug, sortBy, order))
                 .build();
     }
-
-
 }

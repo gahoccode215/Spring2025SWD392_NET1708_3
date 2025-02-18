@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CategoryCreationRequest {
+public class BrandUpdateRequest {
     @NotBlank(message = "category name can not blank")
     String name;
     String description;

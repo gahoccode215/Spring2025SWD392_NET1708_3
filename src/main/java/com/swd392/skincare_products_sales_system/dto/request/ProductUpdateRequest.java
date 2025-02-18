@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +17,7 @@ public class ProductUpdateRequest {
     String name;
     Double price;
     String description;
+    MultipartFile thumbnail;
+    Long brand_id;
     String category_id;
 }

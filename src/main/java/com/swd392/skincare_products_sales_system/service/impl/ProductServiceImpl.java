@@ -28,7 +28,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -59,12 +60,27 @@ public class ProductServiceImpl implements ProductService {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
             product.setCategory(category);
         }
-        product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        if (request.getBrand_id() != null) {
+            Brand brand = brandRepository.findByIdAndIsDeletedFalse(request.getBrand_id()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+            product.setBrand(brand);
+        }
+        if(!(request.getThumbnail().isEmpty())){
+            product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        }
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
         log.info("Product: {}", product);
-        return productMapper.toProductResponse(productRepository.save(product));
+        productRepository.save(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+                .status(product.getStatus())
+                .build();
     }
 
     @Override
@@ -77,11 +93,15 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse updateProduct(ProductUpdateRequest request, String productId) {
+    public ProductResponse updateProduct(ProductUpdateRequest request, String productId) throws IOException {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
             product.setCategory(category);
+        }
+        if (request.getBrand_id() != null) {
+            Brand brand = brandRepository.findByIdAndIsDeletedFalse(request.getBrand_id()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+            product.setBrand(brand);
         }
         if (request.getName() != null) {
             product.setName(request.getName());
@@ -92,7 +112,19 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
         }
-        return productMapper.toProductResponse(productRepository.save(product));
+        if(request.getThumbnail() != null){
+            product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        }
+        productRepository.save(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+                .status(product.getStatus())
+                .build();
     }
 
     @Override
@@ -115,7 +147,22 @@ public class ProductServiceImpl implements ProductService {
 
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         ProductPageResponse response = new ProductPageResponse();
-        response.setProductResponses(products.stream().map(productMapper::toProductResponse).collect(Collectors.toList()));
+
+        List<ProductResponse> productResponses = new ArrayList<>();
+
+        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
+        for (Product product : products.getContent()) {
+            ProductResponse productResponse = new ProductResponse();
+            productResponse.setId(product.getId());
+            productResponse.setName(product.getName());
+            productResponse.setPrice(product.getPrice());
+            productResponse.setDescription(product.getDescription());
+            productResponse.setSlug(product.getSlug());
+            productResponse.setThumbnail(product.getThumbnail());
+            productResponse.setStatus(product.getStatus());
+            productResponses.add(productResponse);
+        }
+        response.setProductResponses(productResponses);
         response.setTotalElements(products.getTotalElements());
         response.setTotalPages(products.getTotalPages());
         response.setPageNumber(products.getNumber());
@@ -124,16 +171,33 @@ public class ProductServiceImpl implements ProductService {
         return response;
     }
 
+
     @Override
     public ProductResponse getProductBySlug(String slug) {
         Product product = productRepository.findBySlugAndIsDeletedFalseAndStatus(slug).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return productMapper.toProductResponse(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+                .status(product.getStatus())
+                .build();
     }
 
     @Override
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return productMapper.toProductResponse(product);
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+                .status(product.getStatus())
+                .build();
     }
 
     @Override

@@ -7,19 +7,13 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import com.cloudinary.Cloudinary;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
-
 
 @Service
 @RequiredArgsConstructor
@@ -29,17 +23,10 @@ public class CloudServiceImpl implements CloudService {
 
     Cloudinary cloudinary;
 
+
     @Override
     public String uploadFile(MultipartFile multipartFile) throws IOException {
-        Map<String, String> uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-        return uploadResult.get("url");  // Return the URL of the uploaded image
+        Map<String, Object> uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
+        return (String) uploadResult.get("secure_url"); // Return the URL of the uploaded image
     }
-
-
-//    @Override
-//    public String uploadImage(MultipartFile file) throws IOException {
-//        Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("resource_type", "auto"));
-//        return (String) uploadResult.get("url");  // Return the URL of the uploaded image
-//    }
-
 }
