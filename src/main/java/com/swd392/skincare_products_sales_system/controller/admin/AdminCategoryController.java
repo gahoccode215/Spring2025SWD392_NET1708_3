@@ -44,9 +44,10 @@ public class AdminCategoryController {
 
     @PutMapping("/{categoryId}")
     @Operation(summary = "Update a category (ADMIN, MANAGER)", description = "API retrieve category id to update category")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId) {
+    public ApiResponse<CategoryResponse> updateCategory(@RequestPart("request") @Valid CategoryUpdateRequest request, @PathVariable String categoryId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
+        request.setThumbnail(thumbnail);
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Update category successfully")

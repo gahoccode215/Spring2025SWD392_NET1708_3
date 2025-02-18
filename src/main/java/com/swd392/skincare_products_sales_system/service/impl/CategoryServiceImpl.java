@@ -63,12 +63,26 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId) {
+    @Transactional
+    public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId) throws IOException {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        category.setName(request.getName());
-        category.setDescription(request.getDescription());
-        return categoryMapper.toCategoryResponse(categoryRepository.save(category));
+        if(request.getName() != null){
+            category.setName(request.getName());
+        }
+        if(request.getDescription() != null){
+            category.setDescription(request.getDescription());
+        }
+        if(request.getThumbnail() != null){
+            category.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+        }
+        categoryRepository.save(category);
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .slug(category.getSlug())
+                .thumbnail(category.getThumbnail())
+                .build();
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.io.IOException;
 public interface CategoryService {
     CategoryResponse createCategory(CategoryCreationRequest request) throws IOException;
 
-    CategoryResponse updateCategory(CategoryUpdateRequest request, String id);
+    CategoryResponse updateCategory(CategoryUpdateRequest request, String id) throws IOException;
 
     void deleteCategory(String id);
 
