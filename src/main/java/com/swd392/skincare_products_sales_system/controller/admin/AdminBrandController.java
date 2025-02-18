@@ -30,16 +30,27 @@ public class AdminBrandController {
     BrandService brandService;
 
     @PostMapping
-    @Operation(summary = "Create category (ADMIN, MANAGER)", description = "API retrieve attribute to create category")
+    @Operation(summary = "Create brand (ADMIN, MANAGER)", description = "API retrieve attribute to create brand")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BrandResponse> createCategory(@RequestPart("request") @Valid BrandCreationRequest request,
+    public ApiResponse<BrandResponse> createBrand(@RequestPart("request") @Valid BrandCreationRequest request,
                                                         @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
         request.setThumbnail(thumbnail);
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create brand successfully")
                 .result(brandService.createBrand(request))
+                .build();
+    }
+    @DeleteMapping("/{brandId}")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Delete a brand (ADMIN, MANAGER)", description = "API delete brand by its id")
+    public ApiResponse<Void> deleteBrand(@PathVariable Long brandId) {
+        brandService.deleteBrand(brandId);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Delete brand successfully")
                 .build();
     }
 }

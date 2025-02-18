@@ -18,6 +18,7 @@ public enum ErrorCode {
     ROLE_NOT_FOUND(1006, "Role not found", HttpStatus.BAD_REQUEST),
     CART_NOT_FOUND(1007, "Cart not found", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED_IN_CART(1008, "Product not existed in cart", HttpStatus.BAD_REQUEST),
+    BRAND_NOT_EXISTED(1009, "Brand not existed", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),

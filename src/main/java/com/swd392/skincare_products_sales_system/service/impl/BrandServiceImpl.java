@@ -5,7 +5,9 @@ import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Brand;
 import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.repository.BrandRepository;
@@ -53,6 +55,15 @@ public class BrandServiceImpl implements BrandService {
                 .slug(brand.getSlug())
                 .build();
     }
+
+    @Override
+    @Transactional
+    public void deleteBrand(Long id) {
+        Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
+        brand.setIsDeleted(true);
+        brandRepository.save(brand);
+    }
+
     // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);

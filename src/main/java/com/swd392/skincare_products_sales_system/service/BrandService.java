@@ -7,4 +7,5 @@ import java.io.IOException;
 
 public interface BrandService {
     BrandResponse createBrand(BrandCreationRequest request) throws IOException;
+    void deleteBrand(Long id);
 }
