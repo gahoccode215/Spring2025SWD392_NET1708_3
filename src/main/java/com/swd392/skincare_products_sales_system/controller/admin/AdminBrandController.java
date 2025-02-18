@@ -3,9 +3,7 @@ package com.swd392.skincare_products_sales_system.controller.admin;
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,6 +82,22 @@ public class AdminBrandController {
                 .code(HttpStatus.OK.value())
                 .message("Update brand successfully")
                 .result(brandService.updateBrand(request, brandId))
+                .build();
+    }
+    @GetMapping
+    @Operation(summary = "Get all brands (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<BrandPageResponse> getAllCategories(
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "100") int size,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String order) {
+        return ApiResponse.<BrandPageResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get brands successfully")
+                .result(brandService.getBrands(true, keyword, page, size, sortBy, order))
                 .build();
     }
 }

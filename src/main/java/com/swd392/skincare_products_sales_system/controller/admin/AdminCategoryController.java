@@ -92,7 +92,7 @@ public class AdminCategoryController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all categories (ADMIN, MANAGER)", description = "Retrieve all active categories with pagination, sorting, and filtering.")
+    @Operation(summary = "Get all categories (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<CategoryPageResponse> getAllCategories(

@@ -4,7 +4,9 @@ import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
+import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
@@ -19,11 +21,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -112,6 +119,46 @@ public class BrandServiceImpl implements BrandService {
                 .status(brand.getStatus())
                 .build();
 
+    }
+
+    @Override
+    public BrandPageResponse getBrands(boolean admin, String keyword, int page, int size, String sortBy, String order) {
+        if (page > 0) page -= 1;
+
+        Pageable pageable;
+        Sort sort = getSort(sortBy, order);
+        pageable = PageRequest.of(page, size, sort);
+
+
+        Page<Brand> brands;
+        if (admin) {
+            brands = brandRepository.findAllByFilters(keyword, null, pageable);
+        } else {
+            brands = brandRepository.findAllByFilters(keyword, Status.ACTIVE, pageable);
+        }
+
+        // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
+        BrandPageResponse response = new BrandPageResponse();
+
+        List<BrandResponse> brandResponses = new ArrayList<>();
+
+        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
+        for (Brand brand : brands.getContent()) {
+            BrandResponse brandResponse = new BrandResponse();
+            brandResponse.setId(brand.getId());
+            brandResponse.setName(brand.getName());
+            brandResponse.setDescription(brand.getDescription());
+            brandResponse.setStatus(brand.getStatus());
+            brandResponse.setSlug(brand.getSlug());
+            brandResponse.setThumbnail(brand.getThumbnail());
+            brandResponses.add(brandResponse);
+        }
+        response.setBrandResponses(brandResponses);
+        response.setTotalElements(brands.getTotalElements());
+        response.setTotalPages(brands.getTotalPages());
+        response.setPageNumber(brands.getNumber());
+        response.setPageSize(brands.getSize());
+        return response;
     }
 
     // Generate a unique slug
