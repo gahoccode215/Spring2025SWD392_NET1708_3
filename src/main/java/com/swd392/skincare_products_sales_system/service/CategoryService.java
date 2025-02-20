@@ -9,9 +9,9 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import java.io.IOException;
 
 public interface CategoryService {
-    CategoryResponse createCategory(CategoryCreationRequest request) throws IOException;
+    CategoryResponse createCategory(CategoryCreationRequest request);
 
-    CategoryResponse updateCategory(CategoryUpdateRequest request, String id) throws IOException;
+    CategoryResponse updateCategory(CategoryUpdateRequest request, String id) ;
 
     void deleteCategory(String id);
 

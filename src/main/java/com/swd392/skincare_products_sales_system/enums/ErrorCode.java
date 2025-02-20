@@ -19,6 +19,7 @@ public enum ErrorCode {
     CART_NOT_FOUND(1007, "Cart not found", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED_IN_CART(1008, "Product not existed in cart", HttpStatus.BAD_REQUEST),
     BRAND_NOT_EXISTED(1009, "Brand not existed", HttpStatus.BAD_REQUEST),
+    ORIGIN_NOT_EXISTED(1010, "Origin not existed", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
@@ -30,6 +31,7 @@ public enum ErrorCode {
     INVALID_CHANGE_PASSWORD(1007, "Old password not correct", HttpStatus.BAD_REQUEST),
     INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
     INVALID_ROLE(1008, "Role invalid", HttpStatus.BAD_REQUEST),
+    INVALID_JSON(1009, "Json invalid", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

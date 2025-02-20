@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.CartResponse;
 import com.swd392.skincare_products_sales_system.model.Cart;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.service.CartService;
@@ -30,8 +31,7 @@ public class CartController {
     @Operation(summary = "Add item to cart ", description = "Retrieve products to cart")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Void> addItemToCart(
-            @RequestParam String productId,
-            @RequestParam Integer quantity) {
+            @RequestParam String productId, @RequestParam int quantity) {
         cartService.addProductToCart(productId, quantity);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
@@ -42,21 +42,21 @@ public class CartController {
     @GetMapping
     @Operation(summary = "Get cart ", description = "Retrieve user id to get cart")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Cart> getCart() {
-        return ApiResponse.<Cart>builder()
+    public ApiResponse<CartResponse> getCart() {
+        return ApiResponse.<CartResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get cart successfully")
                 .result(cartService.getCart())
                 .build();
     }
-    @DeleteMapping("/remove/{productIds}")
-    @Operation(summary = "Remove product from cart ", description = "Remove product from cart")
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> removeProductFromCart(@RequestParam List<String> productIds) {
-        cartService.removeProductsFromCart(productIds);
-        return ApiResponse.<Void>builder()
-                .code(HttpStatus.OK.value())
-                .message("Remove successfully")
-                .build();
-    }
+//    @DeleteMapping("/remove/{productIds}")
+//    @Operation(summary = "Remove product from cart ", description = "Remove product from cart")
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResponse<Void> removeProductFromCart(@RequestParam List<String> productIds) {
+//        cartService.removeProductsFromCart(productIds);
+//        return ApiResponse.<Void>builder()
+//                .code(HttpStatus.OK.value())
+//                .message("Remove successfully")
+//                .build();
+//    }
 }

@@ -22,7 +22,7 @@ public class ProductCreationRequest {
     String name;
     Double price;
     String description;
-    MultipartFile thumbnail;
+    String thumbnail;
     Long brand_id;
     String category_id;
 

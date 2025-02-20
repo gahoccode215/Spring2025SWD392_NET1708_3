@@ -12,14 +12,14 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import java.io.IOException;
 
 public interface BrandService {
-    BrandResponse createBrand(BrandCreationRequest request) throws IOException;
+    BrandResponse createBrand(BrandCreationRequest request) ;
     void deleteBrand(Long id);
 
     BrandResponse getBrandById(Long id);
 
     void changeBrandStatus(Long brandId, Status status);
 
-    BrandResponse updateBrand(BrandUpdateRequest request, Long id) throws IOException;
+    BrandResponse updateBrand(BrandUpdateRequest request, Long id);
 
     BrandPageResponse getBrands(boolean admin, String keyword , int page, int size, String sortBy, String order);
 }

@@ -9,9 +9,9 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import java.io.IOException;
 
 public interface ProductService {
-    ProductResponse createProduct(ProductCreationRequest request) throws IOException;
+    ProductResponse createProduct(ProductCreationRequest request) ;
     void deleteProduct(String productId);
-    ProductResponse updateProduct(ProductUpdateRequest request, String productId) throws IOException;
+    ProductResponse updateProduct(ProductUpdateRequest request, String productId) ;
     ProductPageResponse getProducts(boolean admin, String keyword, int page, int size, String categorySlug, String brandSlug, String originSlug, String sortBy, String order);
     ProductResponse getProductBySlug(String slug);
     ProductResponse getProductById(String id);

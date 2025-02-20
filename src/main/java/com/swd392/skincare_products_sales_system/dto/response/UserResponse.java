@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import com.swd392.skincare_products_sales_system.enums.Gender;
+import com.swd392.skincare_products_sales_system.model.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,5 +19,5 @@ public class UserResponse {
     Gender gender;
     String lastName;
     String username;
-    Set<RoleResponse> roles;
+    Role role;
 }

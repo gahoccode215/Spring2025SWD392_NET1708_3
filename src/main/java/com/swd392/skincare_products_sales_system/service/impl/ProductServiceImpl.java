@@ -10,10 +10,8 @@ import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.mapper.ProductMapper;
 import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.repository.*;
-import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
 import lombok.AccessLevel;
@@ -27,7 +25,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,17 +37,14 @@ public class ProductServiceImpl implements ProductService {
     Slugify slugify;
     SlugUtil slugUtil;
     ProductRepository productRepository;
-    ProductMapper productMapper;
     BrandRepository brandRepository;
     OriginRepository originRepository;
-    SkinTypeRepository skinTypeRepository;
     CategoryRepository categoryRepository;
-    FeatureRepository featureRepository;
-    CloudService cloudService;
+
 
     @Override
     @Transactional
-    public ProductResponse createProduct(ProductCreationRequest request)  throws IOException {
+    public ProductResponse createProduct(ProductCreationRequest request)  {
         Product product = Product.builder()
                 .name(request.getName())
                 .price(request.getPrice())
@@ -64,9 +58,7 @@ public class ProductServiceImpl implements ProductService {
             Brand brand = brandRepository.findByIdAndIsDeletedFalse(request.getBrand_id()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
             product.setBrand(brand);
         }
-        if(!(request.getThumbnail().isEmpty())){
-            product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
-        }
+        product.setThumbnail(request.getThumbnail());
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
@@ -93,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse updateProduct(ProductUpdateRequest request, String productId) throws IOException {
+    public ProductResponse updateProduct(ProductUpdateRequest request, String productId){
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
@@ -113,7 +105,10 @@ public class ProductServiceImpl implements ProductService {
             product.setDescription(request.getDescription());
         }
         if(request.getThumbnail() != null){
-            product.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+            product.setThumbnail(request.getThumbnail());
+        }
+        if(request.getStatus() != null){
+            product.setStatus(request.getStatus());
         }
         productRepository.save(product);
         return ProductResponse.builder()

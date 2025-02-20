@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -52,6 +53,30 @@ public class GlobalExceptionHandler {
                         : errorCode.getMessage());
 
         return ResponseEntity.badRequest().body(apiResponse);
+    }
+    /**
+     * Xử lý lỗi json không hợp lệ
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        // Tạo đối tượng lỗi mặc định
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(ErrorCode.INVALID_JSON.getCode());
+
+        // Cung cấp thông điệp lỗi chi tiết
+        String errorMessage = "JSON data invalid";
+
+        // Log lỗi để kiểm tra chi tiết
+        log.error("Error processing JSON: " + exception.getMessage());
+
+        // Nếu lỗi JSON liên quan đến cấu trúc không hợp lệ hoặc định dạng, thông báo thêm
+        if (exception.getMessage().contains("JSON parse error")) {
+            errorMessage = "JSON data invalid. Please check again";
+        }
+
+        // Trả về thông điệp lỗi
+        apiResponse.setMessage(errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
     }
 
 

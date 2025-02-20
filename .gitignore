@@ -204,3 +204,4 @@ README.html
 *.iml
 .idea
 .exercism.env.prod
+/src/main/resources/application-prod.yml

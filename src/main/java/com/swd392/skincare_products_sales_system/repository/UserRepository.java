@@ -1,6 +1,8 @@
 package com.swd392.skincare_products_sales_system.repository;
 
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
@@ -19,6 +21,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
 
     boolean existsByUsername(String username);
+
+
+    default User findByUsernameOrThrow(String username) {
+        return findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+    }
 
     Optional<User> findByUsername(String username);
 

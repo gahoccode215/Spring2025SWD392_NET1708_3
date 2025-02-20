@@ -6,16 +6,12 @@ import com.swd392.skincare_products_sales_system.dto.request.BrandCreationReques
 import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Brand;
-import com.swd392.skincare_products_sales_system.model.Category;
 import com.swd392.skincare_products_sales_system.repository.BrandRepository;
 import com.swd392.skincare_products_sales_system.service.BrandService;
-import com.swd392.skincare_products_sales_system.service.CloudService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +24,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,16 +35,15 @@ public class BrandServiceImpl implements BrandService {
     BrandRepository brandRepository;
     Slugify slugify;
     SlugUtil slugUtil;
-    CloudService cloudService;
 
 
     @Override
     @Transactional
-    public BrandResponse createBrand(BrandCreationRequest request) throws IOException {
+    public BrandResponse createBrand(BrandCreationRequest request)  {
         Brand brand = Brand.builder()
                 .name(request.getName())
                 .description(request.getDescription())
-                .thumbnail(cloudService.uploadFile(request.getThumbnail()))
+                .thumbnail(request.getThumbnail())
                 .build();
         brand.setStatus(Status.ACTIVE);
         brand.setIsDeleted(false);
@@ -97,7 +91,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    public BrandResponse updateBrand(BrandUpdateRequest request, Long id) throws IOException {
+    public BrandResponse updateBrand(BrandUpdateRequest request, Long id) {
         Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
 
         if(request.getName() != null){
@@ -107,7 +101,10 @@ public class BrandServiceImpl implements BrandService {
             brand.setDescription(request.getDescription());
         }
         if(request.getThumbnail() != null){
-            brand.setThumbnail(cloudService.uploadFile(request.getThumbnail()));
+            brand.setThumbnail(request.getThumbnail());
+        }
+        if(request.getStatus() != null){
+            brand.setStatus(request.getStatus());
         }
         brandRepository.save(brand);
         return BrandResponse.builder()

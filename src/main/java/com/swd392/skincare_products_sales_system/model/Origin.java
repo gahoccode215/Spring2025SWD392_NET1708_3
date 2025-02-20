@@ -31,6 +31,12 @@ public class Origin extends AbstractEntity{
     @Column(name = "slug", unique = true)
     String slug;
 
+    @Column(name = "description")
+    String description;
+
+    @Column(name = "thumbnail")
+    String thumbnail;
+
     @OneToMany(mappedBy = "origin", fetch = FetchType.EAGER)
     Set<Product> products;
 }

@@ -1,14 +1,13 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
+import com.swd392.skincare_products_sales_system.dto.response.CartItemResponse;
+import com.swd392.skincare_products_sales_system.dto.response.CartResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.mapper.UserMapper;
 import com.swd392.skincare_products_sales_system.model.Cart;
 import com.swd392.skincare_products_sales_system.model.CartItem;
 import com.swd392.skincare_products_sales_system.model.Product;
 import com.swd392.skincare_products_sales_system.model.User;
-import com.swd392.skincare_products_sales_system.repository.CartItemRepository;
 import com.swd392.skincare_products_sales_system.repository.CartRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
@@ -17,13 +16,11 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,119 +29,98 @@ import java.util.stream.Collectors;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CartServiceImpl implements CartService {
+
     CartRepository cartRepository;
-    CartItemRepository cartItemRepository;
     ProductRepository productRepository;
     UserRepository userRepository;
-    UserMapper userMapper;
 
     @Override
     @Transactional
-    public Cart addProductToCart(String productId, Integer quantity) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+    public void addProductToCart(String productId, Integer quantity) {
+        String username = null;
+        try {
+            var context = SecurityContextHolder.getContext();
+            username = context.getAuthentication().getName();
+        } catch (Exception e) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        String username = authentication.getName();
+        User user = userRepository.findByUsernameOrThrow(username);
+        Optional<Product> productOptional = productRepository.findById(productId);
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            Cart cart = getOrCreateCartEntity(user); // Lấy hoặc tạo mới giỏ hàng cho người dùng
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
-            throw new AppException(ErrorCode.FORBIDDEN);
+            // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
+            Optional<CartItem> existingItem = cart.getItems().stream()
+                    .filter(item -> item.getProduct().getId().equals(productId))
+                    .findFirst();
+            if (existingItem.isPresent()) {
+                existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
+            } else {
+                // Thêm sản phẩm mới vào giỏ hàng
+                CartItem newItem = new CartItem();
+                newItem.setProduct(product);
+                newItem.setCart(cart);
+                newItem.setPrice(product.getPrice());
+                newItem.setQuantity(quantity);
+                cart.getItems().add(newItem);
+            }
+            cartRepository.save(cart); // Lưu giỏ hàng vào cơ sở dữ liệu
         }
-
-//        UserResponse userResponse = userMapper.toUserResponse(user);
-
-        Cart cart = getOrCreateCart(user);
-
-        // Lấy sản phẩm từ ID
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-
-        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
-        Optional<CartItem> existingItem = cartItemRepository.findByCartAndProduct(cart, product);
-        if (existingItem.isPresent()) {
-            // Nếu có, cập nhật số lượng
-            CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + quantity);
-            cartItemRepository.save(item);
-        } else {
-            // Nếu chưa có, thêm sản phẩm mới vào giỏ
-            CartItem newItem = new CartItem();
-            newItem.setCart(cart);
-            newItem.setProduct(product);
-            newItem.setQuantity(quantity);
-            newItem.setPrice(product.getPrice());  // Gán giá sản phẩm tại thời điểm thêm vào giỏ
-            cartItemRepository.save(newItem);
-        }
-
-        // Cập nhật tổng giá trị giỏ hàng
-        cart.updateTotalPrice();
-        cartRepository.save(cart);
-        return cart;
     }
 
     @Override
-    public Cart getCart() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-        String username = authentication.getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
-            throw new AppException(ErrorCode.FORBIDDEN);
-        }
-        return getOrCreateCart(user);
+    public void removeProductFromCart(String productId, String username) {
+        return;
     }
 
     @Override
     @Transactional
-    public void removeProductsFromCart(List<String> productIds) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
+    public CartResponse getCart() {
+        String username = null;
+        try {
+            var context = SecurityContextHolder.getContext();
+            username = context.getAuthentication().getName();
+        } catch (Exception e) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        User user = userRepository.findByUsernameOrThrow(username);
 
-        // Kiểm tra quyền của người dùng
-        if(!(user.getRole().getName().equals(PredefinedRole.CUSTOMER_ROLE))){
-            throw new AppException(ErrorCode.FORBIDDEN);
-        }
+        Cart cart = getOrCreateCartEntity(user); // Trả về đối tượng giỏ hàng
 
-        // Tìm giỏ hàng của người dùng
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
-        productIds = productIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
-        // Lấy danh sách các sản phẩm cần xóa trong giỏ hàng
-        List<CartItem> itemsToRemove = cartItemRepository.findByCartIdAndProductIdIn(cart.getId(), productIds);
+        Double totalPrice = cart.getItems().stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
 
-        log.info("{}", itemsToRemove);
-        // Nếu không có sản phẩm nào cần xóa
-        if (itemsToRemove.isEmpty()) {
-            throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED_IN_CART);
-        }
-        cartItemRepository.flush();
+        // Chuyển đổi CartItem thành CartItemResponse
+        List<CartItemResponse> itemResponses = cart.getItems().stream()
+                .map(item -> {
+                    CartItemResponse response = new CartItemResponse();
+                    response.setProductName(item.getProduct().getName());
+                    response.setPrice(item.getPrice());
+                    response.setQuantity(item.getQuantity());
+                    response.setTotalItemPrice(item.getPrice() * item.getQuantity());
+                    return response;
+                })
+                .collect(Collectors.toList());
 
-        // Xóa các sản phẩm ra khỏi giỏ hàng
-        cartItemRepository.deleteAll(itemsToRemove);
-
-        // Cập nhật tổng giá trị giỏ hàng sau khi xóa các sản phẩm
-        cart.updateTotalPrice();  // Hãy chắc chắn rằng phương thức `updateTotalPrice` không tham chiếu đến các đối tượng đã bị xóa
-        cartRepository.save(cart);
+        // Tạo và trả về CartResponse
+        CartResponse cartResponse = new CartResponse();
+        cartResponse.setCartId(cart.getId());
+        cartResponse.setItems(itemResponses);
+        cartResponse.setTotalPrice(totalPrice);
+        cartResponse.setUsername(username);
+        return cartResponse;
     }
 
-    private Cart getOrCreateCart(User user) {
-        // Tìm giỏ hàng của người dùng
+
+    // Giúp kiểm tra và tạo giỏ hàng mới nếu người dùng chưa có
+    private Cart getOrCreateCartEntity(User user) {
         return cartRepository.findByUser(user)
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUser(user);
-                    return cartRepository.save(newCart);
+                    return cartRepository.save(newCart); // Lưu giỏ hàng mới vào DB
                 });
     }
 }

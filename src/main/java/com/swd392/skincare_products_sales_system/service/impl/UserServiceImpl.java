@@ -160,7 +160,15 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         // Chuyển đổi từ đối tượng User sang UserResponse (DTO)
-        return userMapper.toUserResponse(user);
+//        return userMapper.toUserResponse(user);
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .gender(user.getGender())
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
     }
 
     private Sort getSort(String sortBy, String order) {
