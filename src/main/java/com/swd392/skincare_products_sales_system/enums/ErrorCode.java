@@ -32,6 +32,7 @@ public enum ErrorCode {
     INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
     INVALID_ROLE(1008, "Role invalid", HttpStatus.BAD_REQUEST),
     INVALID_JSON(1009, "Json invalid", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(1010, "Quantity invalid.Quantity must greater than 0", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

@@ -28,7 +28,6 @@ public class Cart {
     @JoinColumn(name = "user_id")
     User user;  // Liên kết giỏ hàng với người dùng
 
-    @JsonBackReference
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<CartItem> items = new HashSet<>();
 
@@ -36,14 +35,11 @@ public class Cart {
 
     public void updateTotalPrice() {
         double totalPrice = 0;
-
-        // Lọc bỏ các sản phẩm đã bị xóa
         for (CartItem cartItem : items) {
             if (cartItem != null && cartItem.getProduct() != null) {
                 totalPrice += cartItem.getPrice() * cartItem.getQuantity();
             }
         }
-
         this.totalPrice = totalPrice;
     }
 }

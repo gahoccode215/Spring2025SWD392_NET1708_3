@@ -39,6 +39,9 @@ public class Product extends AbstractEntity{
     @Column(name = "usage_instruction")
     String usageInstruction;
 
+    @Column(name = "size")
+    String size;
+
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
