@@ -61,4 +61,7 @@ public class User extends AbstractEntity {
     @JoinColumn(name = "role_id")
     Role role;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    List<Address> addresses;
+
 }

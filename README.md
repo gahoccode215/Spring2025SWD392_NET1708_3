@@ -132,29 +132,36 @@ Lệnh run image
 
 4. **FE**
 
-Đảm bảo đã chạy docker
+- Đảm bảo đã chạy docker
 
 ```bash
 docker pull gahoccode215/swd392-api-service:latest
 ```
+---
 
-Kiểm tra image đã có thì run với cổng 8080
+- Kiểm tra image đã có thì run với cổng 8080
 
 ```bash
 docker run -d --name swd392-api-container -p 8080:8080 gahoccode215/swd392-api-service:latest
 ```
+---
 
-Nếu như cổng 8080 dang được sử dụng thì kill port
+- Nếu như cổng 8080 dang được sử dụng thì kill port
 
 ```bash
 netstat -ano | findstr :8080
 ```
+---
 
-Kill Số cột cuối thay vào "number"
+- Kill Số cột cuối thay vào "number"
 
 ```bash
 netstat -ano | findstr :"number"
 ```
+--- 
+- localhost:8080/api/v1/swd392-skincare-products-sales-system/swagger-ui/index.html (Swagger)
+
+- localhost:8080/api/v1/swd392-skincare-products-sales-system (Domain)
 
 
 
