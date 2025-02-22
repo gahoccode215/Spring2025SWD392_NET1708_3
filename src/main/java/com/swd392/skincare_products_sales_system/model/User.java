@@ -1,6 +1,9 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Gender;
+import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,21 +47,41 @@ public class User extends AbstractEntity {
     @Temporal(TemporalType.DATE)
     LocalDate birthday;
 
+    @Column(name = "point")
+    Integer point;
+
     @Column(name = "username", unique = true, nullable = false, length = 255)
     String username;
 
     @Column(name = "password", length = 255)
     String password;
 
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", length = 255)
-    UserStatus status;
+    Status status = Status.ACTIVE;
 
+    @Column(name = "address")
+    String address;
+
+
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    Role role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<Result> results;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<BookingOrder> bookingOrders;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "tbl_user_has_role",
+    @JoinTable(
+            name = "tbl_user_voucher",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
-
+            inverseJoinColumns = @JoinColumn(name = "voucher_id")
+    )
+     Set<Voucher> vouchers;
 }

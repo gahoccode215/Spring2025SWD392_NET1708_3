@@ -11,6 +11,8 @@ import com.swd392.skincare_products_sales_system.dto.response.LoginResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RefreshTokenResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.enums.UserStatus;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
 import com.swd392.skincare_products_sales_system.model.Role;
@@ -56,11 +58,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .gender(request.getGender())
                 .birthday(request.getBirthday())
+                .status(Status.ACTIVE)
                 .build();
         // Lấy Role từ Database gắn vào
-        Role userRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
+        Role customRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
-        user.setRoles(Set.of(userRole));
+        user.setRole(customRole);
+        user.setDeleted(false);
         userRepository.save(user);
         return RegisterResponse.builder()
                 .username(user.getUsername())

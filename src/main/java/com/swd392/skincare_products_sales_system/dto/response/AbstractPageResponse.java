@@ -11,8 +11,8 @@ import java.io.Serializable;
 @Setter
 @FieldDefaults(level = AccessLevel.PROTECTED)
 public abstract class AbstractPageResponse implements Serializable {
-    int pageNumber;
-    int pageSize;
-    long totalPages;
-    long totalElements;
+    Integer pageNumber;
+    Integer pageSize;
+    Integer totalPages;
+    Long totalElements;
 }

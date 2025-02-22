@@ -1,10 +1,13 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -27,8 +30,10 @@ public class Role extends AbstractEntity {
     @Column(name = "description")
     String description;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+    Set<User> users;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -36,5 +41,5 @@ public class Role extends AbstractEntity {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
-    private Set<Permission> permissions;
+    Set<Permission> permissions;
 }
