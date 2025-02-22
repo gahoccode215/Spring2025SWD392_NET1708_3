@@ -21,6 +21,7 @@ public enum ErrorCode {
     BRAND_NOT_EXISTED(1009, "Brand not existed", HttpStatus.BAD_REQUEST),
     ORIGIN_NOT_EXISTED(1010, "Origin not existed", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_FOUND(1011, "Address not found", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(1012, "Order not found", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
@@ -34,6 +35,7 @@ public enum ErrorCode {
     INVALID_ROLE(1008, "Role invalid", HttpStatus.BAD_REQUEST),
     INVALID_JSON(1009, "Json invalid", HttpStatus.BAD_REQUEST),
     INVALID_QUANTITY(1010, "Quantity invalid.Quantity must greater than 0", HttpStatus.BAD_REQUEST),
+    INVALID_PAYMENT_METHOD(1011, "Invalid Payment Method", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

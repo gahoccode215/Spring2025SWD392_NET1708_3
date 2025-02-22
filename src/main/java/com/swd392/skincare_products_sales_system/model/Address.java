@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Getter
 @ToString
@@ -25,6 +27,10 @@ public class Address {
     String street;
     String addressLine;
     Boolean isDefault;
+
+
+    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    List<Order> orders;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

@@ -66,11 +66,11 @@ docker build -t api-image .
 ```
 
 ```bash
-docker tag myapp:latest your-username/myapp:latest
+docker tag api-image gahoccode215/swd392-api-service:latest
 ```
 
 ```bash
-docker push your-username/myapp:latest
+docker push gahoccode215/swd392-api-service:latest
 ```
 
 ---

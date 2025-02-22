@@ -92,11 +92,11 @@ public class GlobalExceptionHandler {
 
         log.warn("Constraint validation failed: {}", errors);
         return ResponseEntity.badRequest()
-                .body(new ApiResponse<>(
-                        HttpStatus.BAD_REQUEST.value(),
-                        "Validation failed",
-                        errors)
-                );
+                .body(ApiResponse.<Map<String, String>>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Validation failed")
+                        .result(errors)
+                        .build());
     }
 
     /**
@@ -106,7 +106,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException exception) {
         log.warn("Access Denied: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), ErrorCode.UNAUTHENTICATED.getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .message(ErrorCode.UNAUTHENTICATED.getMessage())
+                        .build());
     }
 
 
@@ -117,7 +120,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         log.warn("Data violation: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Data input invalid", null));
+                .body(ApiResponse.<Void>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Data input invalid")
+                        .build());
     }
 
     /**
@@ -127,7 +133,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
         log.error("Application error: {}", exception.getMessage());
         return ResponseEntity.status(exception.getErrorCode().getStatusCode())
-                .body(new ApiResponse<>(exception.getErrorCode().getCode(), exception.getErrorCode().getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(exception.getErrorCode().getCode())
+                        .message(exception.getMessage())
+                        .build());
+
     }
 
     /**
@@ -137,7 +147,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleUncaughtException(Exception exception) {
         log.error("Uncaught exception: ", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode(), ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
+                        .build());
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {
