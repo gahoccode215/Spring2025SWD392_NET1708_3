@@ -59,7 +59,7 @@ public class VoucherController {
     public ApiResponse<List<Voucher>> getAllVouchers() {
         List<Voucher> list = voucherRepository.findAll()
                 .stream()
-                .filter(voucher -> !voucher.isDeleted() && voucher.getStatus().equals(Status.ACTIVE))
+                .filter(voucher -> !voucher.getIsDeleted() && voucher.getStatus().equals(Status.ACTIVE))
                 .toList();
         return ApiResponse.<List<Voucher>>builder()
                 .result(list)

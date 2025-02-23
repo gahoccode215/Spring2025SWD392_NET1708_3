@@ -44,37 +44,37 @@ public enum ErrorCode {
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),
     // 13XX
     REGISTER_ERROR(1301, "Register failed", HttpStatus.BAD_REQUEST),
-    //20XX
-    QUIZ_EXISTED(2001, "Quiz existed", HttpStatus.BAD_REQUEST),
-    TITLE_EXISTED(2002, "Title existed", HttpStatus.BAD_REQUEST),
-    QUIZ_NOT_EXISTED(2003, "Quiz not existed", HttpStatus.BAD_REQUEST),
-    QUIZ_NOT_FOUND(2004, "Quiz not found", HttpStatus.BAD_REQUEST),
-    //21xx
-    SERVICE_EXISTED(2101, "Service existed", HttpStatus.BAD_REQUEST),
-    SERVICENAME_EXISTED(2102, "Service name existed", HttpStatus.BAD_REQUEST),
-    SERVICE_NOT_EXIST(2103, "Service not existed", HttpStatus.BAD_REQUEST),
-    SERVICENAME_NOT_EXIST(2104, "Service name not existed", HttpStatus.BAD_REQUEST),
-    SERVICE_TYPE_EXISTED(2105, "Service type existed", HttpStatus.BAD_REQUEST),
-    SERVICE_TYPE_NOT_EXIST(2106, "Service type not existed", HttpStatus.BAD_REQUEST),
-    SERVICE_INACTIVE(2107, "Service inactive", HttpStatus.BAD_REQUEST),
-    //22xx
-    QUESTION_EXISTED(2201, "Question existed", HttpStatus.BAD_REQUEST),
-    QUESTION_NOT_EXIST(2202, "Question not existed", HttpStatus.BAD_REQUEST),
-    QUESTION_NOT_FOUND(2203, "Question not found", HttpStatus.BAD_REQUEST),
-    //23xx
-    ANSWER_EXISTED(3001, "Answer existed", HttpStatus.BAD_REQUEST),
-    ANSWER_NOT_EXIST(3002, "Answer not existed", HttpStatus.BAD_REQUEST),
-    ANSWER_NOT_FOUND(3003, "Answer not found", HttpStatus.BAD_REQUEST),
-    //24xx
-    VOUCHER_EXISTED(4001, "Voucher existed", HttpStatus.BAD_REQUEST),
-    VOUCHER_NOT_EXIST(4002, "Voucher not existed", HttpStatus.BAD_REQUEST),
-    VOUCHER_CODE_EXISTED(4003, "Voucher code existed", HttpStatus.BAD_REQUEST),
-    VOUCHER_NAME_EXISTED(4004, "Voucher name existed", HttpStatus.BAD_REQUEST),
-    VOUCHER_NAME_NOT_EXIST(4005, "Voucher name not existed", HttpStatus.BAD_REQUEST),
-    VOUCHER_CODE_NOT_EXIST(4006, "Voucher code not existed", HttpStatus.BAD_REQUEST),
-    //25xx
-    BOOKING_EXISTED(5001, "Booking existed", HttpStatus.BAD_REQUEST),
-    BOOKING_NOT_EXIST(5002, "Booking not existed", HttpStatus.BAD_REQUEST),
+    //14XX
+    QUIZ_EXISTED(1401, "Quiz existed", HttpStatus.BAD_REQUEST),
+    TITLE_EXISTED(1402, "Title existed", HttpStatus.BAD_REQUEST),
+    QUIZ_NOT_EXISTED(1403, "Quiz not existed", HttpStatus.BAD_REQUEST),
+    QUIZ_NOT_FOUND(1404, "Quiz not found", HttpStatus.BAD_REQUEST),
+    //15XX
+    SERVICE_EXISTED(1501, "Service existed", HttpStatus.BAD_REQUEST),
+    SERVICENAME_EXISTED(1502, "Service name existed", HttpStatus.BAD_REQUEST),
+    SERVICE_NOT_EXIST(1503, "Service not existed", HttpStatus.BAD_REQUEST),
+    SERVICENAME_NOT_EXIST(1504, "Service name not existed", HttpStatus.BAD_REQUEST),
+    SERVICE_TYPE_EXISTED(1505, "Service type existed", HttpStatus.BAD_REQUEST),
+    SERVICE_TYPE_NOT_EXIST(1506, "Service type not existed", HttpStatus.BAD_REQUEST),
+    SERVICE_INACTIVE(1507, "Service inactive", HttpStatus.BAD_REQUEST),
+    //16XX
+    QUESTION_EXISTED(1601, "Question existed", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_EXIST(1602, "Question not existed", HttpStatus.BAD_REQUEST),
+    QUESTION_NOT_FOUND(1603, "Question not found", HttpStatus.BAD_REQUEST),
+    //17XX
+    ANSWER_EXISTED(1701, "Answer existed", HttpStatus.BAD_REQUEST),
+    ANSWER_NOT_EXIST(1702, "Answer not existed", HttpStatus.BAD_REQUEST),
+    ANSWER_NOT_FOUND(1703, "Answer not found", HttpStatus.BAD_REQUEST),
+    //18XX
+    VOUCHER_EXISTED(1801, "Voucher existed", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_EXIST(1802, "Voucher not existed", HttpStatus.BAD_REQUEST),
+    VOUCHER_CODE_EXISTED(1803, "Voucher code existed", HttpStatus.BAD_REQUEST),
+    VOUCHER_NAME_EXISTED(1804, "Voucher name existed", HttpStatus.BAD_REQUEST),
+    VOUCHER_NAME_NOT_EXIST(1805, "Voucher name not existed", HttpStatus.BAD_REQUEST),
+    VOUCHER_CODE_NOT_EXIST(1806, "Voucher code not existed", HttpStatus.BAD_REQUEST),
+    //19XX
+    BOOKING_EXISTED(1901, "Booking existed", HttpStatus.BAD_REQUEST),
+    BOOKING_NOT_EXIST(1902, "Booking not existed", HttpStatus.BAD_REQUEST),
     ;
 
 

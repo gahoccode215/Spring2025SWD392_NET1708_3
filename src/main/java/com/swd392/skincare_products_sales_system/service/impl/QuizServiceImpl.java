@@ -78,7 +78,7 @@ public class QuizServiceImpl implements QuizService {
     public void deleteQuiz(long quizId) {
         Quiz quiz = quizRepository.findQuizById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_EXISTED));
-        quiz.setDeleted(true);
+        quiz.setIsDeleted(true);
         quizRepository.save(quiz);
     }
 
@@ -228,7 +228,7 @@ public class QuizServiceImpl implements QuizService {
             }else{
                  list = quizRepository.findAll()
                          .stream()
-                         .filter(quiz -> !quiz.isDeleted()
+                         .filter(quiz -> !quiz.getIsDeleted()
                                     && quiz.getStatus() == Status.ACTIVE)
                          .collect(Collectors.toList());
             }

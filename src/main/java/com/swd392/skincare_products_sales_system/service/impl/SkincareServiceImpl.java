@@ -71,7 +71,7 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
     public void deleteService(long skincareId) {
         SkincareService skincareService = serviceRepository.findSkincareServiceById(skincareId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_EXIST));
-        skincareService.setDeleted(true);
+        skincareService.setIsDeleted(true);
         serviceRepository.save(skincareService);
     }
 
@@ -145,7 +145,7 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
         } else {
             list = serviceRepository.findAll()
                     .stream()
-                    .filter(s -> s.getStatus().equals(Status.ACTIVE) || !s.isDeleted())
+                    .filter(s -> s.getStatus().equals(Status.ACTIVE) || !s.getIsDeleted())
                     .toList();
         }
         return list;

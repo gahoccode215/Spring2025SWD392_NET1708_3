@@ -56,7 +56,7 @@ public class ApplicationInitConfig {
                         .build());
                 Role expertRole = roleRepository.save(Role.builder()
 
-                        .name(PredefinedRole.EXPERT)
+                        .name(PredefinedRole.EXPERT_ROLE)
                         .description("Expert role")
                         .build());
                 Role adminRole = roleRepository.save(Role.builder()

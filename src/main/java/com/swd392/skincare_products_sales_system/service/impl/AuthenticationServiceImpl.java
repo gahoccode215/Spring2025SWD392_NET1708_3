@@ -12,7 +12,6 @@ import com.swd392.skincare_products_sales_system.dto.response.RefreshTokenRespon
 import com.swd392.skincare_products_sales_system.dto.response.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.enums.UserStatus;
 
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;

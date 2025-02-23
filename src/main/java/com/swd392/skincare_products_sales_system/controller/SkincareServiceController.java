@@ -101,7 +101,7 @@ public class SkincareServiceController {
     public ApiResponse<List<SkincareService>> getAllSkincares() {
         List<SkincareService> list = serviceRepository.findAll()
                 .stream()
-                .filter(v -> !v.isDeleted() && v.getStatus().equals(Status.ACTIVE))
+                .filter(v -> !v.getIsDeleted() && v.getStatus().equals(Status.ACTIVE))
                 .toList();
         return ApiResponse.<List<SkincareService>>builder()
                 .result(list)

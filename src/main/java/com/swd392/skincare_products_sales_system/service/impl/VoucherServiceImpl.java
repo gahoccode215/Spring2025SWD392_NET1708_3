@@ -115,7 +115,7 @@ public class VoucherServiceImpl implements VoucherService {
     public void deleteVoucher(Long voucherId) {
         Voucher voucher = voucherRepository.findByIdAndIsDeletedFalse(voucherId)
                     .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_EXIST));
-        voucher.setDeleted(true);
+        voucher.setIsDeleted(true);
         voucherRepository.save(voucher);
     }
 
@@ -164,7 +164,7 @@ public class VoucherServiceImpl implements VoucherService {
         }else{
             list = voucherRepository.findAll()
                     .stream()
-                    .filter(voucher -> !voucher.isDeleted()
+                    .filter(voucher -> !voucher.getIsDeleted()
                             && voucher.getStatus() == Status.ACTIVE)
                     .collect(Collectors.toList());
         }
