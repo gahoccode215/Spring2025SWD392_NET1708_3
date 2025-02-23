@@ -16,13 +16,11 @@ public class GenderValidator implements ConstraintValidator<GenderConstraint, Ge
         if (value == null) {
             return false;
         }
-
-        // Kiểm tra nếu giá trị có nằm trong các giá trị hợp lệ của Gender hay không
         try {
-            Gender.valueOf(value.name());  // Kiểm tra nếu giá trị có hợp lệ trong enum
+            Gender.valueOf(value.name());
             return true;
         } catch (IllegalArgumentException e) {
-            return false;  // Nếu không hợp lệ, trả về false
+            return false;
         }
     }
 }

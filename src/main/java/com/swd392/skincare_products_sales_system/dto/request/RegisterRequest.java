@@ -1,5 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.validator.BirthdayConstraint;
 import com.swd392.skincare_products_sales_system.validator.GenderConstraint;
@@ -14,7 +16,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegisterRequest  {
 
     @Size(min = 6, message = "INVALID_USERNAME")

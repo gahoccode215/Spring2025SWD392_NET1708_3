@@ -1,12 +1,18 @@
 package com.swd392.skincare_products_sales_system.service.impl;
+
+
+import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.*;
+import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.UserMapper;
+import com.swd392.skincare_products_sales_system.model.Category;
+import com.swd392.skincare_products_sales_system.model.Product;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
@@ -25,6 +31,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +63,8 @@ public class UserServiceImpl implements UserService {
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         UserPageResponse response = new UserPageResponse();
         if (users == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
-        response.setResponses(users.stream().map(userMapper::toUserResponse).collect(Collectors.toList()));
+
+        response.setUserResponses(users.stream().map(userMapper::toUserResponse).collect(Collectors.toList()));
         response.setTotalElements(users.getTotalElements());
         response.setTotalPages(users.getTotalPages());
         response.setPageNumber(users.getNumber());
@@ -78,7 +91,8 @@ public class UserServiceImpl implements UserService {
                 .phone(request.getPhone())
                 .role(role)
                 .build();
-        user.setDeleted(false);
+
+        user.setIsDeleted(false);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -122,7 +136,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        user.setDeleted(true);
+        user.setIsDeleted(true);
         userRepository.save(user);
     }
 
@@ -148,7 +162,16 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         // Chuyển đổi từ đối tượng User sang UserResponse (DTO)
-        return userMapper.toUserResponse(user);
+
+//        return userMapper.toUserResponse(user);
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .gender(user.getGender())
+                .username(user.getUsername())
+                .role(user.getRole())
+                .build();
     }
 
     private Sort getSort(String sortBy, String order) {

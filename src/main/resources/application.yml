@@ -5,15 +5,26 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: ${SPRING_PROFILES_ACTIVE:prod}
   jpa:
     hibernate:
-      ddl-auto: update  # Mặc định, từng môi trường có thể ghi đè
+      ddl-auto: update
     show-sql: true
-  data:
-    redis:
-      port: 6379
-      host: localhost
+#  data:
+#    redis:
+#      port: 6379
+#      host: localhost
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
 
 springdoc:
   api-docs:
@@ -33,3 +44,9 @@ jwt:
   signerKey: ${JWT_SIGNER_KEY:1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij}
   valid-duration: ${JWT_VALID_DURATION:3600} # in seconds
   refreshable-duration: ${JWT_REFRESHABLE_DURATION:36000} # in seconds
+
+cloudinary:
+
+
+
+

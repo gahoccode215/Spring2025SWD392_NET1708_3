@@ -84,4 +84,8 @@ public class User extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "voucher_id")
     )
      Set<Voucher> vouchers;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    List<Address> addresses;
+
 }

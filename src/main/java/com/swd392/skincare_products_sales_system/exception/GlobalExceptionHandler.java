@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -53,6 +54,30 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
+    /**
+     * Xử lý lỗi json không hợp lệ
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
+        // Tạo đối tượng lỗi mặc định
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setCode(ErrorCode.INVALID_JSON.getCode());
+
+        // Cung cấp thông điệp lỗi chi tiết
+        String errorMessage = "JSON data invalid";
+
+        // Log lỗi để kiểm tra chi tiết
+        log.error("Error processing JSON: " + exception.getMessage());
+
+        // Nếu lỗi JSON liên quan đến cấu trúc không hợp lệ hoặc định dạng, thông báo thêm
+        if (exception.getMessage().contains("JSON parse error")) {
+            errorMessage = "JSON data invalid. Please check again";
+        }
+
+        // Trả về thông điệp lỗi
+        apiResponse.setMessage(errorMessage);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);
+    }
 
 
     /**
@@ -67,13 +92,12 @@ public class GlobalExceptionHandler {
 
         log.warn("Constraint validation failed: {}", errors);
         return ResponseEntity.badRequest()
-                .body(new ApiResponse<>(
-                        HttpStatus.BAD_REQUEST.value(),
-                        "Validation failed",
-                        errors)
-                );
+                .body(ApiResponse.<Map<String, String>>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Validation failed")
+                        .result(errors)
+                        .build());
     }
-
 
     /**
      * Xử lý lỗi không có quyền truy cập (401 Unauthorized).
@@ -82,7 +106,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(AccessDeniedException exception) {
         log.warn("Access Denied: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(), ErrorCode.UNAUTHENTICATED.getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(HttpStatus.UNAUTHORIZED.value())
+                        .message(ErrorCode.UNAUTHENTICATED.getMessage())
+                        .build());
     }
 
 
@@ -93,7 +120,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
         log.warn("Data violation: {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Data input invalid", null));
+                .body(ApiResponse.<Void>builder()
+                        .code(HttpStatus.BAD_REQUEST.value())
+                        .message("Data input invalid")
+                        .build());
     }
 
     /**
@@ -103,7 +133,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleAppException(AppException exception) {
         log.error("Application error: {}", exception.getMessage());
         return ResponseEntity.status(exception.getErrorCode().getStatusCode())
-                .body(new ApiResponse<>(exception.getErrorCode().getCode(), exception.getErrorCode().getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(exception.getErrorCode().getCode())
+                        .message(exception.getMessage())
+                        .build());
+
     }
 
     /**
@@ -113,7 +147,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleUncaughtException(Exception exception) {
         log.error("Uncaught exception: ", exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ApiResponse<>(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode(), ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage(), null));
+                .body(ApiResponse.<Void>builder()
+                        .code(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode())
+                        .message(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage())
+                        .build());
     }
 
     private String mapAttribute(String message, Map<String, Object> attributes) {

@@ -1,8 +1,10 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,6 +30,10 @@ public class Category extends AbstractEntity{
 
     @Column(name = "description")
     String description;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    Status status = Status.ACTIVE;
 
     @Column(name = "thumbnail")
     String thumbnail;

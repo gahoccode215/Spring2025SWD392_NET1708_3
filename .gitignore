@@ -203,4 +203,5 @@ dependency-reduced-pom.xml
 README.html
 *.iml
 .idea
-.exercism
+.exercism.env.prod
+/src/main/resources/application-prod.yml

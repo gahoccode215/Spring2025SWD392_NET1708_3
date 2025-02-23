@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.io.Serializable;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PROTECTED)
-public abstract class AbstractPageResponse implements Serializable {
+
+public abstract class AbstractPageResponse {
+    Long totalElements;
+    Integer totalPages;
     Integer pageNumber;
     Integer pageSize;
-    Integer totalPages;
-    Long totalElements;
 }

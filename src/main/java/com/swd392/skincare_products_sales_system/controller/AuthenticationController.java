@@ -63,7 +63,7 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Logout successful")
+                .message("Logout successfully")
                 .build();
     }
     @PostMapping("/change-password")
