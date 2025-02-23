@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PROTECTED)
+
 public abstract class AbstractPageResponse {
     Long totalElements;
     Integer totalPages;

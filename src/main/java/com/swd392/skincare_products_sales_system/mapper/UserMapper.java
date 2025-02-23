@@ -8,9 +8,6 @@ import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;

@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
+
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.*;
@@ -21,7 +22,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+
 
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         UserPageResponse response = new UserPageResponse();
         if (users == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
+
         response.setUserResponses(users.stream().map(userMapper::toUserResponse).collect(Collectors.toList()));
         response.setTotalElements(users.getTotalElements());
         response.setTotalPages(users.getTotalPages());
@@ -90,6 +91,7 @@ public class UserServiceImpl implements UserService {
                 .phone(request.getPhone())
                 .role(role)
                 .build();
+
         user.setIsDeleted(false);
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -160,6 +162,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         // Chuyển đổi từ đối tượng User sang UserResponse (DTO)
+
 //        return userMapper.toUserResponse(user);
         return UserResponse.builder()
                 .id(user.getId())

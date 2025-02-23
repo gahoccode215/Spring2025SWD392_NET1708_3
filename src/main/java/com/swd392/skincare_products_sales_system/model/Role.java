@@ -31,6 +31,7 @@ public class Role extends AbstractEntity {
     String description;
 
 
+
     @JsonManagedReference  // Ngừng vòng lặp khi serialize các role
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     Set<User> users;

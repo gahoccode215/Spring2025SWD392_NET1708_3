@@ -55,6 +55,7 @@ public class ApplicationInitConfig {
                         .description("Delivery role")
                         .build());
                 Role expertRole = roleRepository.save(Role.builder()
+
                         .name(PredefinedRole.EXPERT)
                         .description("Expert role")
                         .build());
