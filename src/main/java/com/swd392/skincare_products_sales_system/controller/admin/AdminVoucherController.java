@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.VoucherCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.VoucherUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.VoucherResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;

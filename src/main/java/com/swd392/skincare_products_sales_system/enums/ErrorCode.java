@@ -75,6 +75,7 @@ public enum ErrorCode {
     //19XX
     BOOKING_EXISTED(1901, "Booking existed", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_EXIST(1902, "Booking not existed", HttpStatus.BAD_REQUEST),
+    BOOKING_ORDER_NOT_EXIST(1903, "Booking order not existed", HttpStatus.BAD_REQUEST),
     ;
 
 

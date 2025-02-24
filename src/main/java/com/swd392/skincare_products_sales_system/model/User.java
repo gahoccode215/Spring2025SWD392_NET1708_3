@@ -87,4 +87,7 @@ public class User extends AbstractEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     List<Address> addresses;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    List<Routine> routines;
+
 }

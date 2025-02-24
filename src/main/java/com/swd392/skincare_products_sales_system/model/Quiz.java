@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class Quiz extends AbstractEntity{
     String description;
 
     @Column(nullable = false, unique = true)
+    @NotNull(message = "Title cannot be null")
     String title;
 
     @Enumerated(EnumType.STRING)

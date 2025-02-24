@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -25,18 +28,26 @@ public class BookingOrder extends AbstractEntity {
     Long id;
 
     @Column
+    @FutureOrPresent
     LocalDate orderDate;
 
     @Column
+    LocalDate date;
+
+    @Column
+    @NotNull(message = "Price cannot be null")
+    @Positive(message = "Price must be a positive number")
     Float price;
 
     @Column
     String note;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "SkinType cannot be null")
     SkinType skinType;
 
     @Column
+    @NotNull(message = "Image cannot be null")
     String image;
 
     @Column

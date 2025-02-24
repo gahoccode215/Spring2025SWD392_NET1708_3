@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.request.SkincareCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.SkincareUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareCreateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.SkincareServiceResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -20,11 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j

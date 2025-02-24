@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.request.*;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;

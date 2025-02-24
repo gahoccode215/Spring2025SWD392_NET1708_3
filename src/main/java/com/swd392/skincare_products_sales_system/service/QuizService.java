@@ -1,9 +1,8 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.QuizCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.QuizUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.SubmitQuiz;
-import com.swd392.skincare_products_sales_system.dto.response.QuizPageResponse;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.QuizCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.QuizUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
