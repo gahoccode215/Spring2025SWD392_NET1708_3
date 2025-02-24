@@ -49,14 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setIsDeleted(false);
         category.setSlug(generateUniqueSlug(category.getName()));
         categoryRepository.save(category);
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .description(category.getDescription())
-                .thumbnail(category.getThumbnail())
-                .slug(category.getSlug())
-                .status(category.getStatus())
-                .build();
+        return toCategoryResponse(category);
     }
 
     @Override
@@ -76,14 +69,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setStatus(request.getStatus());
         }
         categoryRepository.save(category);
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .description(category.getDescription())
-                .thumbnail(category.getThumbnail())
-                .slug(category.getSlug())
-                .status(category.getStatus())
-                .build();
+        return toCategoryResponse(category);
     }
 
     @Override
@@ -97,14 +83,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryResponse getCategoryById(String id) {
         Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .description(category.getDescription())
-                .thumbnail(category.getThumbnail())
-                .slug(category.getSlug())
-                .status(category.getStatus())
-                .build();
+        return toCategoryResponse(category);
     }
 
     @Override
@@ -178,5 +157,15 @@ public class CategoryServiceImpl implements CategoryService {
             return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
         }
         return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
+    }
+    private CategoryResponse toCategoryResponse(Category category){
+        return CategoryResponse.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .description(category.getDescription())
+                .thumbnail(category.getThumbnail())
+                .slug(category.getSlug())
+                .status(category.getStatus())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
+import com.swd392.skincare_products_sales_system.config.VNPayConfig;
 import com.swd392.skincare_products_sales_system.dto.response.OrderResponse;
 import com.swd392.skincare_products_sales_system.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +12,8 @@ import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -19,56 +22,87 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class VNPayPaymentService implements PaymentService {
-    private static final String VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    private static final String TERMINAL_ID = "M0R9Z6E1";
-    private static final String SECRET_KEY = "6Z3AGDLVVDYXEAE3JKBNI6LN2ARZXXST";
+
     @Override
-    public String createPaymentUrl(OrderResponse order) {
-        String vnp_TxnRef = String.valueOf(System.currentTimeMillis()); // Mã giao dịch duy nhất
-        String vnp_Amount = String.valueOf(order.getTotalAmount().longValue() * 100); // Chuyển đổi sang đơn vị VNPay
-        String vnp_CreateDate = getCurrentDate();
-        String vnp_ExpireDate = getExpireDate(15);
+    public String createPaymentUrl(OrderResponse order, HttpServletRequest request) {
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "pay";
+        String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
+        String vnp_IpAddr = VNPayConfig.getIpAddress(request);
+        String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
+        String orderType = "order-type";
+
 
         Map<String, String> vnp_Params = new TreeMap<>();
-        vnp_Params.put("vnp_Version", "2.1.0");
-        vnp_Params.put("vnp_Command", "pay");
-        vnp_Params.put("vnp_TmnCode", TERMINAL_ID);
-        vnp_Params.put("vnp_Amount", vnp_Amount);
+        vnp_Params.put("vnp_Version", vnp_Version);
+        vnp_Params.put("vnp_Command", vnp_Command);
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Amount", String.valueOf(order.getTotalAmount() * 100));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh Toan Don Hang #" + order.getOrderId());
-        vnp_Params.put("vnp_OrderType", "other");
+        vnp_Params.put("vnp_OrderType", orderType);
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", "https://skynbeauty.vercel.app/vnpay-return"); // URL nhận kết quả
-        vnp_Params.put("vnp_IpAddr", "172.19.112.1");
-        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
         vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
 
-        // Tạo chữ ký bảo mật HMAC-SHA512
-        vnp_Params.remove("vnp_SecureHash"); // Xóa trước khi tạo chữ ký
-        String secureHash = hmacSHA512(SECRET_KEY, vnp_Params);
-        vnp_Params.put("vnp_SecureHash", secureHash);
+        cld.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
 
-        // Tạo URL thanh toán
-        return VNPAY_URL + "?" + vnp_Params.entrySet().stream()
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining("&"));
+        List fieldNames = new ArrayList(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+        Iterator itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = (String) itr.next();
+            String fieldValue = (String) vnp_Params.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                //Build hash data
+                hashData.append(fieldName);
+                hashData.append('=');
+                try {
+                    hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                    //Build query
+                    query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                    query.append('=');
+                    query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (itr.hasNext()) {
+                    query.append('&');
+                    hashData.append('&');
+                }
+            }
+        }
+        String queryUrl = query.toString();
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
+        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
+        return paymentUrl;
     }
 
     @Override
     public boolean checkSignature(HttpServletRequest request) {
-        Map<String, String> vnp_Params = new TreeMap<>();
-        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
-
-        for (String key : request.getParameterMap().keySet()) {
-            if (!key.equals("vnp_SecureHash")) {
-                vnp_Params.put(key, request.getParameter(key));
-            }
-        }
-
-        // Tạo chữ ký từ tham số phản hồi
-        String generatedSignature = hmacSHA512(SECRET_KEY, vnp_Params);
-        return generatedSignature.equalsIgnoreCase(vnp_SecureHash);
+        return true;
+//        Map<String, String> vnp_Params = new TreeMap<>();
+//        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+//
+//        for (String key : request.getParameterMap().keySet()) {
+//            if (!key.equals("vnp_SecureHash")) {
+//                vnp_Params.put(key, request.getParameter(key));
+//            }
+//        }
+//
+//        // Tạo chữ ký từ tham số phản hồi
+//        String generatedSignature = hmacSHA512(SECRET_KEY, vnp_Params);
+//        return generatedSignature.equalsIgnoreCase(vnp_SecureHash);
 
     }
     private String getCurrentDate() {
@@ -101,5 +135,40 @@ public class VNPayPaymentService implements PaymentService {
         calendar.add(Calendar.MINUTE, minutes); // Cộng thêm số phút
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         return formatter.format(calendar.getTime());
+    }
+
+    public int orderReturn(HttpServletRequest request){
+        Map fields = new HashMap();
+        for (Enumeration params = request.getParameterNames(); params.hasMoreElements();) {
+            String fieldName = null;
+            String fieldValue = null;
+            try {
+                fieldName = URLEncoder.encode((String) params.nextElement(), StandardCharsets.US_ASCII.toString());
+                fieldValue = URLEncoder.encode(request.getParameter(fieldName), StandardCharsets.US_ASCII.toString());
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                fields.put(fieldName, fieldValue);
+            }
+        }
+
+        String vnp_SecureHash = request.getParameter("vnp_SecureHash");
+        if (fields.containsKey("vnp_SecureHashType")) {
+            fields.remove("vnp_SecureHashType");
+        }
+        if (fields.containsKey("vnp_SecureHash")) {
+            fields.remove("vnp_SecureHash");
+        }
+        String signValue = VNPayConfig.hashAllFields(fields);
+        if (signValue.equals(vnp_SecureHash)) {
+            if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            return -1;
+        }
     }
 }

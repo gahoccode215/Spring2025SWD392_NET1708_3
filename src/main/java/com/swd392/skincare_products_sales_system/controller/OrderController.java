@@ -5,8 +5,8 @@ import com.swd392.skincare_products_sales_system.dto.response.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import com.swd392.skincare_products_sales_system.service.PaymentFactory;
-import com.swd392.skincare_products_sales_system.service.PaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,10 +24,10 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public ApiResponse<OrderResponse> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId,
-                                               @RequestParam("paymentMethod") PaymentMethod paymentMethod) {
+                                               @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) {
         OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
         if(paymentMethod != PaymentMethod.COD){
-            String paymentUrl = paymentFactory.getPaymentService(paymentMethod).createPaymentUrl(orderResponse);
+            String paymentUrl = paymentFactory.getPaymentService(paymentMethod).createPaymentUrl(orderResponse, request);
             return ApiResponse.<OrderResponse>builder()
                     .code(HttpStatus.OK.value())
                     .message("Redirecting to VNPay")

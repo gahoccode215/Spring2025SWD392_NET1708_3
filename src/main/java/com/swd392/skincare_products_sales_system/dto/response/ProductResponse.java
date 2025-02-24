@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.Category;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,4 +20,7 @@ public class ProductResponse {
     String thumbnail;
     String slug;
     Status status;
+    String category_id;
+    String brand_id;
+    Category category;
 }

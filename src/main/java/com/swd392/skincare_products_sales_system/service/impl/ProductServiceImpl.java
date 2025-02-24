@@ -64,15 +64,7 @@ public class ProductServiceImpl implements ProductService {
         product.setIsDeleted(false);
         log.info("Product: {}", product);
         productRepository.save(product);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .slug(product.getSlug())
-                .thumbnail(product.getThumbnail())
-                .status(product.getStatus())
-                .build();
+        return toProductResponse(product);
     }
 
     @Override
@@ -111,15 +103,7 @@ public class ProductServiceImpl implements ProductService {
             product.setStatus(request.getStatus());
         }
         productRepository.save(product);
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .slug(product.getSlug())
-                .thumbnail(product.getThumbnail())
-                .status(product.getStatus())
-                .build();
+        return toProductResponse(product);
     }
 
     @Override
@@ -155,6 +139,9 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setSlug(product.getSlug());
             productResponse.setThumbnail(product.getThumbnail());
             productResponse.setStatus(product.getStatus());
+            if(product.getCategory() != null){
+                productResponse.setCategory(product.getCategory());
+            }
             productResponses.add(productResponse);
         }
         response.setProductResponses(productResponses);
@@ -170,29 +157,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse getProductBySlug(String slug) {
         Product product = productRepository.findBySlugAndIsDeletedFalseAndStatus(slug).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .slug(product.getSlug())
-                .thumbnail(product.getThumbnail())
-                .status(product.getStatus())
-                .build();
+        return toProductResponse(product);
     }
 
     @Override
     public ProductResponse getProductById(String id) {
         Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .slug(product.getSlug())
-                .thumbnail(product.getThumbnail())
-                .status(product.getStatus())
-                .build();
+        return toProductResponse(product);
     }
 
     @Override
@@ -227,5 +198,23 @@ public class ProductServiceImpl implements ProductService {
             uniqueSlug = baseSlug + "-" + slugUtil.generateRandomString(6);
         }
         return uniqueSlug;
+    }
+    private ProductResponse toProductResponse(Product product){
+
+         ProductResponse productResponse = ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .slug(product.getSlug())
+                .thumbnail(product.getThumbnail())
+//                .category_id(product.getCategory().getId())
+                .status(product.getStatus())
+                .build();
+         if(product.getCategory() != null){
+             Category category = product.getCategory();
+             productResponse.setCategory(category);
+         }
+         return productResponse;
     }
 }

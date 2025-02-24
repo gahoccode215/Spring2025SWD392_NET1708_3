@@ -25,5 +25,4 @@ public class ProductCreationRequest {
     String thumbnail;
     Long brand_id;
     String category_id;
-
 }

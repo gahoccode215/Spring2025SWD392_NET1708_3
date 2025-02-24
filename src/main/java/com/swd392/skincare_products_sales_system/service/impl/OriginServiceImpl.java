@@ -51,14 +51,7 @@ public class OriginServiceImpl implements OriginService {
                 .build();
         origin.setIsDeleted(false);
         originRepository.save(origin);
-        return OriginResponse.builder()
-                .id(origin.getId())
-                .name(origin.getName())
-                .description(origin.getDescription())
-                .thumbnail(origin.getThumbnail())
-                .slug(origin.getSlug())
-                .status(origin.getStatus())
-                .build();
+        return toOriginResponse(origin);
     }
 
     @Override
@@ -72,41 +65,27 @@ public class OriginServiceImpl implements OriginService {
     @Override
     public OriginResponse getOriginById(Long id) {
         Origin origin = originRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.ORIGIN_NOT_EXISTED));
-        return OriginResponse.builder()
-                .id(origin.getId())
-                .name(origin.getName())
-                .description(origin.getDescription())
-                .thumbnail(origin.getThumbnail())
-                .slug(origin.getSlug())
-                .status(origin.getStatus())
-                .build();
+        return toOriginResponse(origin);
     }
 
     @Override
     public OriginResponse update(OriginUpdateRequest request, Long id) {
         Origin origin = originRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.ORIGIN_NOT_EXISTED));
 
-        if(request.getName() != null){
+        if (request.getName() != null) {
             origin.setName(request.getName());
         }
-        if(request.getDescription() != null){
+        if (request.getDescription() != null) {
             origin.setDescription(request.getDescription());
         }
-        if(request.getThumbnail() != null){
+        if (request.getThumbnail() != null) {
             origin.setThumbnail(request.getThumbnail());
         }
-        if(request.getStatus() != null){
+        if (request.getStatus() != null) {
             origin.setStatus(request.getStatus());
         }
         originRepository.save(origin);
-        return OriginResponse.builder()
-                .id(origin.getId())
-                .name(origin.getName())
-                .description(origin.getDescription())
-                .thumbnail(origin.getThumbnail())
-                .slug(origin.getSlug())
-                .status(origin.getStatus())
-                .build();
+        return toOriginResponse(origin);
     }
 
     @Override
@@ -159,6 +138,7 @@ public class OriginServiceImpl implements OriginService {
         }
         return uniqueSlug;
     }
+
     private Sort getSort(String sortBy, String order) {
         if (sortBy == null) {
             sortBy = Query.NAME; // mặc định là sắp xếp theo tên nếu không có sortBy
@@ -173,5 +153,16 @@ public class OriginServiceImpl implements OriginService {
             return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
         }
         return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
+    }
+
+    private OriginResponse toOriginResponse(Origin origin) {
+        return OriginResponse.builder()
+                .id(origin.getId())
+                .name(origin.getName())
+                .description(origin.getDescription())
+                .thumbnail(origin.getThumbnail())
+                .slug(origin.getSlug())
+                .status(origin.getStatus())
+                .build();
     }
 }
