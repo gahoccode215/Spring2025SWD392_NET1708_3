@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
@@ -36,6 +37,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
+    @JsonIgnore
     Address address;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +49,7 @@ public class Order {
     Double shippingFee;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
     List<OrderItem> orderItems;
 
     String discountCode;

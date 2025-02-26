@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -30,9 +31,11 @@ public class Address {
 
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    @JsonIgnore
     List<Order> orders;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     User user;
 }

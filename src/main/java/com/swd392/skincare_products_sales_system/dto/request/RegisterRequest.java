@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.validator.BirthdayConstraint;
 import com.swd392.skincare_products_sales_system.validator.GenderConstraint;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +27,10 @@ public class RegisterRequest  {
 
     @Size(min = 6, message = "INVALID_PASSWORD")
     String password;
+
+//    @NotBlank(message = "EMAIL_REQUIRED")
+//    @Email(message = "INVALID_EMAIL")
+//    String email;
 
     @BirthdayConstraint(min = 6, message = "INVALID_BIRTHDAY")
     LocalDate birthday;

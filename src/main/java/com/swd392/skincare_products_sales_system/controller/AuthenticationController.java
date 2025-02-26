@@ -3,7 +3,13 @@ package com.swd392.skincare_products_sales_system.controller;
 import com.nimbusds.jose.JOSEException;
 import com.swd392.skincare_products_sales_system.dto.request.*;
 import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.exception.AppException;
+import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,6 +31,8 @@ import java.text.ParseException;
 public class AuthenticationController {
 
     AuthenticationService authenticationService;
+    JwtUtil jwtUtil;
+    UserRepository userRepository;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -77,5 +85,26 @@ public class AuthenticationController {
                 .message("Change password successfully")
                 .build();
     }
+//    @GetMapping("/verify")
+//    public String verifyUser(@RequestParam String token) {
+//        String username;
+//        try {
+//            username = jwtUtil.extractUsername(token);
+//        } catch (Exception e) {
+//            throw new AppException(ErrorCode.INVALID_TOKEN);
+//        }
+//
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+//
+//        if (user.getStatus() == Status.ACTIVE) {
+//            return "Tài khoản đã được xác thực trước đó!";
+//        }
+//
+//        user.setStatus(Status.ACTIVE);
+//        userRepository.save(user);
+//
+//        return "Tài khoản xác thực thành công!";
+//    }
 
 }

@@ -26,13 +26,14 @@ public class Batch extends AbstractEntity {
     @JsonIgnore
     Product product;
 
+    @Column(name = "quantity")
     Integer quantity;
+
+    @Column(name = "manaufactur_date")
     LocalDate manufactureDate;
+
+    @Column(name = "expiration_date")
     LocalDate expirationDate;
 
 
-    // Kiểm tra xem lô có còn sản phẩm không
-    public boolean isAvailable() {
-        return quantity > 0;
-    }
 }

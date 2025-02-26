@@ -2,7 +2,9 @@ package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
+import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.Address;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,5 +25,7 @@ public class OrderResponse {
     String username;
     LocalDateTime orderDate;
     PaymentMethod paymentMethod;
+    PaymentStatus paymentStatus;
+    Address address;
     List<OrderItemResponse> orderResponseItemList;
 }

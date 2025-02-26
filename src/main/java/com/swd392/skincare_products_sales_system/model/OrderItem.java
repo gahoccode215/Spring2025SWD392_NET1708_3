@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -20,10 +21,12 @@ public class OrderItem {
     Long id; // Mã sản phẩm trong đơn hàng
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinColumn(name = "order_id", nullable = false)
     Order order; // Liên kết với đơn hàng
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "product_id", nullable = false)
     Product product; // Liên kết với sản phẩm
 

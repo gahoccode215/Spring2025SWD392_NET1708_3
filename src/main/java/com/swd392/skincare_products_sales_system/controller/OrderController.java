@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.OrderPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.service.OrderService;
@@ -26,6 +27,16 @@ import java.util.Map;
 public class OrderController {
     OrderService orderService;
     VNPayService vnPayService;
+
+
+    @GetMapping("/history-order")
+    public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        return ApiResponse.<OrderPageResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get order history")
+                .result(orderService.getOrdersByCustomer(page, size))
+                .build();
+    }
 
     @PostMapping("/checkout")
     public ApiResponse<OrderResponse> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId,

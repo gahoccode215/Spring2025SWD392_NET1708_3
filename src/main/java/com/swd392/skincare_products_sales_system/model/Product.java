@@ -37,9 +37,6 @@ public class Product extends AbstractEntity{
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @Column(name = "usage_instruction")
-    String usageInstruction;
-
     @Column(name = "size")
     String size;
 

@@ -24,6 +24,10 @@ public enum ErrorCode {
     ORIGIN_NOT_EXISTED(1010, "Origin not existed", HttpStatus.BAD_REQUEST),
     ADDRESS_NOT_FOUND(1011, "Address not found", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND(1012, "Order not found", HttpStatus.BAD_REQUEST),
+    EMAIL_SENDING_FAILED(1013, "Email fail", HttpStatus.BAD_REQUEST),
+    EMAIL_REQUIRED(1014, "Email can not blank", HttpStatus.BAD_REQUEST),
+    EMAIL_EXISTED(1015, "Email existed", HttpStatus.BAD_REQUEST),
+    BATCH_NOT_FOUND(1016, "Batch not found", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
@@ -39,6 +43,7 @@ public enum ErrorCode {
     INVALID_JSON(1109, "Json invalid", HttpStatus.BAD_REQUEST),
     INVALID_QUANTITY(1110, "Quantity invalid.Quantity must greater than 0", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_METHOD(1111, "Invalid Payment Method", HttpStatus.BAD_REQUEST),
+    INVALID_EMAIL(1112, "Invalid Email", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),
