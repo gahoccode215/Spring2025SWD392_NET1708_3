@@ -26,7 +26,7 @@ public class Cart {
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @OneToOne
     @JoinColumn(name = "user_id")
-    User user;  // Liên kết giỏ hàng với người dùng
+    User user;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     Set<CartItem> items = new HashSet<>();

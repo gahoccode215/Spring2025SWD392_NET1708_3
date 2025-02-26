@@ -2,9 +2,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.response.OrderItemResponse;
 import com.swd392.skincare_products_sales_system.dto.response.OrderResponse;
-import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
-import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.repository.*;
@@ -33,85 +31,82 @@ public class OrderServiceImpl implements OrderService {
     CartRepository cartRepository;
     UserRepository userRepository;
     CartItemRepository cartItemRepository;
-
+    OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
     public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod) {
-        User user = getAuthenticatedUser();  // Lấy người dùng đã đăng nhập
+        User user = getAuthenticatedUser();
 
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
 
-        // Kiểm tra phương thức thanh toán hợp lệ
         if (paymentMethod == null) {
             throw new AppException(ErrorCode.INVALID_PAYMENT_METHOD);
         }
 
-        // Tạo đơn hàng và lưu vào database
         Order order = buildOrder(cart, address, paymentMethod);
-        Order savedOrder = saveOrderAndItems(order, cart);
+        order = orderRepository.save(order); // LƯU vào DB trước (để có ID)
+
+        List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
+        orderItemRepository.saveAll(orderItems); // Lưu danh sách OrderItems
+
+        order.setOrderItems(orderItems);
+        orderRepository.save(order);
+
         if (paymentMethod == PaymentMethod.COD) {
             clearCart(cart);
         }
-        // Tạo OrderResponse từ đơn hàng đã lưu
-        return mapToOrderResponse(savedOrder);
-    }
 
-    @Override
-    public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId)
-                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return mapToOrderResponse(order);
     }
 
     @Override
     @Transactional
-    public void confirmOrder(Long orderId) {
+    public void updateOrderStatus(Long orderId, boolean isPaid) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
-        order.setStatus(Status.PAID);
+        order.setPaymentStatus(isPaid ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
+        order.setStatus(OrderStatus.PENDING);
         orderRepository.save(order);
 
-        // Xóa giỏ hàng sau khi thanh toán thành công
-        Cart cart = cartRepository.findByUser(order.getAddress().getUser())
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
-
-        clearCart(cart);
+        if (isPaid) {
+            Cart cart = cartRepository.findByUser(order.getAddress().getUser())
+                    .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
+            clearCart(cart);
+        }
     }
 
-    // Tạo đối tượng Order từ Cart và Address
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {
-        Order order = Order.builder()
+        return Order.builder()
                 .totalAmount(cart.getTotalPrice())
                 .username(cart.getUser().getUsername())
                 .orderDate(LocalDateTime.now())
                 .paymentMethod(paymentMethod)
                 .shippingFee(0.0)
                 .address(address)
-                .status(Status.PENDING)
+                .paymentStatus(PaymentStatus.NOT_PAID)
+                .status(OrderStatus.PENDING)
                 .build();
-
-        order.setOrderItems(createOrderItemsFromCart(cart, order));
-        return order;
     }
 
-    // Chuyển đổi CartItem thành OrderItem
     private List<OrderItem> createOrderItemsFromCart(Cart cart, Order order) {
         return cart.getItems().stream()
-                .map(cartItem -> OrderItem.builder()
-                        .product(cartItem.getProduct())
-                        .quantity(cartItem.getQuantity())
-                        .price(cartItem.getPrice())
-                        .totalPrice(cartItem.getPrice() * cartItem.getQuantity())
-                        .order(order)  // ✅ Gán Order trước khi lưu
-                        .build())
+                .map(cartItem -> {
+                    OrderItem orderItem = new OrderItem();
+                    orderItem.setOrder(order);
+                    orderItem.setProduct(cartItem.getProduct());
+                    orderItem.setQuantity(cartItem.getQuantity());
+                    orderItem.setPrice(cartItem.getPrice());
+                    orderItem.setTotalPrice(cartItem.getPrice() * cartItem.getQuantity());
+                    return orderItem;
+                })
                 .collect(Collectors.toList());
     }
 
-    // Chuyển đổi Order thành OrderResponse
     private OrderResponse mapToOrderResponse(Order order) {
         List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
                 .map(item -> OrderItemResponse.builder()
@@ -139,17 +134,8 @@ public class OrderServiceImpl implements OrderService {
         return userRepository.findByUsernameOrThrow(username);
     }
 
-    // Lưu OrderItems sau khi Order đã được lưu
-    private Order saveOrderAndItems(Order order, Cart cart) {
-        Order savedOrder = orderRepository.save(order);
-        List<OrderItem> orderItems = order.getOrderItems();
-        savedOrder.setOrderItems(orderItems);
-        // Lưu lại Order cùng với OrderItems
-        return orderRepository.save(savedOrder);
-    }
-
     private void clearCart(Cart cart) {
-        cartItemRepository.deleteAll(cart.getItems()); // Xóa tất cả CartItem
+        cartItemRepository.deleteAll(cart.getItems());
         cart.getItems().clear();
         cart.setTotalPrice(0.0);
         cartRepository.save(cart);

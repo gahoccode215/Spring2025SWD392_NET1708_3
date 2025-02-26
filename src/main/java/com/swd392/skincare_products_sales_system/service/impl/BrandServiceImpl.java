@@ -36,10 +36,9 @@ public class BrandServiceImpl implements BrandService {
     Slugify slugify;
     SlugUtil slugUtil;
 
-
     @Override
     @Transactional
-    public BrandResponse createBrand(BrandCreationRequest request)  {
+    public BrandResponse createBrand(BrandCreationRequest request) {
         Brand brand = Brand.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -49,14 +48,7 @@ public class BrandServiceImpl implements BrandService {
         brand.setIsDeleted(false);
         brand.setSlug(generateUniqueSlug(brand.getName()));
         brandRepository.save(brand);
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .description(brand.getDescription())
-                .thumbnail(brand.getThumbnail())
-                .slug(brand.getSlug())
-                .status(brand.getStatus())
-                .build();
+        return toBrandResponse(brand);
     }
 
     @Override
@@ -70,15 +62,7 @@ public class BrandServiceImpl implements BrandService {
     @Override
     public BrandResponse getBrandById(Long id) {
         Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .description(brand.getDescription())
-                .thumbnail(brand.getThumbnail())
-                .slug(brand.getSlug())
-                .status(brand.getStatus())
-                .build();
-
+        return toBrandResponse(brand);
     }
 
     @Override
@@ -93,53 +77,29 @@ public class BrandServiceImpl implements BrandService {
     @Transactional
     public BrandResponse updateBrand(BrandUpdateRequest request, Long id) {
         Brand brand = brandRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
-
-        if(request.getName() != null){
-            brand.setName(request.getName());
-        }
-        if(request.getDescription() != null){
-            brand.setDescription(request.getDescription());
-        }
-        if(request.getThumbnail() != null){
-            brand.setThumbnail(request.getThumbnail());
-        }
-        if(request.getStatus() != null){
-            brand.setStatus(request.getStatus());
-        }
+        if (request.getName() != null) brand.setName(request.getName());
+        if (request.getDescription() != null) brand.setDescription(request.getDescription());
+        if (request.getThumbnail() != null) brand.setThumbnail(request.getThumbnail());
+        if (request.getStatus() != null) brand.setStatus(request.getStatus());
         brandRepository.save(brand);
-        return BrandResponse.builder()
-                .id(brand.getId())
-                .name(brand.getName())
-                .description(brand.getDescription())
-                .thumbnail(brand.getThumbnail())
-                .slug(brand.getSlug())
-                .status(brand.getStatus())
-                .build();
+        return toBrandResponse(brand);
 
     }
 
     @Override
     public BrandPageResponse getBrands(boolean admin, String keyword, int page, int size, String sortBy, String order) {
         if (page > 0) page -= 1;
-
         Pageable pageable;
         Sort sort = getSort(sortBy, order);
         pageable = PageRequest.of(page, size, sort);
-
-
         Page<Brand> brands;
         if (admin) {
             brands = brandRepository.findAllByFilters(keyword, null, pageable);
         } else {
             brands = brandRepository.findAllByFilters(keyword, Status.ACTIVE, pageable);
         }
-
-        // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         BrandPageResponse response = new BrandPageResponse();
-
         List<BrandResponse> brandResponses = new ArrayList<>();
-
-        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
         for (Brand brand : brands.getContent()) {
             BrandResponse brandResponse = new BrandResponse();
             brandResponse.setId(brand.getId());
@@ -168,6 +128,7 @@ public class BrandServiceImpl implements BrandService {
         }
         return uniqueSlug;
     }
+
     private Sort getSort(String sortBy, String order) {
         if (sortBy == null) {
             sortBy = Query.NAME; // mặc định là sắp xếp theo tên nếu không có sortBy
@@ -180,5 +141,16 @@ public class BrandServiceImpl implements BrandService {
             return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
         }
         return order.equals(Query.ASC) ? Sort.by(Query.NAME).ascending() : Sort.by(Query.NAME).descending();
+    }
+
+    private BrandResponse toBrandResponse(Brand brand) {
+        return BrandResponse.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .description(brand.getDescription())
+                .thumbnail(brand.getThumbnail())
+                .slug(brand.getSlug())
+                .status(brand.getStatus())
+                .build();
     }
 }

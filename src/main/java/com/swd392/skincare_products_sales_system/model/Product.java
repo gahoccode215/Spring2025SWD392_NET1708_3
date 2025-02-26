@@ -43,24 +43,27 @@ public class Product extends AbstractEntity{
     @Column(name = "size")
     String size;
 
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonIgnore
     List<Batch> batches;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "brand_id")
     Brand brand;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "origin_id")
     Origin origin;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "skin_type_id")
     SkinType skinType;
 

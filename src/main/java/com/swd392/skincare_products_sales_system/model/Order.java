@@ -1,6 +1,8 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
+import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,30 +25,32 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id; // Mã đơn hàng
+    Long id;
 
-    Double totalAmount; // Tổng giá trị đơn hàng (bao gồm phí vận chuyển, giảm giá)
-    String orderInfo; // Thông tin đơn hàng (ví dụ: "Thanh toán đơn hàng #12345")
-    String username; // Tên người dùng
-    LocalDateTime orderDate; // Ngày tạo đơn hàng
+    Double totalAmount;
+    String orderInfo;
+    String username;
+    LocalDateTime orderDate;
     @Enumerated(EnumType.STRING)
-    Status status; // Trạng thái đơn hàng (ví dụ: "Đang xử lý", "Đã giao", "Đã hủy")
+    OrderStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     Address address;
 
-    // Phương thức thanh toán
     @Enumerated(EnumType.STRING)
-    PaymentMethod paymentMethod; // Phương thức thanh toán (COD, Thẻ ATM, Thẻ quốc tế, v.v.)
-    Double shippingFee; // Phí vận chuyển
+    PaymentStatus paymentStatus;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<OrderItem> orderItems;  // Danh sách các sản phẩm trong đơn hàng
 
-    // Các thông tin khác
-    String discountCode; // Mã giảm giá (nếu có)
-    Double discountAmount; // Số tiền giảm giá
-    String deliveryTime; // Thời gian giao hàng dự kiến
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod;
+    Double shippingFee;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<OrderItem> orderItems;
+
+    String discountCode;
+    Double discountAmount;
+    String deliveryTime;
 
 }

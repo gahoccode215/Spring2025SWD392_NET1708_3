@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
+import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import lombok.*;
@@ -18,7 +19,7 @@ public class OrderResponse {
     Long orderId;
     Double totalAmount;
     String orderInfo;
-    Status status;
+    OrderStatus status;
     String username;
     LocalDateTime orderDate;
     PaymentMethod paymentMethod;

@@ -71,19 +71,10 @@ public class OriginServiceImpl implements OriginService {
     @Override
     public OriginResponse update(OriginUpdateRequest request, Long id) {
         Origin origin = originRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.ORIGIN_NOT_EXISTED));
-
-        if (request.getName() != null) {
-            origin.setName(request.getName());
-        }
-        if (request.getDescription() != null) {
-            origin.setDescription(request.getDescription());
-        }
-        if (request.getThumbnail() != null) {
-            origin.setThumbnail(request.getThumbnail());
-        }
-        if (request.getStatus() != null) {
-            origin.setStatus(request.getStatus());
-        }
+        if (request.getName() != null) origin.setName(request.getName());
+        if (request.getDescription() != null) origin.setDescription(request.getDescription());
+        if (request.getThumbnail() != null) origin.setThumbnail(request.getThumbnail());
+        if (request.getStatus() != null) origin.setStatus(request.getStatus());
         originRepository.save(origin);
         return toOriginResponse(origin);
     }
@@ -91,25 +82,17 @@ public class OriginServiceImpl implements OriginService {
     @Override
     public OriginPageResponse getAll(boolean admin, String keyword, int page, int size, String sortBy, String order) {
         if (page > 0) page -= 1;
-
         Pageable pageable;
         Sort sort = getSort(sortBy, order);
         pageable = PageRequest.of(page, size, sort);
-
-
         Page<Origin> origins;
         if (admin) {
             origins = originRepository.findAllByFilters(keyword, null, pageable);
         } else {
             origins = originRepository.findAllByFilters(keyword, Status.ACTIVE, pageable);
         }
-
-        // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         OriginPageResponse response = new OriginPageResponse();
-
         List<OriginResponse> originResponses = new ArrayList<>();
-
-        // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
         for (Origin origin : origins.getContent()) {
             OriginResponse originResponse = new OriginResponse();
             originResponse.setId(origin.getId());

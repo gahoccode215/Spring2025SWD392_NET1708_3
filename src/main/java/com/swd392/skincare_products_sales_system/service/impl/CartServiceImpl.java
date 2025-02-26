@@ -43,22 +43,15 @@ public class CartServiceImpl implements CartService {
     public void addProductToCart(String productId, Integer quantity) {
         User user = getAuthenticatedUser();
         Product product = getProductById(productId);
-
-        // Tạo hoặc lấy giỏ hàng
         Cart cart = getOrCreateCartEntity(user);
-        // Kiểm tra nếu sản phẩm đã có trong giỏ hàng
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst();
-
-        // Nếu đã có thì cập nhật số lượng, nếu chưa có thì thêm sản phẩm mới vào giỏ hàng
         if (existingItem.isPresent()) {
             existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
         } else {
             addNewItemToCart(cart, product, quantity);
         }
-
-        // Cập nhật lại tổng giá trị giỏ hàng
         cart.updateTotalPrice();
         cartRepository.save(cart);
     }
@@ -72,18 +65,11 @@ public class CartServiceImpl implements CartService {
         if (products.size() != productIds.size()) {
             throw new AppException(ErrorCode.PRODUCT_NOT_EXISTED);
         }
-        // Lưu các CartItem cần xóa
         List<CartItem> itemsToRemove = cart.getItems().stream()
                 .filter(cartItem -> productIds.contains(cartItem.getProduct().getId()))
                 .toList();
-
-        // Xóa các sản phẩm trong giỏ hàng
         cart.getItems().removeAll(itemsToRemove);
-        // Xóa các CartItem khỏi cơ sở dữ liệu
         cartItemRepository.deleteAll(itemsToRemove);
-
-
-        // Cập nhật lại tổng giá trị của giỏ hàng sau khi xóa sản phẩm
         cart.updateTotalPrice();
         cartRepository.save(cart);
     }
@@ -93,41 +79,28 @@ public class CartServiceImpl implements CartService {
     public CartResponse getCart() {
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCartEntity(user);
-
-        // Tính tổng giá trị giỏ hàng
         Double totalPrice = calculateTotalPrice(cart);
-
-        // Chuyển đổi CartItem thành CartItemResponse
         List<CartItemResponse> itemResponses = convertCartItemsToResponses(cart);
-
-        // Tạo và trả về CartResponse
         return createCartResponse(cart, itemResponses, totalPrice);
     }
 
     @Override
     @Transactional
     public void updateProductQuantityInCart(String productId, Integer quantity) {
-        // Lấy người dùng đã đăng nhập
         User user = getAuthenticatedUser();
         Cart cart = getOrCreateCartEntity(user);
-
-        // Kiểm tra nếu sản phẩm tồn tại trong giỏ hàng
         CartItem cartItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-
-        // Kiểm tra số lượng mới, nếu số lượng hợp lệ thì cập nhật
         if (quantity > 0) {
             cartItem.setQuantity(quantity);
         } else {
             throw new AppException(ErrorCode.INVALID_QUANTITY);
         }
-        // Cập nhật lại tổng giá trị của giỏ hàng
         cart.updateTotalPrice();
-        cartRepository.save(cart);  // Lưu giỏ hàng đã cập nhật
+        cartRepository.save(cart);
     }
-
 
     private User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
