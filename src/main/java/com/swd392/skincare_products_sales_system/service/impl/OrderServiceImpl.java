@@ -114,6 +114,42 @@ public class OrderServiceImpl implements OrderService {
         return response;
     }
 
+    @Override
+    public OrderPageResponse getOrdersByAdmin(int page, int size) {
+//        User user = getAuthenticatedUser();
+        if (page > 0) page -= 1;
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Order> orders = orderRepository.findAll(pageable);
+        OrderPageResponse response = new OrderPageResponse();
+        List<OrderResponse> orderResponses = new ArrayList<>();
+        for(Order x : orders.getContent()){
+            OrderResponse orderResponse = new OrderResponse();
+            orderResponse.setOrderId(x.getId());
+            orderResponse.setTotalAmount(x.getTotalAmount());
+            orderResponse.setUsername(x.getUsername());
+            orderResponse.setOrderInfo(x.getOrderInfo());
+            orderResponse.setOrderDate(x.getOrderDate());
+            orderResponse.setStatus(x.getStatus());
+            orderResponse.setPaymentMethod(x.getPaymentMethod());
+            orderResponse.setPaymentStatus(x.getPaymentStatus());
+            orderResponse.setAddress(x.getAddress());
+            orderResponses.add(orderResponse);
+        }
+        response.setOrderResponseList(orderResponses);
+        response.setTotalElements(orders.getTotalElements());
+        response.setTotalPages(orders.getTotalPages());
+        response.setPageNumber(orders.getNumber());
+        response.setPageSize(orders.getSize());
+
+        return response;
+    }
+
+    @Override
+    public OrderResponse getOrderById(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return mapToOrderResponse(order);
+    }
+
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {
         return Order.builder()
                 .totalAmount(cart.getTotalPrice())
@@ -159,6 +195,8 @@ public class OrderServiceImpl implements OrderService {
                 .orderDate(order.getOrderDate())
                 .paymentMethod(order.getPaymentMethod())
                 .orderResponseItemList(itemResponses)
+                .address(order.getAddress())
+                .paymentStatus(order.getPaymentStatus())
                 .status(order.getStatus())
                 .build();
     }

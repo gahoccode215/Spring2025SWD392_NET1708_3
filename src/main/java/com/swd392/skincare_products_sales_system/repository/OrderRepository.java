@@ -15,4 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findAllByFilters(
             @Param("username") String username,
             Pageable pageable);
+
+    Page<Order> findAll(Pageable pageable);
 }

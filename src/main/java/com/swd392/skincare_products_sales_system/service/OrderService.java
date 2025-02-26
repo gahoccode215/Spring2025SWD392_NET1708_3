@@ -11,4 +11,6 @@ public interface OrderService {
     OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod);
     void updateOrderStatus(Long orderId, boolean isPaid);
     OrderPageResponse getOrdersByCustomer(int page, int size);
+    OrderPageResponse getOrdersByAdmin(int page, int size);
+    OrderResponse getOrderById(Long id);
 }
