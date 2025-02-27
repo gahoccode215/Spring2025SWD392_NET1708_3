@@ -47,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse createProduct(ProductCreationRequest request)  {
+    public ProductResponse createProduct(ProductCreationRequest request) {
         Product product = Product.builder()
                 .name(request.getName())
                 .price(request.getPrice())
@@ -81,7 +81,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductResponse updateProduct(ProductUpdateRequest request, String productId){
+    public ProductResponse updateProduct(ProductUpdateRequest request, String productId) {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
@@ -100,10 +100,10 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
         }
-        if(request.getThumbnail() != null){
+        if (request.getThumbnail() != null) {
             product.setThumbnail(request.getThumbnail());
         }
-        if(request.getStatus() != null){
+        if (request.getStatus() != null) {
             product.setStatus(request.getStatus());
         }
         productRepository.save(product);
@@ -143,7 +143,8 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setSlug(product.getSlug());
             productResponse.setThumbnail(product.getThumbnail());
             productResponse.setStatus(product.getStatus());
-            if(product.getCategory() != null){
+            productResponse.setStock(product.getStock());
+            if (product.getCategory() != null) {
                 productResponse.setCategory(product.getCategory());
             }
             productResponses.add(productResponse);
@@ -202,22 +203,25 @@ public class ProductServiceImpl implements ProductService {
         }
         return uniqueSlug;
     }
-    private ProductResponse toProductResponse(Product product){
 
-         ProductResponse productResponse = ProductResponse.builder()
+    private ProductResponse toProductResponse(Product product) {
+
+        ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .slug(product.getSlug())
                 .thumbnail(product.getThumbnail())
-//                .category_id(product.getCategory().getId())
+                .stock(product.getStock())
                 .status(product.getStatus())
                 .build();
-         if(product.getCategory() != null){
-             Category category = product.getCategory();
-             productResponse.setCategory(category);
-         }
-         return productResponse;
+        if (product.getCategory() != null) {
+            productResponse.setCategory(product.getCategory());
+        }
+        if (product.getBrand() != null) {
+            productResponse.setBrand(product.getBrand());
+        }
+        return productResponse;
     }
 }
