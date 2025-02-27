@@ -1,19 +1,17 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.AsignExpertRequest;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.QuestionRequest;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
+import com.swd392.skincare_products_sales_system.dto.response.ImageSkinResponse;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Role;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.BookingOrder;
-import com.swd392.skincare_products_sales_system.model.SkincareService;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.repository.BookingRepository;
+import com.swd392.skincare_products_sales_system.repository.ImageSkinRepository;
 import com.swd392.skincare_products_sales_system.repository.SkincareServiceRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
@@ -29,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +40,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     UserRepository userRepository;
     BookingRepository bookingRepository;
     SkincareServiceRepository serviceRepository;
+    private final ImageSkinRepository imageSkinRepository;
 
     @Override
     public List<User> filterListExpert() {
@@ -98,30 +98,52 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FormResponse bookingAdvise(FormCreateRequest request) {
+        // Authenticate user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         String username = authentication.getName();
 
+        // Fetch user information
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
+        // Fetch expert information
         User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
-                .orElse(null);
+                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
 
+        // Fetch skincare service information
         SkincareService service = serviceRepository.findById(request.getSkincareServiceId())
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_EXIST));
 
-        if (expert.getStatus().equals(Status.INACTIVE)){
+        // Check expert and service status
+        if (expert.getStatus().equals(Status.INACTIVE.name())) {
             throw new AppException(ErrorCode.USER_INACTIVE);
         }
-        if (service.getStatus().equals(Status.INACTIVE)){
+        if (service.getStatus().equals(Status.INACTIVE.name())) {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
-        String expertName = (expert != null) ? expert.getFirstName() + "" + expert.getLastName() : null;
+        // Prepare ImageSkin list
+        List<ImageSkin> imageSkinList = new ArrayList<>();
+        if (request.getImageSkins() != null && !request.getImageSkins().isEmpty()) {
+            // Map each ImageSkinRequest to ImageSkin entity
+            imageSkinList = request.getImageSkins().stream()
+                    .map(imageSkinRequest -> {
+                        ImageSkin imageSkin = new ImageSkin();
+                        imageSkin.setImage(imageSkinRequest.getImage());
+                        imageSkin.setUser(user);
+                        imageSkin.setIsDeleted(false);
+                        return imageSkin;
+                    })
+                    .collect(Collectors.toList());
+        }
 
+        // Create expert name
+        String expertName = expert.getFirstName() + " " + expert.getLastName();
+
+        // Create BookingOrder
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
                 .orderDate(LocalDateTime.now())
@@ -129,18 +151,31 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .skinCondition(request.getSkinCondition())
                 .status(BookingStatus.PENDING)
                 .allergy(request.getAllergy())
-                .image(request.getImage())
                 .skinType(request.getSkinType())
                 .expertName(expertName)
                 .skincareService(service)
+                .lastName(request.getLastName())
+                .age(request.getAge())
+                .firstName(request.getFirstName())
                 .user(user)
                 .date(LocalDateTime.now())
                 .build();
-        bookingOrder.setIsDeleted(false);
-        bookingRepository.save(bookingOrder);
+
+        // Save the BookingOrder to generate its ID
+        bookingOrder.setIsDeleted(false);  // Ensure it's not deleted
+        bookingRepository.save(bookingOrder);  // Save first to generate ID
+
+        // Now set the bookingOrder for each ImageSkin and save them
+        for (ImageSkin imageSkin : imageSkinList) {
+            imageSkin.setBookingOrder(bookingOrder);  // Associate ImageSkin with BookingOrder
+        }
+
+        // Save ImageSkins into the database
+        imageSkinRepository.saveAll(imageSkinList);
+
+        // Build and return the response
         return FormResponse.builder()
                 .note(bookingOrder.getNote())
-                .image(bookingOrder.getImage())
                 .skinType(bookingOrder.getSkinType())
                 .expertName(bookingOrder.getExpertName())
                 .allergy(bookingOrder.getAllergy())
@@ -148,10 +183,17 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .price(bookingOrder.getPrice())
                 .skincareService(service.getId())
                 .userId(user.getId())
+                .skinCondition(request.getSkinCondition())
+                .imageSkins(imageSkinList)
+                .lastName(request.getLastName())
+                .age(request.getAge())
+                .firstName(request.getFirstName())
                 .status(BookingStatus.PENDING)
                 .date(bookingOrder.getDate())
                 .build();
     }
+
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -182,7 +224,6 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .skinCondition(request.getSkinCondition())
                 .status(BookingStatus.CONTACT_CUSTOMER)
                 .allergy(request.getAllergy())
-                .image(request.getImage())
                 .skinType(request.getSkinType())
                 .expertName(booking.getExpertName())
                 .skincareService(service)
@@ -192,7 +233,6 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         bookingRepository.save(bookingOrder);
         return FormResponse.builder()
                 .note(bookingOrder.getNote())
-                .image(bookingOrder.getImage())
                 .skinType(bookingOrder.getSkinType())
                 .expertName(bookingOrder.getExpertName())
                 .allergy(bookingOrder.getAllergy())

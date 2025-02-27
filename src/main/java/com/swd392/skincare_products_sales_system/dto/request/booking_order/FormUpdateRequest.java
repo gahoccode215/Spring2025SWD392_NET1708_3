@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.request.booking_order;
 
 import com.swd392.skincare_products_sales_system.enums.SkinType;
+import com.swd392.skincare_products_sales_system.model.ImageSkin;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -28,9 +30,12 @@ public class FormUpdateRequest {
     SkinType skinType;
     String note;
     String skinCondition;
-    String image;
     String allergy;
     LocalDateTime bookDate;
     LocalDateTime date;
     String expertId;
+    String firstName;
+    String lastName;
+    Integer age;
+    List<ImageSkinRequest> imageSkin;
 }
