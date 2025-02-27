@@ -4,10 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_bookingOrder")
@@ -25,18 +31,25 @@ public class BookingOrder extends AbstractEntity {
     Long id;
 
     @Column
-    LocalDate orderDate;
+    LocalDateTime orderDate;
 
     @Column
+    LocalDateTime date;
+
+    @Column
+    @NotNull(message = "Price cannot be null")
+    @Positive(message = "Price must be a positive number")
     Float price;
 
     @Column
     String note;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "SkinType cannot be null")
     SkinType skinType;
 
     @Column
+    @NotNull(message = "Image cannot be null")
     String image;
 
     @Column
@@ -60,4 +73,9 @@ public class BookingOrder extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     User user;
+
+    @OneToMany(mappedBy = "bookingOrder")
+    @JsonIgnore
+    List<ImageSkin> imageSkins;
+
 }

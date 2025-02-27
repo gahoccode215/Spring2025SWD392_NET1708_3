@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.dto.request;
+package com.swd392.skincare_products_sales_system.dto.request.quiz;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

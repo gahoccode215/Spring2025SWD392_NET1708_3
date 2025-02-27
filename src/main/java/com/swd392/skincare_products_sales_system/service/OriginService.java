@@ -1,10 +1,7 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.OriginCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.OriginUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
 import com.swd392.skincare_products_sales_system.dto.response.OriginPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.OriginResponse;
 

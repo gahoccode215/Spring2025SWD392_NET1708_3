@@ -80,4 +80,7 @@ public class Product extends AbstractEntity{
             inverseJoinColumns = @JoinColumn(name = "feature_id")
     )
     Set<Feature> features;
+
+    @OneToMany(mappedBy = "product")
+    List<Step> steps;
 }

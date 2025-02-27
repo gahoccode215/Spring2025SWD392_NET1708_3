@@ -2,6 +2,10 @@ package com.swd392.skincare_products_sales_system.model;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -24,9 +28,11 @@ public class Voucher extends AbstractEntity {
     Long id;
 
     @Column(nullable = false)
+    @Size(min = 5, message = "VoucherName must have at least 5 character")
     String voucherName;
 
     @Column(nullable = false)
+    @Size(min = 5, max = 100, message = "VoucherName must have at least 5 character")
     String voucherCode;
 
     @Column(nullable = false)
@@ -36,12 +42,15 @@ public class Voucher extends AbstractEntity {
     LocalDate endDate;
 
     @Column(nullable = false)
+    @Size(min = 5, message = "Description must have at least 5 character")
     String description;
 
     @Column(nullable = false)
+    @DecimalMin(value = "0", inclusive = true, message = "Point must be greater than or equal to 0")
     Integer point;
 
     @Column(nullable = false)
+    @DecimalMin(value = "0.0", inclusive = true, message = "DiscountAmount must be greater than or equal to 0")
     Float discountAmount;
 
     @Enumerated(EnumType.STRING)

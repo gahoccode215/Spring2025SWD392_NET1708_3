@@ -1,8 +1,6 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.QuizCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.QuizUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.SubmitQuiz;
+import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
@@ -16,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClient;
 
 import java.util.List;
 
@@ -33,7 +30,7 @@ public class QuizController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get an existing quiz",
-            description = "API to get an existing quiz by providing the quiz ID and updated attributes such as title, questions, and answers."
+            description = "API to get an existing quiz by providing the quiz ID and updated attributes body"
     )
     public ApiResponse<QuizResponse> getQuizById(@PathVariable Long quizId) {
         return ApiResponse.<QuizResponse>builder()
@@ -58,7 +55,7 @@ public class QuizController {
                 .build();
     }
 
-    @GetMapping("/getQuizAll")
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Get All quiz",

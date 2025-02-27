@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -19,6 +20,7 @@ public class Answer extends AbstractEntity{
     Long id;
 
     @Column(nullable = false)
+    @NotNull(message = "Answer cannot be null")
     String answerText;
 
     @Enumerated(EnumType.STRING)

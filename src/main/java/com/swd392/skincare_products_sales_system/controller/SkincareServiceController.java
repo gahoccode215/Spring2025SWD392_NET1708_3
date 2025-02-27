@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.SkincareCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.SkincareUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareCreateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.SkincareServiceResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/skincareServices")
+@RequestMapping("/skincare-service")
 @RequiredArgsConstructor
 @Tag(name = "SkincareService Controller")
 public class SkincareServiceController {
@@ -71,9 +71,9 @@ public class SkincareServiceController {
                 .build();
     }
 
-    @PatchMapping("/changeStatus/{skincareServiceId}")
+    @PatchMapping("/change-status/{skincareServiceId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change service status (ADMIN, MANAGER)", description = "API to change product status (ACTIVE/INACTIVE)")
+    @Operation(summary = "Change service status (ADMIN, MANAGER)", description = "API to change status service (ACTIVE/INACTIVE)")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> changeSkincareServiceStatus(@PathVariable Long skincareServiceId, @RequestParam Status status) {
         service.changeStatusService(skincareServiceId, status);
@@ -83,9 +83,9 @@ public class SkincareServiceController {
                 .build();
     }
 
-    @GetMapping("/system/getAllSkincare")
+    @GetMapping("/system/all")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change service status (ADMIN, MANAGER)", description = "API to change product status (ACTIVE/INACTIVE)")
+    @Operation(summary = "List voucher (ADMIN, MANAGER)", description = "Thấy được tất cả voucher kể cả đã xoá hay inactive")
     public ApiResponse<List<SkincareService>> getAllSkincare() {
 
         return ApiResponse.<List<SkincareService>>builder()
@@ -95,16 +95,12 @@ public class SkincareServiceController {
                 .build();
     }
 
-    @GetMapping("/getAllSkincare")
-    @Operation(summary = "For all role(guest) ", description = "")
+    @GetMapping("/alls")
+    @Operation(summary = "For all role(guest) ", description = "Dành cho tất cả các role thấy được voucher đang hoạt động")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<SkincareService>> getAllSkincares() {
-        List<SkincareService> list = serviceRepository.findAll()
-                .stream()
-                .filter(v -> !v.getIsDeleted() && v.getStatus().equals(Status.ACTIVE))
-                .toList();
         return ApiResponse.<List<SkincareService>>builder()
-                .result(list)
+                .result(service.getAllSkincareServices())
                 .code(HttpStatus.OK.value())
                 .message("List Voucher")
                 .build();
