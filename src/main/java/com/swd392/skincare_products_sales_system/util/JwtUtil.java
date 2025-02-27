@@ -119,4 +119,13 @@ public class JwtUtil {
         }
         return IntrospectResponse.builder().valid(isValid).build();
     }
+
+    public String extractUsername(String token) {
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
+            return signedJWT.getJWTClaimsSet().getSubject(); // Lấy username từ `subject`
+        } catch (ParseException e) {
+            throw new RuntimeException("Lỗi trích xuất username từ JWT token", e);
+        }
+    }
 }

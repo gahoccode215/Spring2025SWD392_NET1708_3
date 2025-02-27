@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,31 +37,39 @@ public class Product extends AbstractEntity{
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @Column(name = "usage_instruction")
-    String usageInstruction;
-
+    @Column(name = "size")
+    String size;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonIgnore
     List<Batch> batches;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<FeedBack> feedBacks;
 
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "brand_id")
     Brand brand;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "origin_id")
     Origin origin;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "skin_type_id")
     SkinType skinType;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     @JoinColumn(name = "category_id")
     Category category;
 

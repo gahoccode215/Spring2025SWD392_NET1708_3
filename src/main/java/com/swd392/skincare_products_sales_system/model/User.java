@@ -46,6 +46,9 @@ public class User extends AbstractEntity {
     @Temporal(TemporalType.DATE)
     LocalDate birthday;
 
+    @Column(name = "point")
+    Integer point;
+
     @Column(name = "username", unique = true, nullable = false, length = 255)
     String username;
 
@@ -56,9 +59,32 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;
 
+    @Column(name = "address")
+    String address;
+
+
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     Role role;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<Result> results;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<BookingOrder> bookingOrders;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "tbl_user_voucher",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "voucher_id")
+    )
+     Set<Voucher> vouchers;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    List<Address> addresses;
 
 }

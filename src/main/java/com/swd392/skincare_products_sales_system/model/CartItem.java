@@ -19,8 +19,7 @@ public class CartItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "cart_id")
     Cart cart;  // Liên kết sản phẩm với giỏ hàng
 
@@ -32,7 +31,5 @@ public class CartItem {
     Integer quantity;  // Số lượng sản phẩm
     Double price;  // Giá sản phẩm tại thời điểm thêm vào giỏ
 
-    public Double getTotalPrice() {
-        return this.quantity * this.price;
-    }
+
 }

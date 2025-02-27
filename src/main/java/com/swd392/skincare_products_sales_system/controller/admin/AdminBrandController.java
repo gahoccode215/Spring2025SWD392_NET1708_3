@@ -2,7 +2,6 @@ package com.swd392.skincare_products_sales_system.controller.admin;
 
 import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.BrandService;
@@ -14,9 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/brands")
@@ -30,11 +26,9 @@ public class AdminBrandController {
     @Operation(summary = "Create brand (ADMIN, MANAGER)", description = "API retrieve attribute to create brand")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<BrandResponse> createBrand(@RequestPart("request") @Valid BrandCreationRequest request,
-                                                        @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
-        if(thumbnail != null){
-            request.setThumbnail(thumbnail);
-        }
+    public ApiResponse<BrandResponse> createBrand(@RequestBody @Valid BrandCreationRequest request)
+                                                        {
+
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create brand successfully")
@@ -78,10 +72,7 @@ public class AdminBrandController {
     @Operation(summary = "Update a brand (ADMIN, MANAGER)", description = "API retrieve brand id to update brand")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<BrandResponse> updateCategory(@RequestPart("request") @Valid BrandUpdateRequest request, @PathVariable Long brandId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
-        if(thumbnail != null){
-            request.setThumbnail(thumbnail);
-        }
+    public ApiResponse<BrandResponse> updateBrand(@RequestBody @Valid BrandUpdateRequest request, @PathVariable Long brandId) {
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update brand successfully")
@@ -92,7 +83,7 @@ public class AdminBrandController {
     @Operation(summary = "Get all brands (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ApiResponse<BrandPageResponse> getAllCategories(
+    public ApiResponse<BrandPageResponse> getAllBrands(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size,
             @RequestParam(required = false) String keyword,

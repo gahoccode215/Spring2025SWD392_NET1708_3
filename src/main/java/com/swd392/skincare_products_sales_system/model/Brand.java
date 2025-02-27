@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,5 +39,6 @@ public class Brand extends AbstractEntity{
     String thumbnail;
 
     @OneToMany(mappedBy = "brand")
+    @JsonIgnore
     Set<Product> products;
 }

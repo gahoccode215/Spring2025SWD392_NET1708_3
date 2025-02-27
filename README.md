@@ -64,6 +64,15 @@ mvn clean package
 ```bash
 docker build -t api-image . 
 ```
+
+```bash
+docker tag api-image gahoccode215/swd392-api-service:latest
+```
+
+```bash
+docker push gahoccode215/swd392-api-service:latest
+```
+
 ---
 ```bash
 docker run -it -p 8080:8080 --name=api-container api-image
@@ -79,7 +88,7 @@ docker-compose logs -tf api-service
 ```
 
 ----
-3. **Guide CI/CD:**
+3. **Guide:**
 ```bash
 docker-compose up --build -d
 ```
@@ -120,6 +129,44 @@ docker run -p xxxx:xxxx --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d
 ```
 
 Lệnh run image
+
+4. **FE**
+
+- Đảm bảo đã chạy docker
+
+```bash
+docker pull gahoccode215/swd392-api-service:latest
+```
+---
+
+- Kiểm tra image đã có thì run với cổng 8080
+
+```bash
+docker run -d --name swd392-api-container -p 8080:8080 gahoccode215/swd392-api-service:latest
+```
+---
+
+- Nếu như cổng 8080 dang được sử dụng thì kill port
+
+```bash
+netstat -ano | findstr :8080
+```
+---
+
+- Kill Số cột cuối thay vào "number"
+
+```bash
+netstat -ano | findstr :"number"
+```
+--- 
+- localhost:8080/api/v1/swd392-skincare-products-sales-system/swagger-ui/index.html (Swagger)
+
+- localhost:8080/api/v1/swd392-skincare-products-sales-system (Domain)
+
+
+
+
+
 
 
 

@@ -16,9 +16,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+
 
 @RestController
 @RequestMapping("/admin/categories")
@@ -32,11 +31,9 @@ public class AdminCategoryController {
     @Operation(summary = "Create category (ADMIN, MANAGER)", description = "API retrieve attribute to create category")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<CategoryResponse> createCategory(@RequestPart("request") @Valid CategoryCreationRequest request,
-                                                        @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException {
-        if(thumbnail != null){
-            request.setThumbnail(thumbnail);
-        }
+    public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryCreationRequest request
+    )  {
+
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Create category successfully")
@@ -48,10 +45,8 @@ public class AdminCategoryController {
     @Operation(summary = "Update a category (ADMIN, MANAGER)", description = "API retrieve category id to update category")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<CategoryResponse> updateCategory(@RequestPart("request") @Valid CategoryUpdateRequest request, @PathVariable String categoryId, @RequestPart("thumbnail") MultipartFile thumbnail) throws IOException{
-        if(thumbnail != null){
-            request.setThumbnail(thumbnail);
-        }
+    public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId) {
+
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Update category successfully")

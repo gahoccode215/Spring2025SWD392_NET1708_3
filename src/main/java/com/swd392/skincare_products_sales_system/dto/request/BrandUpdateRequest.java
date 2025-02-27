@@ -2,6 +2,7 @@ package com.swd392.skincare_products_sales_system.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,5 +19,6 @@ public class BrandUpdateRequest {
     @NotBlank(message = "category name can not blank")
     String name;
     String description;
-    MultipartFile thumbnail;
+    String thumbnail;
+    Status status;
 }

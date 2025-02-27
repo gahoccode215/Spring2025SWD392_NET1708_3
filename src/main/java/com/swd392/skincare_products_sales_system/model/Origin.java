@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -31,6 +32,13 @@ public class Origin extends AbstractEntity{
     @Column(name = "slug", unique = true)
     String slug;
 
+    @Column(name = "description")
+    String description;
+
+    @Column(name = "thumbnail")
+    String thumbnail;
+
     @OneToMany(mappedBy = "origin", fetch = FetchType.EAGER)
+    @JsonIgnore
     Set<Product> products;
 }

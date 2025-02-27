@@ -17,6 +17,6 @@ public class BrandCreationRequest {
     @NotBlank(message = "brand name can not blank")
     String name;
     String description;
-    MultipartFile thumbnail;
+    String thumbnail;
     String slug;
 }

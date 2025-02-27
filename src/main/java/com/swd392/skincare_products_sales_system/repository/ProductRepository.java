@@ -18,6 +18,8 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String>, JpaSpecificationExecutor<Product> {
     Optional<Product> findByIdAndIsDeletedFalse(String productId);
 
+    @Query("SELECT x FROM Product x WHERE x.id = :productId AND x.isDeleted = false AND x.status = com.swd392.skincare_products_sales_system.enums.Status.ACTIVE")
+    Optional<Product> findByIdAndIsDeletedFalseAndStatus(@Param("productId") String productId);
     boolean existsBySlug(String slug);
 
     @Query("SELECT p FROM Product p WHERE p.isDeleted = false " +
