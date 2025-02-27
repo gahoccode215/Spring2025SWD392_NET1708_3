@@ -1,9 +1,8 @@
 package com.swd392.skincare_products_sales_system.model;
 
 
-import com.swd392.skincare_products_sales_system.enums.RoutineStauts;
+import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -39,7 +38,7 @@ public class Routine extends AbstractEntity {
     String description;
 
     @Enumerated(EnumType.STRING)
-    RoutineStauts routineStauts;
+    RoutineStatusEnum routineStauts;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

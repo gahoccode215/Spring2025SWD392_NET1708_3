@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.validator;
 
-import com.swd392.skincare_products_sales_system.enums.Role;
+import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -17,7 +17,7 @@ public class RoleValidator implements ConstraintValidator<RoleConstraint, String
         }
 
         try {
-            Role.valueOf(value);
+            RoleEnum.valueOf(value);
             return true;
         } catch (IllegalArgumentException e) {
             return false;

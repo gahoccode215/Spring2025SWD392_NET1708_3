@@ -58,7 +58,7 @@ public class VNPayService {
 
         Calendar expireCalendar = Calendar.getInstance();
         expireCalendar.setTime(new Date());
-        expireCalendar.add(Calendar.MINUTE, 10); // Hết hạn sau 10 phút
+        expireCalendar.add(Calendar.MINUTE, 20);
         String expireDate = sdf.format(expireCalendar.getTime());
         params.put("vnp_ExpireDate", expireDate);
 

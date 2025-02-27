@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
-import com.swd392.skincare_products_sales_system.enums.RoutineStauts;
+import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -20,7 +20,7 @@ public class RoutineResponse {
     String routineName;
 
     @Enumerated(EnumType.STRING)
-    RoutineStauts routineStauts;
+    RoutineStatusEnum routineStauts;
 
     @FutureOrPresent
     LocalDateTime startDate;

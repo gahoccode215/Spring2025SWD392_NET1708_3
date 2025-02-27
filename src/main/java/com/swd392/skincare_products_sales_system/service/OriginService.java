@@ -1,9 +1,9 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.OriginCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.OriginUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.OriginPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.OriginResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.OriginCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.OriginUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.OriginPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.OriginResponse;
 
 public interface OriginService {
     OriginResponse createOrigin(OriginCreationRequest request);

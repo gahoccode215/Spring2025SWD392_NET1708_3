@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.response.CartItemResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CartResponse;
+import com.swd392.skincare_products_sales_system.dto.response.cart.CartItemResponse;
+import com.swd392.skincare_products_sales_system.dto.response.cart.CartResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Cart;

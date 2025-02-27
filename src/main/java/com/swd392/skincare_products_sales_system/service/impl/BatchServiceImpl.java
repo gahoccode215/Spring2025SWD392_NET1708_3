@@ -1,11 +1,9 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.constant.Query;
-import com.swd392.skincare_products_sales_system.dto.request.BatchCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BatchUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.BatchPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BatchResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Batch;
@@ -17,15 +15,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Slf4j

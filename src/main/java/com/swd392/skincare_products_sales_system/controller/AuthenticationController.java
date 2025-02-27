@@ -1,12 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.nimbusds.jose.JOSEException;
-import com.swd392.skincare_products_sales_system.dto.request.*;
+import com.swd392.skincare_products_sales_system.dto.request.authentication.*;
 import com.swd392.skincare_products_sales_system.dto.response.*;
-import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.LoginResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RefreshTokenResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RegisterResponse;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
@@ -19,8 +17,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
 
 
 @RestController

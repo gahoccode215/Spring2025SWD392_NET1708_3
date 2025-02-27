@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormU
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Role;
+import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.BookingOrder;
@@ -26,8 +26,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,7 +45,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         List<User> list;
         list = userRepository.findAll()
                 .stream()
-                .filter(u -> u.getRole().equals(Role.EXPERT))
+                .filter(u -> u.getRole().equals(RoleEnum.EXPERT))
                 .collect(Collectors.toList());
         return list;
     }
@@ -84,7 +82,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         List<BookingOrder> list ;
-        if (user.getRole().equals(Role.CUSTOMER)) {
+        if (user.getRole().equals(RoleEnum.CUSTOMER)) {
             list = bookingRepository.findAll()
                     .stream()
                     .filter(bookingOrder -> bookingOrder.getUser().equals(user))

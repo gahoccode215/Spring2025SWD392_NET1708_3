@@ -1,13 +1,10 @@
 package com.swd392.skincare_products_sales_system.service;
 
 
-import com.swd392.skincare_products_sales_system.dto.request.BatchCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BatchUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.BatchPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BatchResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 
 public interface BatchService {
     BatchResponse importBatch(BatchCreationRequest request);

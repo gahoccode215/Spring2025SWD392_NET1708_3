@@ -1,18 +1,15 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 
-import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.constant.Query;
-import com.swd392.skincare_products_sales_system.dto.request.*;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.mapper.UserMapper;
-import com.swd392.skincare_products_sales_system.model.Category;
-import com.swd392.skincare_products_sales_system.model.Product;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
@@ -32,11 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service

@@ -1,15 +1,10 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BrandUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.BrandPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BrandResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-
-import java.io.IOException;
 
 public interface BrandService {
     BrandResponse createBrand(BrandCreationRequest request) ;

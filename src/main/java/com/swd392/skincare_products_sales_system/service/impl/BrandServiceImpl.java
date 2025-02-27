@@ -2,10 +2,10 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
-import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BrandUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BrandResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BrandUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.BrandPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BrandResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;

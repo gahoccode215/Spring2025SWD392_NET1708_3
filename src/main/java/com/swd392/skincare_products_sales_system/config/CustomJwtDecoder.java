@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.config;
 
 import com.nimbusds.jose.JOSEException;
-import com.swd392.skincare_products_sales_system.dto.request.IntrospectRequest;
+import com.swd392.skincare_products_sales_system.dto.request.authentication.IntrospectRequest;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;

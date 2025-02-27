@@ -1,8 +1,8 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.BatchCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.service.BatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
