@@ -1,11 +1,11 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.*;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_product")
-public class Product extends AbstractEntity{
+public class Product extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -39,6 +39,9 @@ public class Product extends AbstractEntity{
 
     @Column(name = "size")
     String size;
+
+    @Column(name = "stock", nullable = false)
+    Integer stock = 0; // Mặc định tồn kho = 0
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)

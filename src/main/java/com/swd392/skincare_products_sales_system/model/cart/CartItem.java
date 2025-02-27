@@ -1,6 +1,7 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.cart;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

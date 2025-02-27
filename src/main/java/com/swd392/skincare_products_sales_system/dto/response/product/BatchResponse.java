@@ -1,20 +1,20 @@
 package com.swd392.skincare_products_sales_system.dto.response.product;
 
-import com.swd392.skincare_products_sales_system.model.Product;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class BatchResponse {
-    Long id;
-    Product product;
+    String id;
+    String batchCode;
+    String productId;
     Integer quantity;
+    Double importPrice;
     LocalDate manufactureDate;
     LocalDate expirationDate;
 }
