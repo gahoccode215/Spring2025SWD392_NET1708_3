@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.service.impl;
+package com.swd392.skincare_products_sales_system.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

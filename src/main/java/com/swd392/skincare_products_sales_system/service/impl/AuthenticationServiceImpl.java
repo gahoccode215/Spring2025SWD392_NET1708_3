@@ -21,8 +21,11 @@ import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepo
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.service.EmailService;
+import com.swd392.skincare_products_sales_system.service.PostmarkService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import jakarta.mail.MessagingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,6 +49,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     JwtUtil jwtUtil;
     InvalidatedTokenRepository invalidatedTokenRepository;
     EmailService emailService;
+    PostmarkService postmarkService;
+
+//    @Value("${base.url}")
+//    private String baseUrl;
 
 
     @Override
@@ -54,16 +61,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new AppException(ErrorCode.USERNAME_EXISTED);
         }
-//        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-//            throw new AppException(ErrorCode.EMAIL_EXISTED);
-//        }
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new AppException(ErrorCode.EMAIL_EXISTED);
+        }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .gender(request.getGender())
                 .birthday(request.getBirthday())
                 .status(Status.ACTIVE)
-//                .email(request.getEmail)
+                .email(request.getEmail())
                 .build();
         // Lấy Role từ Database gắn vào
         Role customRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
@@ -71,10 +78,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRole(customRole);
         user.setIsDeleted(false);
         userRepository.save(user);
+        // Send verification email
+//        String verificationUrl = "http:localhost:8080/api/v1/swd392-skincare-products-sales-system/verify?token=" + jwtUtil.generateToken(user);
+//        try {
+//            postmarkService.sendEmail(user.getEmail(), "Verify your account",
+//                    "<p>Click the link below to verify your account:</p><a href='" + verificationUrl + "'>Verify Account</a>");
+//        } catch (Exception e) {
+//            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+//        }
 //        sendVerificationEmail(user);
         return RegisterResponse.builder()
                 .username(user.getUsername())
                 .gender(user.getGender())
+                .email(user.getEmail())
                 .birthday(user.getBirthday())
                 .build();
     }

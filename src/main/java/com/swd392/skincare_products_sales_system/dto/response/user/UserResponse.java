@@ -17,6 +17,7 @@ public class UserResponse {
     Gender gender;
     String lastName;
     String username;
-
-    Role role;
+    String email;
+    String roleName;
+    String avatar;
 }

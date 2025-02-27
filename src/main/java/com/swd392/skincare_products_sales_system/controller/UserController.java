@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.controller;
 
+import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateProfileRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.service.UserService;
@@ -31,6 +32,16 @@ public class UserController {
                 .code(HttpStatus.OK.value())
                 .message("Get profile successfully")
                 .result(userService.getUserProfile())
+                .build();
+    }
+    @PutMapping("/profile")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Update profile", description = "API to update profile")
+    ApiResponse<UserResponse> updateMyInfo(@RequestBody UserUpdateProfileRequest request) {
+        return ApiResponse.<UserResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Update profile successfully")
+                .result(userService.updateUserProfile(request))
                 .build();
     }
 

@@ -15,4 +15,5 @@ public class RegisterResponse {
     String username;
     Gender gender;
     LocalDate birthday;
+    String email;
 }

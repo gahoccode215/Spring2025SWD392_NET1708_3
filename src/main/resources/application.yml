@@ -60,8 +60,13 @@ vnpay:
   hashSecret: 6Z3AGDLVVDYXEAE3JKBNI6LN2ARZXXST
   url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   returnUrl: http://localhost:8080/api/v1/swd392-skincare-products-sales-system/orders/payment-callback
-
-
+postmark:
+  api:
+    key: ba355e86-7ee0-44c3-94fb-809826d15af5
+  from:
+    address: minhdlcnse173451@fpt.edu.vn
+base:
+  url: http://localhost:8080/api/v1/swd392-skincare-products-sales-system
 
 
 

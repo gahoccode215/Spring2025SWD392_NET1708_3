@@ -28,6 +28,7 @@ public enum ErrorCode {
     EMAIL_REQUIRED(1014, "Email can not blank", HttpStatus.BAD_REQUEST),
     EMAIL_EXISTED(1015, "Email existed", HttpStatus.BAD_REQUEST),
     BATCH_NOT_FOUND(1016, "Batch not found", HttpStatus.BAD_REQUEST),
+    EMAIL_SEND_FAILED(1018, "Email send fail", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
