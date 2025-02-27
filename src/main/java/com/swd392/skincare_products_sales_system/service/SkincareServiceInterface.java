@@ -17,4 +17,5 @@ public interface SkincareServiceInterface {
     SkincareServiceResponse updateSkincareService (SkincareUpdateRequest request, Long skincareServiceId);
     SkincareServiceResponse getSkincareServiceById(long skincareId);
     List<SkincareService> getAllSkincareService();
+    List<SkincareService> getAllSkincareServices();
 }

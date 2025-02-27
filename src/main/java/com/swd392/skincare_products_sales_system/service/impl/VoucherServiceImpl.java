@@ -40,7 +40,7 @@ public class VoucherServiceImpl implements VoucherService {
             throw new AppException(ErrorCode.VOUCHER_CODE_EXISTED);
         }
         if (request.getVoucherName() == null || request.getVoucherName().isEmpty()) {
-            throw new AppException(ErrorCode.VOUCHER_NAME_EXISTED);
+            throw new AppException(ErrorCode.VOUCHER_CODE_EXISTED);
         }
         Voucher voucher = Voucher.builder()
                 .voucherCode(request.getVoucherCode())
@@ -52,7 +52,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .discountAmount(request.getDiscountAmount())
                 .status(Status.ACTIVE)
                 .build();
-
+        voucher.setIsDeleted(false);
         voucherRepository.save(voucher);
 
         return VoucherResponse.builder()
@@ -116,6 +116,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = voucherRepository.findByIdAndIsDeletedFalse(voucherId)
                     .orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_EXIST));
         voucher.setIsDeleted(true);
+        voucher.setStatus(Status.INACTIVE);
         voucherRepository.save(voucher);
     }
 
@@ -123,7 +124,11 @@ public class VoucherServiceImpl implements VoucherService {
     public void changeStatusVoucher(Long voucherId , Status status) {
         Voucher voucher = voucherRepository.findByIdAndIsDeletedFalse(voucherId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_EXISTED));
-        voucher.setStatus(status);
+        if(voucher.getStatus() == Status.ACTIVE){
+            voucher.setStatus(Status.INACTIVE);
+        }else{
+            voucher.setStatus(Status.ACTIVE);
+        }
         voucherRepository.save(voucher);
     }
 

@@ -99,12 +99,8 @@ public class SkincareServiceController {
     @Operation(summary = "For all role(guest) ", description = "Dành cho tất cả các role thấy được voucher đang hoạt động")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<SkincareService>> getAllSkincares() {
-        List<SkincareService> list = serviceRepository.findAll()
-                .stream()
-                .filter(v -> !v.getIsDeleted() && v.getStatus().equals(Status.ACTIVE))
-                .toList();
         return ApiResponse.<List<SkincareService>>builder()
-                .result(list)
+                .result(service.getAllSkincareServices())
                 .code(HttpStatus.OK.value())
                 .message("List Voucher")
                 .build();

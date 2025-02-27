@@ -76,6 +76,12 @@ public enum ErrorCode {
     BOOKING_EXISTED(1901, "Booking existed", HttpStatus.BAD_REQUEST),
     BOOKING_NOT_EXIST(1902, "Booking not existed", HttpStatus.BAD_REQUEST),
     BOOKING_ORDER_NOT_EXIST(1903, "Booking order not existed", HttpStatus.BAD_REQUEST),
+    EXPERT_NOT_EXIST(1904, "Expert not existed", HttpStatus.BAD_REQUEST),
+    //20XX
+    BLOG_NAME_EXISTED(2000, "Blog name existed", HttpStatus.BAD_REQUEST),
+    BLOG_NOT_EXIST(2001, "Blog not existed", HttpStatus.BAD_REQUEST),
+    BLOG_EXISTED(2002, "Blog existed", HttpStatus.BAD_REQUEST),
+    INVALID_BLOG_NAME(2003, "Blog name not existed", HttpStatus.BAD_REQUEST),
     ;
 
 

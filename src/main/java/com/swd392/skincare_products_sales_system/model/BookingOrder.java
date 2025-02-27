@@ -10,7 +10,10 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_bookingOrder")
@@ -28,11 +31,10 @@ public class BookingOrder extends AbstractEntity {
     Long id;
 
     @Column
-    @FutureOrPresent
-    LocalDate orderDate;
+    LocalDateTime orderDate;
 
     @Column
-    LocalDate date;
+    LocalDateTime date;
 
     @Column
     @NotNull(message = "Price cannot be null")
@@ -71,4 +73,9 @@ public class BookingOrder extends AbstractEntity {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     User user;
+
+    @OneToMany(mappedBy = "bookingOrder")
+    @JsonIgnore
+    List<ImageSkin> imageSkins;
+
 }

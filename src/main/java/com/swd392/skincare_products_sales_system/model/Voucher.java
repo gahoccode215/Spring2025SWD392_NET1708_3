@@ -36,11 +36,9 @@ public class Voucher extends AbstractEntity {
     String voucherCode;
 
     @Column(nullable = false)
-    @FutureOrPresent
     LocalDate startDate;
 
     @Column(nullable = false)
-    @FutureOrPresent
     LocalDate endDate;
 
     @Column(nullable = false)

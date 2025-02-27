@@ -10,7 +10,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -28,10 +30,8 @@ public class FormCreateRequest {
     @NotNull(message = "Image cannot be null")
     String image;
     String allergy;
-    @FutureOrPresent(message = "Book date must be in the present or future")
-    LocalDate bookDate;
+    LocalDateTime bookDate;
     String expertId;
-    @FutureOrPresent(message = "Book date must be in the present or future")
-    LocalTime date;
+    LocalDateTime date;
 
 }

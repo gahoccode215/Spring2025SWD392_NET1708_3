@@ -50,7 +50,7 @@ public class AdminVoucherController {
     @DeleteMapping("/{voucherId}")
     @Operation(summary = "Delete a voucher", description = "API retrieve id to delete service")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> deleteVoycher (@PathVariable Long voucherId) {
+    public ApiResponse<Void> deleteVoucher (@PathVariable Long voucherId) {
         service.deleteVoucher(voucherId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
@@ -58,7 +58,7 @@ public class AdminVoucherController {
                 .build();
     }
 
-    @PatchMapping("/{voucherID}")
+    @PatchMapping("/{voucherId}")
     @Operation(summary = "Change status  voucher", description = "API retrieve id to change status")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<Void> changeStatusVoucher (@PathVariable Long voucherId, @RequestParam Status status) {

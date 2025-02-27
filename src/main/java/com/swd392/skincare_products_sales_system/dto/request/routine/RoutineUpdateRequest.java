@@ -17,8 +17,6 @@ public class RoutineUpdateRequest {
     String description;
     String routineName;
     RoutineStauts routineStauts;
-    @FutureOrPresent
     LocalDateTime startDate;
-    @FutureOrPresent
     LocalDateTime endDate;
 }

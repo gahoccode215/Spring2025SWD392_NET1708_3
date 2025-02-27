@@ -10,6 +10,8 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -23,10 +25,10 @@ public class FormResponse {
     String skinCondition;
     String image;
     String allergy;
-    LocalDate bookDate;
+    LocalDateTime bookDate;
     String userId;
     String expertName;
     Float price;
     BookingStatus status;
-    LocalDate date;
+    LocalDateTime date;
 }

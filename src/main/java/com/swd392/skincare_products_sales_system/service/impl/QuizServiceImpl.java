@@ -47,6 +47,7 @@ public class QuizServiceImpl implements QuizService {
                 .description(quizRequest.getDescription())
                 .status(Status.ACTIVE)
                 .build();
+        quiz.setIsDeleted(false);
         quizRepository.save(quiz);
 
         for (QuestionRequest questionRequest : quizRequest.getQuestions()) {
@@ -79,6 +80,7 @@ public class QuizServiceImpl implements QuizService {
         Quiz quiz = quizRepository.findQuizById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_EXISTED));
         quiz.setIsDeleted(true);
+        quiz.setStatus(Status.INACTIVE);
         quizRepository.save(quiz);
     }
 
@@ -109,6 +111,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setTitle(quizUpdateRequest.getTitle());
         quiz.setStatus(quizUpdateRequest.getStatus());
         quiz.setDescription(quizUpdateRequest.getDescription());
+        quiz.setIsDeleted(false);
         quizRepository.save(quiz);
         for (QuestionRequest questionRequest : quizUpdateRequest.getQuestions()) {
             Question question = questionRepository.findById(questionRequest.getQuestionId())
@@ -180,7 +183,7 @@ public class QuizServiceImpl implements QuizService {
         skinTypeCount.put(SkinType.DRY_SKIN, 0L);
         skinTypeCount.put(SkinType.SENSITIVE_SKIN, 0L);
         skinTypeCount.put(SkinType.OILY_SKIN, 0L);
-        skinTypeCount.put(SkinType.COMBINATION_SKIN, 0L);
+        skinTypeCount.put(SkinType.NORMAL_SKIN, 0L);
 
         for (Question question : quiz.getQuestions()) {
             Long answerId = answers.get(question.getId());
@@ -205,7 +208,12 @@ public class QuizServiceImpl implements QuizService {
         if (skinTypeCount.get(SkinType.DRY_SKIN).equals(skinTypeCount.get(SkinType.OILY_SKIN))) {
             return SkinType.COMBINATION_SKIN;
         }
-
+        if (skinTypeCount.get(SkinType.DRY_SKIN).equals(skinTypeCount.get(SkinType.NORMAL_SKIN))) {
+            return SkinType.COMBINATION_SKIN;
+        }
+        if (skinTypeCount.get(SkinType.OILY_SKIN).equals(skinTypeCount.get(SkinType.NORMAL_SKIN))) {
+            return SkinType.COMBINATION_SKIN;
+        }
         return result;
     }
 

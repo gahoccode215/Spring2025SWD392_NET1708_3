@@ -26,11 +26,9 @@ public class Routine extends AbstractEntity {
     Long id;
 
     @Column
-    @FutureOrPresent
     LocalDate startDate;
 
     @Column
-    @FutureOrPresent
     LocalDate endDate;
 
     @Column

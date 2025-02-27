@@ -10,7 +10,9 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -28,7 +30,7 @@ public class FormUpdateRequest {
     String skinCondition;
     String image;
     String allergy;
-    @FutureOrPresent
-    LocalDate bookDate;
+    LocalDateTime bookDate;
+    LocalDateTime date;
     String expertId;
 }

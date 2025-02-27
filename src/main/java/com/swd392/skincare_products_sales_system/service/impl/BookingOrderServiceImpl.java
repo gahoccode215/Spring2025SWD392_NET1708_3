@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.AsignExpertRequest;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormUpdateRequest;
@@ -25,7 +26,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +50,28 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .filter(u -> u.getRole().equals(Role.EXPERT))
                 .collect(Collectors.toList());
         return list;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public BookingOrder asignBookingOrder(AsignExpertRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
+                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+
+        bookingOrder.setExpertName(expert.getFirstName()+" "+expert.getLastName());
+        bookingRepository.save(bookingOrder);
+        return bookingOrder;
     }
 
     @Override
@@ -95,11 +120,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
-        String expertName = (expert != null) ? expert.getUsername() : null;
+        String expertName = (expert != null) ? expert.getFirstName() + "" + expert.getLastName() : null;
 
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
-                .orderDate(LocalDate.now())
+                .orderDate(LocalDateTime.now())
                 .price(service.getPrice())
                 .skinCondition(request.getSkinCondition())
                 .status(BookingStatus.PENDING)
@@ -109,8 +134,9 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .expertName(expertName)
                 .skincareService(service)
                 .user(user)
-                .date(LocalDate.now())
+                .date(LocalDateTime.now())
                 .build();
+        bookingOrder.setIsDeleted(false);
         bookingRepository.save(bookingOrder);
         return FormResponse.builder()
                 .note(bookingOrder.getNote())
