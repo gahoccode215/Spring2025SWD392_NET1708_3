@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.dto.request;
+package com.swd392.skincare_products_sales_system.dto.request.voucher;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
 import lombok.*;

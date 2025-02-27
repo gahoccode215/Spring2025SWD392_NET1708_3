@@ -16,7 +16,10 @@ public enum BookingStatus {
     // 1: là kết thúc tư vấn || Nếu mua liệu trình
     CUSTOMER_CONFIRM,
     // Mua lộ trình
+    PENDING_CONFIRM,
     EXPERT_MAKE_ROUTINE,
+    IN_PROGRESS_ROUTINE,
+    PAYMENT_ROUTINE,
     // Status
     CANCELED,
     FINISHED,

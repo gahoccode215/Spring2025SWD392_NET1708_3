@@ -3,6 +3,9 @@ package com.swd392.skincare_products_sales_system.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,12 +26,15 @@ public class SkincareService extends AbstractEntity {
     Long id;
 
     @Column(nullable = false)
+    @NotNull(message = "ServiceName cannot be null")
     String serviceName;
 
     @Enumerated(EnumType.STRING)
     Status status;
 
-    @Column(nullable = false)
+    @NotNull(message = "Price cannot be null")
+    @DecimalMin(value = "0.0", inclusive = true, message = "Price must be greater than or equal to 0")
+    @Column
     Float price;
 
     @Column

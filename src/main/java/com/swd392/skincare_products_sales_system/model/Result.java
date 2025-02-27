@@ -2,6 +2,7 @@ package com.swd392.skincare_products_sales_system.model;
 
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 
@@ -20,6 +21,7 @@ public class Result extends AbstractEntity {
     Long id;
 
     @Enumerated(EnumType.STRING)
+    @NotNull(message = "SkinType cannot be null")
     SkinType skinType;
 
     @ManyToOne

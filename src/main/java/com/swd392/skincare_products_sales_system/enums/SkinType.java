@@ -5,4 +5,5 @@ public enum SkinType {
     DRY_SKIN,
     COMBINATION_SKIN,
     OILY_SKIN,
+    NORMAL_SKIN,
 }

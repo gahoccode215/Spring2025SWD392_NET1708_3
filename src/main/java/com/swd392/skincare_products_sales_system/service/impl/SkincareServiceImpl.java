@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.request.SkincareCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.SkincareUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareCreateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.SkincareUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.SkincareServiceResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -20,11 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -37,9 +34,6 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
     BookingRepository bookingRepository;
 
 
-
-
-
     @Override
     public SkincareServiceResponse createSkincareService(SkincareCreateRequest request) {
         Optional<SkincareService> existingServiceByName = serviceRepository.findSkincareServiceByServiceName(request.getServiceName());
@@ -50,9 +44,9 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
                 .serviceName(request.getServiceName())
                 .description(request.getDescription())
                 .price(request.getPrice())
-                .status(request.getStatus())
+                .status(Status.ACTIVE)
                 .build();
-
+        skincareService.setIsDeleted(false);
         serviceRepository.save(skincareService);
         return SkincareServiceResponse.builder()
                 .id(skincareService.getId())
@@ -72,6 +66,7 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
         SkincareService skincareService = serviceRepository.findSkincareServiceById(skincareId)
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_EXIST));
         skincareService.setIsDeleted(true);
+        skincareService.setStatus(Status.INACTIVE);
         serviceRepository.save(skincareService);
     }
 
@@ -145,10 +140,18 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
         } else {
             list = serviceRepository.findAll()
                     .stream()
-                    .filter(s -> s.getStatus().equals(Status.ACTIVE) || !s.getIsDeleted())
+                    .filter(s -> s.getStatus().equals(Status.ACTIVE) && !s.getIsDeleted())
                     .toList();
         }
         return list;
     }
 
+    @Override
+    public List<SkincareService> getAllSkincareServices() {
+        List<SkincareService> list = serviceRepository.findAll()
+                .stream()
+                .filter(v -> !v.getIsDeleted() && v.getStatus().equals(Status.ACTIVE))
+                .toList();
+        return list;
+    }
 }

@@ -72,6 +72,9 @@ public class User extends AbstractEntity {
     @JsonIgnore
     List<BookingOrder> bookingOrders;
 
+    @OneToMany(mappedBy = "user")
+    List<ImageSkin> imageSkins;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "tbl_user_voucher",
@@ -83,5 +86,8 @@ public class User extends AbstractEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     List<Address> addresses;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    List<Routine> routines;
 
 }
