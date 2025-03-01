@@ -93,21 +93,24 @@ public class OrderServiceImpl implements OrderService {
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAllByFilters(user.getUsername(),pageable);
+        List<OrderResponse> orderResponses = orders.getContent().stream()
+                .map(this::mapToOrderResponse)
+                .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        for(Order x : orders.getContent()){
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setOrderId(x.getId());
-            orderResponse.setTotalAmount(x.getTotalAmount());
-            orderResponse.setUsername(x.getUsername());
-            orderResponse.setOrderInfo(x.getOrderInfo());
-            orderResponse.setOrderDate(x.getOrderDate());
-            orderResponse.setStatus(x.getStatus());
-            orderResponse.setPaymentMethod(x.getPaymentMethod());
-            orderResponse.setPaymentStatus(x.getPaymentStatus());
-            orderResponse.setAddress(x.getAddress());
-            orderResponses.add(orderResponse);
-        }
+//        List<OrderResponse> orderResponses = new ArrayList<>();
+//        for(Order x : orders.getContent()){
+//            OrderResponse orderResponse = new OrderResponse();
+//            orderResponse.setOrderId(x.getId());
+//            orderResponse.setTotalAmount(x.getTotalAmount());
+//            orderResponse.setUsername(x.getUsername());
+//            orderResponse.setOrderInfo(x.getOrderInfo());
+//            orderResponse.setOrderDate(x.getOrderDate());
+//            orderResponse.setStatus(x.getStatus());
+//            orderResponse.setPaymentMethod(x.getPaymentMethod());
+//            orderResponse.setPaymentStatus(x.getPaymentStatus());
+//            orderResponse.setAddress(x.getAddress());
+//            orderResponses.add(orderResponse);
+//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
@@ -123,21 +126,24 @@ public class OrderServiceImpl implements OrderService {
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAll(pageable);
+        List<OrderResponse> orderResponses = orders.getContent().stream()
+                .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        for(Order x : orders.getContent()){
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setOrderId(x.getId());
-            orderResponse.setTotalAmount(x.getTotalAmount());
-            orderResponse.setUsername(x.getUsername());
-            orderResponse.setOrderInfo(x.getOrderInfo());
-            orderResponse.setOrderDate(x.getOrderDate());
-            orderResponse.setStatus(x.getStatus());
-            orderResponse.setPaymentMethod(x.getPaymentMethod());
-            orderResponse.setPaymentStatus(x.getPaymentStatus());
-            orderResponse.setAddress(x.getAddress());
-            orderResponses.add(orderResponse);
-        }
+//        List<OrderResponse> orderResponses = new ArrayList<>();
+//        for(Order x : orders.getContent()){
+//            OrderResponse orderResponse = new OrderResponse();
+//            orderResponse.setOrderId(x.getId());
+//            orderResponse.setTotalAmount(x.getTotalAmount());
+//            orderResponse.setUsername(x.getUsername());
+//            orderResponse.setOrderInfo(x.getOrderInfo());
+//            orderResponse.setOrderDate(x.getOrderDate());
+//            orderResponse.setStatus(x.getStatus());
+//            orderResponse.setPaymentMethod(x.getPaymentMethod());
+//            orderResponse.setPaymentStatus(x.getPaymentStatus());
+//            orderResponse.setAddress(x.getAddress());
+//            orderResponses.add(orderResponse);
+//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
@@ -145,12 +151,21 @@ public class OrderServiceImpl implements OrderService {
         response.setPageSize(orders.getSize());
 
         return response;
+
+
     }
 
     @Override
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         return mapToOrderResponse(order);
+    }
+
+    @Override
+    @Transactional
+    public void changeOrderStatus(Long id, OrderStatus orderStatus) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        orderRepository.updateOrderStatus(id, orderStatus);
     }
 
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {

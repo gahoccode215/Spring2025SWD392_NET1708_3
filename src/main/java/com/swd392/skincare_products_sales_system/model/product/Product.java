@@ -40,7 +40,7 @@ public class Product extends AbstractEntity {
     @Column(name = "size")
     String size;
 
-    @Column(name = "stock", nullable = false)
+    @Column(name = "stock")
     Integer stock = 0; // Mặc định tồn kho = 0
 
     @Column(name = "status")

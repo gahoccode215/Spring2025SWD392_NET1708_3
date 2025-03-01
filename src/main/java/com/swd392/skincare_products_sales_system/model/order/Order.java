@@ -27,11 +27,17 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(name = "total_amount")
     Double totalAmount;
+    @Column(name = "order_info")
     String orderInfo;
+    @Column(name = "username")
     String username;
+    @Column(name = "order_date")
     LocalDateTime orderDate;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "order_status", length = 50)
     OrderStatus status;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -41,7 +47,6 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     PaymentStatus paymentStatus;
-
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;

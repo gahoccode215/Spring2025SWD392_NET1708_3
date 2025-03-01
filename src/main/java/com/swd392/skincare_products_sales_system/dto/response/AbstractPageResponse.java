@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
