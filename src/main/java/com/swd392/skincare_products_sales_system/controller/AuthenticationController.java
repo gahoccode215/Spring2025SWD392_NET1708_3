@@ -5,6 +5,10 @@ import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.LoginResponse;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.RefreshTokenResponse;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.RegisterResponse;
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.exception.AppException;
+import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
@@ -81,26 +85,35 @@ public class AuthenticationController {
                 .message("Change password successfully")
                 .build();
     }
-//    @GetMapping("/verify")
-//    public String verifyUser(@RequestParam String token) {
-//        String username;
-//        try {
-//            username = jwtUtil.extractUsername(token);
-//        } catch (Exception e) {
-//            throw new AppException(ErrorCode.INVALID_TOKEN);
-//        }
-//
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-//
-//        if (user.getStatus() == Status.ACTIVE) {
-//            return "Tài khoản đã được xác thực trước đó!";
-//        }
-//
-//        user.setStatus(Status.ACTIVE);
-//        userRepository.save(user);
-//
-//        return "Tài khoản xác thực thành công!";
-//    }
+    @GetMapping("/verify")
+    @Operation(summary = "Verify account", description = "Verify account")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> verifyUser(@RequestParam String token) {
+        authenticationService.checkVerifyToken(token);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Verify account successfully")
+                .build();
+    }
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Forgot Password", description = "Handle forgot password and send reset email")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authenticationService.forgotPassword(request);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Password reset email sent successfully.")
+                .build();
+    }
 
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset Password", description = "Reset user password using token")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Password reset successfully.")
+                .build();
+    }
 }

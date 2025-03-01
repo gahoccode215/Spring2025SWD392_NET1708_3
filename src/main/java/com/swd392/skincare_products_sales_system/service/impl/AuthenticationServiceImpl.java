@@ -21,10 +21,9 @@ import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepo
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
-import com.swd392.skincare_products_sales_system.service.EmailService;
 import com.swd392.skincare_products_sales_system.service.PostmarkService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
-import jakarta.mail.MessagingException;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -48,11 +47,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     RoleRepository roleRepository;
     JwtUtil jwtUtil;
     InvalidatedTokenRepository invalidatedTokenRepository;
-    EmailService emailService;
     PostmarkService postmarkService;
 
-//    @Value("${base.url}")
-//    private String baseUrl;
+    @NonFinal
+    @Value("${base.be.url}")
+    String backendUrl;
+
+    @Value("${base.fe.url}")
+    @NonFinal
+    String frontEndUrl;
 
 
     @Override
@@ -69,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .gender(request.getGender())
                 .birthday(request.getBirthday())
-                .status(Status.ACTIVE)
+                .status(Status.INACTIVE)
                 .email(request.getEmail())
                 .build();
         // Lấy Role từ Database gắn vào
@@ -78,15 +81,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRole(customRole);
         user.setIsDeleted(false);
         userRepository.save(user);
-        // Send verification email
-//        String verificationUrl = "http:localhost:8080/api/v1/swd392-skincare-products-sales-system/verify?token=" + jwtUtil.generateToken(user);
-//        try {
-//            postmarkService.sendEmail(user.getEmail(), "Verify your account",
-//                    "<p>Click the link below to verify your account:</p><a href='" + verificationUrl + "'>Verify Account</a>");
-//        } catch (Exception e) {
-//            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
-//        }
-//        sendVerificationEmail(user);
+//         Send verification email
+        String verificationUrl = backendUrl + "/auth/verify?token=" + jwtUtil.generateToken(user);
+        log.info(verificationUrl);
+        try {
+            postmarkService.sendVerificationEmail(user.getEmail(), user.getUsername(), verificationUrl);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+        }
         return RegisterResponse.builder()
                 .username(user.getUsername())
                 .gender(user.getGender())
@@ -211,21 +213,60 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
     }
-    private void sendVerificationEmail(User user) {
-        try {
-            String verificationToken = jwtUtil.generateToken(user);
-            String verificationLink = "http://localhost:8080/api/auth/verify?token=" + verificationToken;
 
-            String content = "<h2>Chào mừng " + user.getUsername() + "!</h2>"
-                    + "<p>Nhấp vào liên kết dưới đây để xác nhận tài khoản của bạn:</p>"
-                    + "<a href='" + verificationLink + "'>Xác nhận tài khoản</a>";
+    @Override
+    @Transactional
+    public void checkVerifyToken(String token) {
+        // Trích xuất username từ token
+        String username = jwtUtil.extractUsername(token);
 
-            emailService.sendEmail(user.getUsername(), "Xác thực tài khoản", content);
-            log.info("Email xác nhận đã gửi đến {}", user.getUsername());
-        } catch (MessagingException e) {
-            log.error("Không thể gửi email xác nhận", e);
-            throw new AppException(ErrorCode.EMAIL_SENDING_FAILED);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // Kiểm tra trạng thái người dùng
+        if (user.getStatus() == Status.ACTIVE) {
+            throw new AppException(ErrorCode.ACCOUNT_ALREADY_VERIFIED);
         }
+
+        user.setStatus(Status.ACTIVE);
+        userRepository.save(user);
+
+
+    }
+
+    @Override
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
+
+        // Tạo token reset password
+        String token = jwtUtil.generateToken(user);
+
+        // URL để người dùng click để đặt lại mật khẩu
+        String resetPasswordUrl = frontEndUrl + "/reset-password?token=" + token;
+        log.info(resetPasswordUrl);
+
+//        try {
+//            // Gửi email qua Postmark
+//            postmarkService.sendForgotPassword(user.getEmail(), user.getUsername(), resetPasswordUrl);
+//        } catch (Exception e) {
+//            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+//        }
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(ResetPasswordRequest request) {
+        // Kiểm tra token và lấy thông tin người dùng
+        String token = request.getToken();
+        String username = jwtUtil.extractUsername(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // Đặt lại mật khẩu
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));  // Mã hóa mật khẩu nếu cần
+        userRepository.save(user);
     }
 
 }

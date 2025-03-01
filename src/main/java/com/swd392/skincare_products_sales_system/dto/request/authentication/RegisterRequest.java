@@ -30,6 +30,7 @@ public class RegisterRequest  {
 
 //    @NotBlank(message = "EMAIL_REQUIRED")
 //    @Email(message = "INVALID_EMAIL")
+
     String email;
 
     @BirthdayConstraint(min = 16, message = "INVALID_BIRTHDAY")

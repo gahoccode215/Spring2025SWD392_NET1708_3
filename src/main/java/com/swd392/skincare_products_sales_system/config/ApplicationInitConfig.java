@@ -73,10 +73,12 @@ public class ApplicationInitConfig {
         };
     }
     private Role initRole(String role){
-        return roleRepository.save(Role.builder()
+        Role newRole =  Role.builder()
                 .name(role)
                 .description(role)
-                .build());
+                .build();
+        newRole.setIsDeleted(false);
+        return newRole;
     }
     private User initAccount(String username, String password, Role role){
         User user = User.builder()
