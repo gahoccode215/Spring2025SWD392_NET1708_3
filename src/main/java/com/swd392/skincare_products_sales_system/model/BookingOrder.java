@@ -49,10 +49,6 @@ public class BookingOrder extends AbstractEntity {
     SkinType skinType;
 
     @Column
-    @NotNull(message = "Image cannot be null")
-    String image;
-
-    @Column
     String allergy;
 
     @Column
@@ -60,6 +56,15 @@ public class BookingOrder extends AbstractEntity {
 
     @Column
     String expertName;
+
+    @Column
+    String firstName;
+
+    @Column
+    String lastName;
+
+    @Column
+    Integer age;
 
     @Enumerated(EnumType.STRING)
     BookingStatus status;
@@ -74,7 +79,7 @@ public class BookingOrder extends AbstractEntity {
     @JsonIgnore
     User user;
 
-    @OneToMany(mappedBy = "bookingOrder")
+    @OneToMany(mappedBy = "bookingOrder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     List<ImageSkin> imageSkins;
 
