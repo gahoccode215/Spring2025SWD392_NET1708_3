@@ -1,8 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.BrandPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BrandPageResponse;
 import com.swd392.skincare_products_sales_system.service.BrandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

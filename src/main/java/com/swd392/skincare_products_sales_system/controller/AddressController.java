@@ -1,8 +1,8 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.AddressCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.AddressUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.AddressResponse;
+import com.swd392.skincare_products_sales_system.dto.request.address.AddressCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.address.AddressUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.address.AddressResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.service.AddressService;
 import io.swagger.v3.oas.annotations.Operation;

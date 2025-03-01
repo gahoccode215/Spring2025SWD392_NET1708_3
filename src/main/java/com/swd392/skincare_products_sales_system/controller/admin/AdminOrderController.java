@@ -1,9 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.OrderPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.OrderResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
+import com.swd392.skincare_products_sales_system.enums.OrderStatus;
+import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,6 +46,18 @@ public class AdminOrderController {
                 .code(HttpStatus.OK.value())
                 .message("Get order successfully")
                 .result(orderService.getOrderById(orderId))
+                .build();
+    }
+    @PatchMapping("/change-status/{orderId}")
+    @Operation(summary = "Change order status", description = "Change order status")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<Void> changeOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
+        orderService.changeOrderStatus(orderId, orderStatus);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Change status to " + orderStatus + " successfully")
+//                .result(orderService.changeOrderStatus(orderId, orderStatus))
                 .build();
     }
 

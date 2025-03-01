@@ -1,9 +1,9 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.*;
-import com.swd392.skincare_products_sales_system.dto.response.*;
-
-import java.util.Map;
+import com.swd392.skincare_products_sales_system.dto.request.authentication.*;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.LoginResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RefreshTokenResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RegisterResponse;
 
 public interface AuthenticationService {
 
@@ -12,4 +12,7 @@ public interface AuthenticationService {
     RegisterResponse register(RegisterRequest request);
     void logout(LogoutRequest request);
     void changePassword(ChangePasswordRequest request);
+    void checkVerifyToken(String token);
+    void forgotPassword(ForgotPasswordRequest request);
+    void resetPassword(ResetPasswordRequest request);
 }

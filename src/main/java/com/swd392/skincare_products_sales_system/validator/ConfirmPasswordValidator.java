@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.validator;
 
-import com.swd392.skincare_products_sales_system.dto.request.ChangePasswordRequest;
+import com.swd392.skincare_products_sales_system.dto.request.authentication.ChangePasswordRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

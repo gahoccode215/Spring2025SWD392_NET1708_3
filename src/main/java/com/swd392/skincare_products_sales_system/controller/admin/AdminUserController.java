@@ -1,11 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.UserCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.UserUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

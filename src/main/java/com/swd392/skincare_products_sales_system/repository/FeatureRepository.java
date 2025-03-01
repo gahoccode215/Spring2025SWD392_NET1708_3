@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.model.Feature;
+import com.swd392.skincare_products_sales_system.model.product.Feature;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

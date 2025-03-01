@@ -1,10 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.CategoryCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.CategoryUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.CategoryPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 

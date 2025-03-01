@@ -1,12 +1,12 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.response.CartItemResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CartResponse;
+import com.swd392.skincare_products_sales_system.dto.response.cart.CartItemResponse;
+import com.swd392.skincare_products_sales_system.dto.response.cart.CartResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.Cart;
-import com.swd392.skincare_products_sales_system.model.CartItem;
-import com.swd392.skincare_products_sales_system.model.Product;
+import com.swd392.skincare_products_sales_system.model.cart.Cart;
+import com.swd392.skincare_products_sales_system.model.cart.CartItem;
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.CartItemRepository;
 import com.swd392.skincare_products_sales_system.repository.CartRepository;

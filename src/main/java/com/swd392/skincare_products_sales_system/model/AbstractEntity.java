@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -28,6 +29,4 @@ public abstract class AbstractEntity {
 
     @Column(name = "is_deleted")
     Boolean isDeleted;
-
-
 }

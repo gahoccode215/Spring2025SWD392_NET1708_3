@@ -135,7 +135,7 @@ public class SkincareServiceImpl implements SkincareServiceInterface {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        if (user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.MANAGER)) {
+        if (user.getRole().equals(RoleEnum.ADMIN) || user.getRole().equals(RoleEnum.MANAGER)) {
             list = serviceRepository.findAll();
         } else {
             list = serviceRepository.findAll()

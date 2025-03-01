@@ -1,10 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,11 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/admin/products")

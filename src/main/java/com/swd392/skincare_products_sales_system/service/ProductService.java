@@ -1,12 +1,10 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.ProductCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.ProductUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ProductResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-
-import java.io.IOException;
 
 public interface ProductService {
     ProductResponse createProduct(ProductCreationRequest request) ;

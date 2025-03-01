@@ -1,10 +1,11 @@
 package com.swd392.skincare_products_sales_system.service;
 
 
-import com.swd392.skincare_products_sales_system.dto.request.*;
-import com.swd392.skincare_products_sales_system.dto.response.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.UserResponse;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateProfileRequest;
+import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 
 public interface UserService {
@@ -21,4 +22,5 @@ public interface UserService {
     void changeUserStatus(String userId, Status status);
 
     UserResponse getUserProfile();
+    UserResponse updateUserProfile(UserUpdateProfileRequest request);
 }

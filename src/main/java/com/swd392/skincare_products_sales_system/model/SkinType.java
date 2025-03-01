@@ -1,10 +1,10 @@
 package com.swd392.skincare_products_sales_system.model;
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity

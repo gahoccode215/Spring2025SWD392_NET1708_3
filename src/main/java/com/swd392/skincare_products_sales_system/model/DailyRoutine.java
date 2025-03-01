@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
-import com.swd392.skincare_products_sales_system.enums.RoutineStauts;
+import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.*;
@@ -28,7 +28,7 @@ public class DailyRoutine extends AbstractEntity {
     LocalDate date;
 
     @Enumerated(EnumType.STRING)
-    RoutineStauts routineStauts;
+    RoutineStatusEnum routineStauts;
 
     @ManyToOne
     @JoinColumn(name = "routine_id")

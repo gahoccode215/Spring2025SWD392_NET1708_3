@@ -1,9 +1,14 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.dto.response.order.OrderItemResponse;
+import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.cart.Cart;
+import com.swd392.skincare_products_sales_system.model.order.Order;
+import com.swd392.skincare_products_sales_system.model.order.OrderItem;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import lombok.AccessLevel;
@@ -17,11 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,21 +93,24 @@ public class OrderServiceImpl implements OrderService {
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAllByFilters(user.getUsername(),pageable);
+        List<OrderResponse> orderResponses = orders.getContent().stream()
+                .map(this::mapToOrderResponse)
+                .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        for(Order x : orders.getContent()){
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setOrderId(x.getId());
-            orderResponse.setTotalAmount(x.getTotalAmount());
-            orderResponse.setUsername(x.getUsername());
-            orderResponse.setOrderInfo(x.getOrderInfo());
-            orderResponse.setOrderDate(x.getOrderDate());
-            orderResponse.setStatus(x.getStatus());
-            orderResponse.setPaymentMethod(x.getPaymentMethod());
-            orderResponse.setPaymentStatus(x.getPaymentStatus());
-            orderResponse.setAddress(x.getAddress());
-            orderResponses.add(orderResponse);
-        }
+//        List<OrderResponse> orderResponses = new ArrayList<>();
+//        for(Order x : orders.getContent()){
+//            OrderResponse orderResponse = new OrderResponse();
+//            orderResponse.setOrderId(x.getId());
+//            orderResponse.setTotalAmount(x.getTotalAmount());
+//            orderResponse.setUsername(x.getUsername());
+//            orderResponse.setOrderInfo(x.getOrderInfo());
+//            orderResponse.setOrderDate(x.getOrderDate());
+//            orderResponse.setStatus(x.getStatus());
+//            orderResponse.setPaymentMethod(x.getPaymentMethod());
+//            orderResponse.setPaymentStatus(x.getPaymentStatus());
+//            orderResponse.setAddress(x.getAddress());
+//            orderResponses.add(orderResponse);
+//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
@@ -120,21 +126,24 @@ public class OrderServiceImpl implements OrderService {
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         Page<Order> orders = orderRepository.findAll(pageable);
+        List<OrderResponse> orderResponses = orders.getContent().stream()
+                .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        for(Order x : orders.getContent()){
-            OrderResponse orderResponse = new OrderResponse();
-            orderResponse.setOrderId(x.getId());
-            orderResponse.setTotalAmount(x.getTotalAmount());
-            orderResponse.setUsername(x.getUsername());
-            orderResponse.setOrderInfo(x.getOrderInfo());
-            orderResponse.setOrderDate(x.getOrderDate());
-            orderResponse.setStatus(x.getStatus());
-            orderResponse.setPaymentMethod(x.getPaymentMethod());
-            orderResponse.setPaymentStatus(x.getPaymentStatus());
-            orderResponse.setAddress(x.getAddress());
-            orderResponses.add(orderResponse);
-        }
+//        List<OrderResponse> orderResponses = new ArrayList<>();
+//        for(Order x : orders.getContent()){
+//            OrderResponse orderResponse = new OrderResponse();
+//            orderResponse.setOrderId(x.getId());
+//            orderResponse.setTotalAmount(x.getTotalAmount());
+//            orderResponse.setUsername(x.getUsername());
+//            orderResponse.setOrderInfo(x.getOrderInfo());
+//            orderResponse.setOrderDate(x.getOrderDate());
+//            orderResponse.setStatus(x.getStatus());
+//            orderResponse.setPaymentMethod(x.getPaymentMethod());
+//            orderResponse.setPaymentStatus(x.getPaymentStatus());
+//            orderResponse.setAddress(x.getAddress());
+//            orderResponses.add(orderResponse);
+//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
@@ -142,12 +151,21 @@ public class OrderServiceImpl implements OrderService {
         response.setPageSize(orders.getSize());
 
         return response;
+
+
     }
 
     @Override
     public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         return mapToOrderResponse(order);
+    }
+
+    @Override
+    @Transactional
+    public void changeOrderStatus(Long id, OrderStatus orderStatus) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        orderRepository.updateOrderStatus(id, orderStatus);
     }
 
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {

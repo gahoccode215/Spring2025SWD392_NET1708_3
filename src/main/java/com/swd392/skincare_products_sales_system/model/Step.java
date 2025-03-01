@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.model;
 
-import com.swd392.skincare_products_sales_system.enums.RoutineStauts;
+import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -35,7 +36,7 @@ public class Step extends AbstractEntity {
     String note;
 
     @Enumerated(EnumType.STRING)
-    RoutineStauts routineStauts;
+    RoutineStatusEnum routineStauts;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

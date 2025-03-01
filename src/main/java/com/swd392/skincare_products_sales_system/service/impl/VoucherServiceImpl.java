@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherCrea
 import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.VoucherResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Role;
+import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.User;
@@ -162,7 +162,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         List<Voucher> list;
-        if(user.getRole().equals(Role.ADMIN) || user.getRole().equals(Role.MANAGER)) {
+        if(user.getRole().equals(RoleEnum.ADMIN) || user.getRole().equals(RoleEnum.MANAGER)) {
             list = voucherRepository.findAll()
                     .stream()
                     .toList();

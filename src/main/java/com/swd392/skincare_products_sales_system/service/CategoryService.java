@@ -1,12 +1,10 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.CategoryCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.CategoryUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.CategoryResponse;
+import com.swd392.skincare_products_sales_system.dto.request.product.CategoryCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.CategoryUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.CategoryPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-
-import java.io.IOException;
 
 public interface CategoryService {
     CategoryResponse createCategory(CategoryCreationRequest request);

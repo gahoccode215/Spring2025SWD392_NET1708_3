@@ -1,8 +1,9 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
-import com.swd392.skincare_products_sales_system.dto.request.BatchCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.BrandCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.service.BatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,21 +32,21 @@ public class AdminBatchController {
         return ApiResponse.<BatchResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("import batch successfully")
-                .result(batchService.importBatch(request))
+                .result(batchService.createBatch(request))
                 .build();
     }
-//    @GetMapping()
-//    @Operation(summary = "Get all batches with options(ADMIN, MANAGER)  ", description = "Retrieve all batches with search, pagination, sorting, and filtering.")
-//    @ResponseStatus(HttpStatus.OK)
-////    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-//    public ApiResponse<BatchPageResponse> getAllProducts(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size
-//    ) {
-//        return ApiResponse.<BatchPageResponse>builder()
-//                .code(HttpStatus.OK.value())
-//                .message("Get batches successfully")
-//                .result(batchService.getBatches(page, size, null, null))
-//                .build();
-//    }
+    @GetMapping()
+    @Operation(summary = "Get all batches with options(ADMIN, MANAGER)  ", description = "Retrieve all batches with search, pagination, sorting, and filtering.")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<BatchPageResponse> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.<BatchPageResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get batches successfully")
+                .result(batchService.getAllBatches(page, size))
+                .build();
+    }
 }

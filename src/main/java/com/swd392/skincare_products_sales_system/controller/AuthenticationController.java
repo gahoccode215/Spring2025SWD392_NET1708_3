@@ -1,8 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.nimbusds.jose.JOSEException;
-import com.swd392.skincare_products_sales_system.dto.request.*;
+import com.swd392.skincare_products_sales_system.dto.request.authentication.*;
 import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.LoginResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RefreshTokenResponse;
+import com.swd392.skincare_products_sales_system.dto.response.authentication.RegisterResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -19,8 +21,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.text.ParseException;
 
 
 @RestController
@@ -85,26 +85,35 @@ public class AuthenticationController {
                 .message("Change password successfully")
                 .build();
     }
-//    @GetMapping("/verify")
-//    public String verifyUser(@RequestParam String token) {
-//        String username;
-//        try {
-//            username = jwtUtil.extractUsername(token);
-//        } catch (Exception e) {
-//            throw new AppException(ErrorCode.INVALID_TOKEN);
-//        }
-//
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-//
-//        if (user.getStatus() == Status.ACTIVE) {
-//            return "Tài khoản đã được xác thực trước đó!";
-//        }
-//
-//        user.setStatus(Status.ACTIVE);
-//        userRepository.save(user);
-//
-//        return "Tài khoản xác thực thành công!";
-//    }
+    @GetMapping("/verify")
+    @Operation(summary = "Verify account", description = "Verify account")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> verifyUser(@RequestParam String token) {
+        authenticationService.checkVerifyToken(token);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Verify account successfully")
+                .build();
+    }
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Forgot Password", description = "Handle forgot password and send reset email")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        authenticationService.forgotPassword(request);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Password reset email sent successfully.")
+                .build();
+    }
 
+    @PostMapping("/reset-password")
+    @Operation(summary = "Reset Password", description = "Reset user password using token")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> resetPassword(@RequestBody ResetPasswordRequest request) {
+        authenticationService.resetPassword(request);
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Password reset successfully.")
+                .build();
+    }
 }
