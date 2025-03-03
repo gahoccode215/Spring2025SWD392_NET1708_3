@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.controller;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.BookingOrder;
@@ -66,8 +67,8 @@ public class BookingOrderController {
     @GetMapping("/filter-expert")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get a filterListExpert", description = "API get filterListExpert ")
-    public ApiResponse<List<User>> getFilterListExpert() {
-        return ApiResponse.<List<User>>builder()
+    public ApiResponse<List<ExpertResponse>> getFilterListExpert() {
+        return ApiResponse.<List<ExpertResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get filterListExpert successfully")
                 .result(service.filterListExpert())

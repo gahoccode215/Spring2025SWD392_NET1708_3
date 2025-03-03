@@ -15,7 +15,7 @@ public class RoutineUpdateRequest {
     Long id;
     String description;
     String routineName;
-    RoutineStatusEnum routineStauts;
+    RoutineStatusEnum routineStatus;
     LocalDateTime startDate;
     LocalDateTime endDate;
 }

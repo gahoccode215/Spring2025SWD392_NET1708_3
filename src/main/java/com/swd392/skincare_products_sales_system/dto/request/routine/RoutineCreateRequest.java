@@ -1,10 +1,12 @@
 package com.swd392.skincare_products_sales_system.dto.request.routine;
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.model.DailyRoutine;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -15,7 +17,8 @@ public class RoutineCreateRequest {
 
     String description;
     String routineName;
-    RoutineStatusEnum routineStauts;
+    RoutineStatusEnum routineStatus;
     LocalDateTime startDate;
     LocalDateTime endDate;
+    List<DailyRoutineRequest> dailyRoutines;
 }

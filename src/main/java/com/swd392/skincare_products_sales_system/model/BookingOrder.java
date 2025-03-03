@@ -83,4 +83,7 @@ public class BookingOrder extends AbstractEntity {
     @JsonIgnore
     List<ImageSkin> imageSkins;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "routine_id")
+    private Routine routine;
 }
