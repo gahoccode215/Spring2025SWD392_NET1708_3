@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT x FROM Order x WHERE x.username = :username")
     Page<Order> findAllByFilters(

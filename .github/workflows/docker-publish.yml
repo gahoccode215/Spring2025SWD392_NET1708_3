@@ -25,10 +25,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/swd392-skincare-api:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/swd392-api-service:latest .
 
       - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/swd392-skincare-api:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/swd392-api-service:latest
 
       # Trigger Render Deploy khi Docker image đã push xong
       - name: Trigger Render Deploy
