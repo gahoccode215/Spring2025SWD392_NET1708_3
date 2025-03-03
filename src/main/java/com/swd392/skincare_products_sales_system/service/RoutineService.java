@@ -4,5 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCrea
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
 
 public interface RoutineService {
-    RoutineResponse makeRoutine (RoutineCreateRequest request);
+    RoutineResponse makeRoutine (RoutineCreateRequest request, Long bookingOrderId);
+    RoutineResponse cancelRoutine (RoutineCreateRequest request, Long bookingOrderId);
+    RoutineResponse updateRoutine (RoutineCreateRequest request, Long bookingOrderId);
 }

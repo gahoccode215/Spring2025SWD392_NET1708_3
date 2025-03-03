@@ -37,8 +37,12 @@ public class Routine extends AbstractEntity {
     @Column
     String description;
 
+    @Column
+    String expertId;
+
     @Enumerated(EnumType.STRING)
-    RoutineStatusEnum routineStauts;
+    @Column(name = "routine_status")
+    RoutineStatusEnum routineStatus;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -47,4 +51,6 @@ public class Routine extends AbstractEntity {
     @OneToMany(mappedBy = "routine")
     List<DailyRoutine> dailyRoutines;
 
+    @OneToOne(mappedBy = "routine")
+    BookingOrder bookingOrder;
 }

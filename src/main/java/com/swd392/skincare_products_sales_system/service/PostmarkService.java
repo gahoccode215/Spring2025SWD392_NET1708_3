@@ -23,7 +23,6 @@ public class PostmarkService {
     private String fromAddress;
 
 
-
     private final RestTemplate restTemplate;
 
     public PostmarkService(RestTemplate restTemplate) {

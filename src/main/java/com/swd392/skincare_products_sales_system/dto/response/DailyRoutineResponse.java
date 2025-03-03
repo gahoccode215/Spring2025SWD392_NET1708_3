@@ -1,28 +1,20 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.FutureOrPresent;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoutineResponse {
+public class DailyRoutineResponse {
      Long id;
-     String routineName;
-     String description;
-     LocalDate startDate;
-     LocalDate endDate;
+     LocalDate date;
      RoutineStatusEnum routineStatus;
-     String userId;
-     List<DailyRoutineResponse> dailyRoutines;
+     List<StepResponse> steps;
 }
