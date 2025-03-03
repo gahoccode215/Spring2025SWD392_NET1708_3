@@ -172,9 +172,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                     .collect(Collectors.toList());
         }
         List<User> list = new ArrayList<>();
-        if(expert != null){
 
-        }
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
                 .orderDate(LocalDateTime.now())
