@@ -46,7 +46,6 @@ public class QuizController {
             summary = "Submit an quiz",
             description = "API to get an existing quiz by providing the quiz ID and updated attributes such as title, questions, and answers."
     )
-
     public ApiResponse<ResultResponse> submitQuiz(@Valid @PathVariable Long quizId, @RequestBody SubmitQuiz submitQuiz) {
         return ApiResponse.<ResultResponse>builder()
                 .code(HttpStatus.OK.value())

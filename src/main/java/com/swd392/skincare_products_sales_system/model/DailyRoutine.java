@@ -28,23 +28,14 @@ public class DailyRoutine extends AbstractEntity {
     LocalDate date;
 
     @Enumerated(EnumType.STRING)
-    RoutineStatusEnum routineStauts;
+    RoutineStatusEnum routineStatus;
 
     @ManyToOne
     @JoinColumn(name = "routine_id")
     Routine routine;
 
-    @OneToMany(mappedBy = "dailyRoutine")
+    @OneToMany(mappedBy = "dailyRoutine", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Step> steps;
 
-
-//    @OneToMany(mappedBy = "routine")
-//     List<Step> morningSteps;
-//
-//    @OneToMany(mappedBy = "routine")
-//     List<Step> afternoonSteps;
-//
-//    @OneToMany(mappedBy = "routine")
-//     List<Step> eveningSteps;
 
 }

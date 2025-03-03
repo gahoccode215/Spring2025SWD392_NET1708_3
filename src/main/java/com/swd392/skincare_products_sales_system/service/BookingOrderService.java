@@ -1,9 +1,7 @@
 package com.swd392.skincare_products_sales_system.service;
 
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.AsignExpertRequest;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
+import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.model.BookingOrder;
 import com.swd392.skincare_products_sales_system.model.User;
@@ -16,7 +14,8 @@ public interface BookingOrderService {
     FormResponse updateBookingAdvise(FormUpdateRequest request, Long bookingOrderId);
     BookingOrder changeStatus(ChangeStatus status);
     List<BookingOrder> getBookingOrder(); // View
-    List<User> filterListExpert();
+    List<ExpertResponse> filterListExpert();
     BookingOrder asignBookingOrder(AsignExpertRequest request);
+    BookingOrder paymentBookingOrder(Long bookingOrderId, PaymentBookingOrder paymentBookingOrder);
 
 }
