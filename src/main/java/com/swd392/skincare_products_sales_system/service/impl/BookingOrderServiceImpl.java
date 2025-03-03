@@ -2,6 +2,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
 import com.swd392.skincare_products_sales_system.dto.request.quiz.QuestionRequest;
+import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ImageSkinResponse;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
@@ -10,11 +11,9 @@ import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.repository.BookingRepository;
-import com.swd392.skincare_products_sales_system.repository.ImageSkinRepository;
-import com.swd392.skincare_products_sales_system.repository.SkincareServiceRepository;
-import com.swd392.skincare_products_sales_system.repository.UserRepository;
+import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
+import com.swd392.skincare_products_sales_system.service.VNPayService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -38,17 +37,33 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     UserRepository userRepository;
     BookingRepository bookingRepository;
     SkincareServiceRepository serviceRepository;
+    RoleRepository roleRepository;
     private final ImageSkinRepository imageSkinRepository;
 
     @Override
-    public List<User> filterListExpert() {
-        List<User> list;
-        list = userRepository.findAll()
-                .stream()
-                .filter(u -> u.getRole().equals(RoleEnum.EXPERT))
-                .collect(Collectors.toList());
+    public List<ExpertResponse> filterListExpert() {
+        List<User> listUser = userRepository.findAll().stream()
+                .filter(user -> user.getRole() != null && user.getRole().getId() == 5)
+                .toList();
+        List<ExpertResponse> list = new ArrayList<>();
+        for (User user : listUser) {
+            ExpertResponse expertResponse = ExpertResponse.builder()
+                    .id(user.getId())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .email(user.getEmail())
+                    .phone(user.getPhone())
+                    .avatar(user.getAvatar())
+                    .gender(user.getGender() != null ? user.getGender().name() : null)
+                    .role(user.getRole() != null ? user.getRole().getName() : null)
+                    .build();
+            list.add(expertResponse);
+        }
         return list;
     }
+
+
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -67,9 +82,30 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
                 .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
 
-        bookingOrder.setExpertName(expert.getFirstName()+" "+expert.getLastName());
+        bookingOrder.setExpertName(expert.getId());
         bookingRepository.save(bookingOrder);
         return bookingOrder;
+    }
+
+    @Override
+    public BookingOrder paymentBookingOrder(Long bookingOrderId, PaymentBookingOrder paymentBookingOrder) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        VNPayService service = new VNPayService();
+        String isAddress = "";
+//        service.createPaymentUrl(bookingOrderId, bookingOrder.getPrice().doubleValue(), );
+        bookingOrder.setStatus(BookingStatus.PAYMENT);
+        bookingRepository.save(bookingOrder);
+        return null;
     }
 
     @Override
@@ -96,37 +132,35 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FormResponse bookingAdvise(FormCreateRequest request) {
-        // Authenticate user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         String username = authentication.getName();
 
-        // Fetch user information
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        // Fetch expert information
         User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
-                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+                .orElse(null);
 
-        // Fetch skincare service information
         SkincareService service = serviceRepository.findById(request.getSkincareServiceId())
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_EXIST));
-
-        // Check expert and service status
-        if (expert.getStatus().equals(Status.INACTIVE.name())) {
-            throw new AppException(ErrorCode.USER_INACTIVE);
+        String expertName = "";
+        if(expert != null){
+            if (expert.getStatus().equals(Status.INACTIVE.name())) {
+                throw new AppException(ErrorCode.USER_INACTIVE);
+            }
+            expertName = expert.getId();
+        }else {
+            expertName = null;
         }
         if (service.getStatus().equals(Status.INACTIVE.name())) {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
-        // Prepare ImageSkin list
         List<ImageSkin> imageSkinList = new ArrayList<>();
         if (request.getImageSkins() != null && !request.getImageSkins().isEmpty()) {
-            // Map each ImageSkinRequest to ImageSkin entity
             imageSkinList = request.getImageSkins().stream()
                     .map(imageSkinRequest -> {
                         ImageSkin imageSkin = new ImageSkin();
@@ -137,11 +171,10 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                     })
                     .collect(Collectors.toList());
         }
+        List<User> list = new ArrayList<>();
+        if(expert != null){
 
-        // Create expert name
-        String expertName = expert.getFirstName() + " " + expert.getLastName();
-
-        // Create BookingOrder
+        }
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
                 .orderDate(LocalDateTime.now())
@@ -159,19 +192,15 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .date(LocalDateTime.now())
                 .build();
 
-        // Save the BookingOrder to generate its ID
-        bookingOrder.setIsDeleted(false);  // Ensure it's not deleted
-        bookingRepository.save(bookingOrder);  // Save first to generate ID
+        bookingOrder.setIsDeleted(false);
+        bookingRepository.save(bookingOrder);
 
-        // Now set the bookingOrder for each ImageSkin and save them
         for (ImageSkin imageSkin : imageSkinList) {
-            imageSkin.setBookingOrder(bookingOrder);  // Associate ImageSkin with BookingOrder
+            imageSkin.setBookingOrder(bookingOrder);
         }
 
-        // Save ImageSkins into the database
         imageSkinRepository.saveAll(imageSkinList);
 
-        // Build and return the response
         return FormResponse.builder()
                 .note(bookingOrder.getNote())
                 .skinType(bookingOrder.getSkinType())
@@ -243,6 +272,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .build();
     }
 
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public BookingOrder changeStatus(ChangeStatus status) {
@@ -258,16 +289,12 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(status.getBookingOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
-        // Đơn sẽ vào hệ thống chờ Staff giao đơn
         if (bookingOrder.getStatus() == BookingStatus.PAYMENT_SUCCESS){
             bookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
         }
-        // Contact với customer
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
             bookingOrder.setStatus(BookingStatus.CONTACT_CUSTOMER);
         }
-        //Chia 2 luong neu tiep tuc mua liệu trình
-        // Khách hàng comfirm mua lộ trình
         if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
             bookingOrder.setStatus(BookingStatus.CUSTOMER_CONFIRM);
         }

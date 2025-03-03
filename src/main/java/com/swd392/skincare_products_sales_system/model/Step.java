@@ -1,8 +1,10 @@
 package com.swd392.skincare_products_sales_system.model;
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.enums.TimeOfDayStatus;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,20 +25,19 @@ public class Step extends AbstractEntity {
     @Column
     Integer stepNumber;
 
-    @Column
-    String timeOfDay;
+    @Enumerated(EnumType.STRING)
+    TimeOfDayStatus timeOfDay;
 
     @Column
+    @NotNull(message = "Action cannot not be null")
     String action;
 
     @Column
+    @NotNull(message = "Description cannot be null")
     String description;
 
-    @Column
-    String note;
-
     @Enumerated(EnumType.STRING)
-    RoutineStatusEnum routineStauts;
+    RoutineStatusEnum routineStatus;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
