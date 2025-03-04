@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.swd392.skincare_products_sales_system.enums.RoleEnum.MANAGER;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -229,7 +231,7 @@ public class QuizServiceImpl implements QuizService {
                     .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
             List<Quiz> list;
-            if(user.getRole().equals(RoleEnum.ADMIN) || user.getRole().equals(RoleEnum.MANAGER)) {
+            if(user.getRole().getId() == 2 || user.getRole().getId() ==  6) {
                  list = quizRepository.findAll()
                          .stream()
                          .toList();

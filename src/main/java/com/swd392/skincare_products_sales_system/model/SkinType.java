@@ -1,4 +1,5 @@
 package com.swd392.skincare_products_sales_system.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -24,5 +25,6 @@ public class SkinType extends AbstractEntity{
     String type;
 
     @OneToMany(mappedBy = "skinType", fetch = FetchType.EAGER)
+            @JsonIgnore
     Set<Product> products;
 }

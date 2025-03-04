@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -56,7 +57,11 @@ public class Voucher extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     Status status;
 
+    @Column
+    Integer quantity;
+
     @ManyToMany(mappedBy = "vouchers")
+            @JsonIgnore
     Set<User> users;
 
 }

@@ -21,4 +21,5 @@ public class VoucherResponse {
     Float discountAmount;
     Long id;
     Status status;
+    Integer quantity;
 }

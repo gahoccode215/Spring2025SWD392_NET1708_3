@@ -13,7 +13,7 @@ public interface BlogService {
     BlogResponse createBlog(BlogCreateRequest request);
     BlogResponse updateBlog(BlogUpdateRequest request, Long id);
     Blog deleteBlog(Long id);
-    BlogResponse getBlog(Long id);
+    BlogResponse getBlogById(Long id);
     List<Blog> getBlog();
     void changeStatus(Long id, Status status);
 

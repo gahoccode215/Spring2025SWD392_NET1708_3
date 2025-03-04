@@ -25,6 +25,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BlogServiceImpl implements BlogService {
 
+
     BlogRepository blogRepository;
 
     @Override
@@ -102,7 +103,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public BlogResponse getBlog(Long id) {
+    public BlogResponse getBlogById(Long id) {
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
         return BlogResponse.builder()
@@ -136,4 +137,5 @@ public class BlogServiceImpl implements BlogService {
         }
         blogRepository.save(blog);
     }
+
 }
