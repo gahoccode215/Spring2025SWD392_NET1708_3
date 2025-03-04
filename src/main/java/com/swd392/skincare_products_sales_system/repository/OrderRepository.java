@@ -21,6 +21,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAll(Pageable pageable);
 
+    @Query("SELECT x FROM Order x WHERE x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.PROCESSING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DELIVERING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DONE ")
+    Page<Order> findAllByFiltersDelivery(Pageable pageable);
+
     @Modifying
     @Transactional
     @Query("UPDATE Order x SET x.status = :orderStatus WHERE x.id = :id")

@@ -12,4 +12,5 @@ public interface OrderService {
     OrderPageResponse getOrdersByAdmin(int page, int size);
     OrderResponse getOrderById(Long id);
     void changeOrderStatus(Long id, OrderStatus orderStatus);
+    void deliveryOrder(Long id, OrderStatus orderStatus, String image);
 }

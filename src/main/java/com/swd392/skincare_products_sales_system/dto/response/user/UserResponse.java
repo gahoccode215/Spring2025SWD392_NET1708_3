@@ -2,9 +2,12 @@ package com.swd392.skincare_products_sales_system.dto.response.user;
 
 import com.swd392.skincare_products_sales_system.enums.Gender;
 
+import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +21,8 @@ public class UserResponse {
     String lastName;
     String username;
     String email;
+    Status status;
     String roleName;
     String avatar;
+    LocalDate birthday;
 }

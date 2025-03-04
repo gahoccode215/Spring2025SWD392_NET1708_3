@@ -36,6 +36,12 @@ public class Order {
     @Column(name = "order_date")
     LocalDateTime orderDate;
 
+    @Column(name = "updated_at")
+    LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    String updatedBy;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", length = 50)
     OrderStatus status;
@@ -59,5 +65,8 @@ public class Order {
     String discountCode;
     Double discountAmount;
     String deliveryTime;
+
+    @Column(name = "image_order_success")
+    String imageOrderSuccess;
 
 }

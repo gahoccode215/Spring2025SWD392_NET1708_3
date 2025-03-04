@@ -1,5 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
+import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
+import com.swd392.skincare_products_sales_system.dto.response.UpdatedResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderItemResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
@@ -25,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,7 +69,7 @@ public class OrderServiceImpl implements OrderService {
         if (paymentMethod == PaymentMethod.COD) {
             clearCart(cart);
         }
-
+        log.info("Den duoc day");
         return mapToOrderResponse(order);
     }
 
@@ -92,25 +95,11 @@ public class OrderServiceImpl implements OrderService {
         User user = getAuthenticatedUser();
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Order> orders = orderRepository.findAllByFilters(user.getUsername(),pageable);
+        Page<Order> orders = orderRepository.findAllByFilters(user.getUsername(), pageable);
         List<OrderResponse> orderResponses = orders.getContent().stream()
                 .map(this::mapToOrderResponse)
                 .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-//        List<OrderResponse> orderResponses = new ArrayList<>();
-//        for(Order x : orders.getContent()){
-//            OrderResponse orderResponse = new OrderResponse();
-//            orderResponse.setOrderId(x.getId());
-//            orderResponse.setTotalAmount(x.getTotalAmount());
-//            orderResponse.setUsername(x.getUsername());
-//            orderResponse.setOrderInfo(x.getOrderInfo());
-//            orderResponse.setOrderDate(x.getOrderDate());
-//            orderResponse.setStatus(x.getStatus());
-//            orderResponse.setPaymentMethod(x.getPaymentMethod());
-//            orderResponse.setPaymentStatus(x.getPaymentStatus());
-//            orderResponse.setAddress(x.getAddress());
-//            orderResponses.add(orderResponse);
-//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
@@ -122,37 +111,47 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderPageResponse getOrdersByAdmin(int page, int size) {
-//        User user = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
+
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
+        if(user.getRole().getName().equals(PredefinedRole.STAFF)){
+            Page<Order> orders = orderRepository.findAll(pageable);
+            List<OrderResponse> orderResponses = orders.getContent().stream()
+                    .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                    .collect(Collectors.toList());
+            OrderPageResponse response = new OrderPageResponse();
+            response.setOrderResponseList(orderResponses);
+            response.setTotalElements(orders.getTotalElements());
+            response.setTotalPages(orders.getTotalPages());
+            response.setPageNumber(orders.getNumber());
+            response.setPageSize(orders.getSize());
+            return response;
+        }
+        if(user.getRole().getName().equals(PredefinedRole.DELIVERY)){
+            Page<Order> orders = orderRepository.findAllByFiltersDelivery(pageable);
+            List<OrderResponse> orderResponses = orders.getContent().stream()
+                    .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                    .collect(Collectors.toList());
+            OrderPageResponse response = new OrderPageResponse();
+            response.setOrderResponseList(orderResponses);
+            response.setTotalElements(orders.getTotalElements());
+            response.setTotalPages(orders.getTotalPages());
+            response.setPageNumber(orders.getNumber());
+            response.setPageSize(orders.getSize());
+            return response;
+        }
         Page<Order> orders = orderRepository.findAll(pageable);
         List<OrderResponse> orderResponses = orders.getContent().stream()
                 .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
                 .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
-//        List<OrderResponse> orderResponses = new ArrayList<>();
-//        for(Order x : orders.getContent()){
-//            OrderResponse orderResponse = new OrderResponse();
-//            orderResponse.setOrderId(x.getId());
-//            orderResponse.setTotalAmount(x.getTotalAmount());
-//            orderResponse.setUsername(x.getUsername());
-//            orderResponse.setOrderInfo(x.getOrderInfo());
-//            orderResponse.setOrderDate(x.getOrderDate());
-//            orderResponse.setStatus(x.getStatus());
-//            orderResponse.setPaymentMethod(x.getPaymentMethod());
-//            orderResponse.setPaymentStatus(x.getPaymentStatus());
-//            orderResponse.setAddress(x.getAddress());
-//            orderResponses.add(orderResponse);
-//        }
         response.setOrderResponseList(orderResponses);
         response.setTotalElements(orders.getTotalElements());
         response.setTotalPages(orders.getTotalPages());
         response.setPageNumber(orders.getNumber());
         response.setPageSize(orders.getSize());
-
         return response;
-
-
     }
 
     @Override
@@ -165,7 +164,25 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void changeOrderStatus(Long id, OrderStatus orderStatus) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        orderRepository.updateOrderStatus(id, orderStatus);
+        User user = getAuthenticatedUser();
+//        orderRepository.updateOrderStatus(id, orderStatus);
+        order.setStatus(orderStatus);
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setUpdatedBy(user.getUsername());
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void deliveryOrder(Long id, OrderStatus orderStatus, String image) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        User user = getAuthenticatedUser();
+//        orderRepository.updateOrderStatus(id, orderStatus);
+        order.setStatus(orderStatus);
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setUpdatedBy(user.getUsername());
+        order.setImageOrderSuccess(image);
+        orderRepository.save(order);
     }
 
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {
@@ -202,8 +219,15 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(item.getQuantity())
                         .price(item.getPrice())
                         .totalPrice(item.calculateTotalPrice())
+                        .thumbnailProduct(item.getProduct().getThumbnail())
                         .build())
                 .collect(Collectors.toList());
+        UpdatedResponse updatedResponse = new UpdatedResponse();
+        if(order.getUpdatedBy() != null){
+            User user = userRepository.findByUsernameOrThrow(order.getUpdatedBy());
+            updatedResponse.setUpdatedAt(order.getUpdatedAt());
+            updatedResponse.setUpdatedBy(user);
+        }
 
         return OrderResponse.builder()
                 .orderId(order.getId())
@@ -216,6 +240,8 @@ public class OrderServiceImpl implements OrderService {
                 .address(order.getAddress())
                 .paymentStatus(order.getPaymentStatus())
                 .status(order.getStatus())
+                .updatedResponse(updatedResponse)
+                .imageOrderSuccess(order.getImageOrderSuccess())
                 .build();
     }
 
@@ -230,6 +256,7 @@ public class OrderServiceImpl implements OrderService {
         cart.setTotalPrice(0.0);
         cartRepository.save(cart);
     }
+
 
 
 }

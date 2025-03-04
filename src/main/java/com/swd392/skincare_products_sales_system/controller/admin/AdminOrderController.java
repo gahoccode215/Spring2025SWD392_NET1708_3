@@ -60,5 +60,16 @@ public class AdminOrderController {
 //                .result(orderService.changeOrderStatus(orderId, orderStatus))
                 .build();
     }
+    @PatchMapping("/delivery/{orderId}")
+    @Operation(summary = "Delivery Order", description = "Delivery Order")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus, String thumbnail) {
+        orderService.changeOrderStatus(orderId, orderStatus);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Delivery success")
+                .build();
+    }
 
 }

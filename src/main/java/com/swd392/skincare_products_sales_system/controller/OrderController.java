@@ -30,7 +30,7 @@ public class OrderController {
 
 
     @GetMapping("/history-order")
-    public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+    public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get order history")

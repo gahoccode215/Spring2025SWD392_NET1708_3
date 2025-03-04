@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     RoleRepository roleRepository;
-    UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
     @Override
@@ -197,8 +196,10 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender())
                 .email(user.getEmail())
                 .username(user.getUsername())
+                .birthday(user.getBirthday())
                 .roleName(user.getRole().getName())
                 .avatar(user.getAvatar())
+                .status(user.getStatus())
                 .build();
     }
 
