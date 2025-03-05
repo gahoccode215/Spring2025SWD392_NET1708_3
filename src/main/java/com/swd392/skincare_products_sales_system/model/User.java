@@ -99,4 +99,6 @@ public class User extends AbstractEntity {
     @JsonIgnore
     List<Routine> routines;
 
+
+
 }

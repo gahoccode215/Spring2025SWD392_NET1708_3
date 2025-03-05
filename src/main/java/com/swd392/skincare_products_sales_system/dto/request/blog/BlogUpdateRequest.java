@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.dto.request.blog;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.User;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -35,4 +36,5 @@ public class BlogUpdateRequest {
     @NotNull
     @Size(min = 5)
     String description;
+    String createdBy;
 }

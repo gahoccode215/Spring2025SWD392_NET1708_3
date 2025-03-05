@@ -7,13 +7,17 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Blog;
+import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.BlogRepository;
+import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.BlogService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,12 +29,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BlogServiceImpl implements BlogService {
 
-
+    UserRepository userRepository;
     BlogRepository blogRepository;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public BlogResponse createBlog(BlogCreateRequest request) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         if(blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName()).isPresent()){
             throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
         }
@@ -45,6 +57,7 @@ public class BlogServiceImpl implements BlogService {
                 .content(request.getContent())
                 .date(LocalDateTime.now())
                 .status(Status.ACTIVE)
+                .createdBy(user.getFirstName() + " " + user.getLastName())
                 .build();
         blog.setIsDeleted(false);
         blogRepository.save(blog);
@@ -56,28 +69,43 @@ public class BlogServiceImpl implements BlogService {
                 .id(blog.getId())
                 .description(blog.getDescription())
                 .date(LocalDate.now())
+                .createdBy(user.getFirstName() + " " + user.getLastName())
                 .build();
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public BlogResponse updateBlog(BlogUpdateRequest request, Long blogId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
         Blog existingBlog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
-
-        if (blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName()).isPresent()) {
-            throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
-        }
 
         if (request.getBlogName() == null || request.getBlogName().isEmpty()) {
             throw new AppException(ErrorCode.INVALID_BLOG_NAME);
         }
+        boolean blogNameExists = blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName())
+                .filter(blog -> !blog.getId().equals(blogId))  // Exclude current blog from check
+                .isPresent();
+
+        if (blogNameExists) {
+            throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
+        }
+
         existingBlog.setBlogName(request.getBlogName());
         existingBlog.setImage(request.getImage());
         existingBlog.setDescription(request.getDescription());
         existingBlog.setContent(request.getContent());
         existingBlog.setDate(LocalDateTime.now());
         existingBlog.setStatus(Status.ACTIVE);
+        existingBlog.setCreatedBy(user.getFirstName() + " " + user.getLastName());
 
         blogRepository.save(existingBlog);
 
@@ -89,12 +117,21 @@ public class BlogServiceImpl implements BlogService {
                 .id(existingBlog.getId())
                 .description(existingBlog.getDescription())
                 .date(existingBlog.getDate().toLocalDate())
+                .createdBy(existingBlog.getCreatedBy())
                 .build();
     }
 
 
+
     @Override
     public Blog deleteBlog(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
         blog.setIsDeleted(true);

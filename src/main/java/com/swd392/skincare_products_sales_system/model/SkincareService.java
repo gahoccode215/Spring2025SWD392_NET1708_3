@@ -37,9 +37,8 @@ public class SkincareService extends AbstractEntity {
     @Column
     Float price;
 
-    @Column
+    @Column(name = "description", columnDefinition = "TEXT")
     String description;
-
     @OneToMany(mappedBy = "skincareService")
     @JsonIgnore
     List<BookingOrder> bookingOrders;

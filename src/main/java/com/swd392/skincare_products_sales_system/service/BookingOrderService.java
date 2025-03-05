@@ -17,8 +17,9 @@ public interface BookingOrderService {
     FormResponse updateBookingAdvise(FormUpdateRequest request, Long bookingOrderId);
     BookingOrder changeStatus(ChangeStatus status);
     List<BookingOrder> getBookingOrder(); // View
+    List<BookingOrder> getBookingOrderByExpertId();
     List<ExpertResponse> filterListExpert();
-    BookingOrder asignBookingOrder(AsignExpertRequest request);
+    BookingOrder asignBookingOrder(AsignExpertRequest request, Long bookingOrderId);
     PaymentOrderResponse paymentBookingOrder(PaymentBookingOrderRequest paymentBookingOrderRequest, Long bookingOrderId, String isAddress) throws UnsupportedEncodingException;
-
+    List<BookingOrder> listAllBookingOrder();
 }

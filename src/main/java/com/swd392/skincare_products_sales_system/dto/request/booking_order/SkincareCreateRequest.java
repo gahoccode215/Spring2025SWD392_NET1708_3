@@ -22,5 +22,4 @@ public class SkincareCreateRequest {
     Float price;
     @Enumerated(EnumType.STRING)
     Status status;
-
 }
