@@ -66,6 +66,7 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
+        product.setStock(0);
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);

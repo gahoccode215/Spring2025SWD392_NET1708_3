@@ -43,6 +43,9 @@ public class Product extends AbstractEntity {
     @Column(name = "stock")
     Integer stock = 0; // Mặc định tồn kho = 0
 
+    @Column(name = "rating")
+    Double rating = 5.0;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     Status status = Status.ACTIVE;

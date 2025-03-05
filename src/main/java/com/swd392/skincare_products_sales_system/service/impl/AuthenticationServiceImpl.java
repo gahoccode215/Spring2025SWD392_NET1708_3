@@ -109,6 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return LoginResponse.builder()
                 .token(jwtUtil.generateToken(user)) //Token được generate
                 .authenticated(true)
+                .roleName(user.getRole().getName())
                 .build();
     }
 

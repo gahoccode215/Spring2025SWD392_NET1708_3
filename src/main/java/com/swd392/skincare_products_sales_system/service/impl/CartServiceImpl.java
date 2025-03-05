@@ -43,6 +43,9 @@ public class CartServiceImpl implements CartService {
     public void addProductToCart(String productId, Integer quantity) {
         User user = getAuthenticatedUser();
         Product product = getProductById(productId);
+        if(quantity > product.getStock()){
+            throw new AppException(ErrorCode.INVALID_QUANTITY);
+        }
         Cart cart = getOrCreateCartEntity(user);
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))

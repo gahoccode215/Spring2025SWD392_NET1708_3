@@ -42,9 +42,8 @@ public enum ErrorCode {
     INVALID_CHANGE_PASSWORD(1107, "Old password not correct", HttpStatus.BAD_REQUEST),
     INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
     INVALID_ROLE(1108, "Role invalid", HttpStatus.BAD_REQUEST),
-
     INVALID_JSON(1109, "Json invalid", HttpStatus.BAD_REQUEST),
-    INVALID_QUANTITY(1110, "Quantity invalid.Quantity must greater than 0", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(1110, "Quantity invalid", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_METHOD(1111, "Invalid Payment Method", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1112, "Invalid Email", HttpStatus.BAD_REQUEST),
     // 12XX

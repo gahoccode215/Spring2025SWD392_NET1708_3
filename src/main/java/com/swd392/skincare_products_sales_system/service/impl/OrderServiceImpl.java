@@ -11,6 +11,7 @@ import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.model.cart.Cart;
 import com.swd392.skincare_products_sales_system.model.order.Order;
 import com.swd392.skincare_products_sales_system.model.order.OrderItem;
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import lombok.AccessLevel;
@@ -42,6 +43,7 @@ public class OrderServiceImpl implements OrderService {
     CartItemRepository cartItemRepository;
     OrderItemRepository orderItemRepository;
     BatchRepository batchRepository;
+    private final ProductRepository productRepository;
 
     @Override
     @Transactional
@@ -58,10 +60,15 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = buildOrder(cart, address, paymentMethod);
-        order = orderRepository.save(order); // LƯU vào DB trước (để có ID)
+        order = orderRepository.save(order);
 
         List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
-        orderItemRepository.saveAll(orderItems); // Lưu danh sách OrderItems
+        orderItems.forEach(orderItem -> {
+            Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            product.setStock(product.getStock() - orderItem.getQuantity());
+        });
+
+        orderItemRepository.saveAll(orderItems);
 
         order.setOrderItems(orderItems);
         orderRepository.save(order);
