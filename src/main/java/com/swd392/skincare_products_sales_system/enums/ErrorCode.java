@@ -46,6 +46,9 @@ public enum ErrorCode {
     INVALID_QUANTITY(1110, "Quantity invalid", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_METHOD(1111, "Invalid Payment Method", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1112, "Invalid Email", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1113, "Invalid Otp", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(1114, "Otp expired", HttpStatus.BAD_REQUEST),
+    ACCOUNT_HAS_BEEN_DISABLE(1113, "Account has been disable", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

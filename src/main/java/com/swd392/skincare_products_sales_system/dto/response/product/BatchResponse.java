@@ -12,6 +12,7 @@ import java.util.List;
 public class BatchResponse {
     String id;
     String batchCode;
+    String productName;
     String productId;
     Integer quantity;
     Double importPrice;

@@ -5,4 +5,5 @@ import com.swd392.skincare_products_sales_system.dto.response.product.FeedBackRe
 
 public interface FeedBackService {
     FeedBackResponse createFeedBack(FeedBackCreationRequest request, String productId);
+
 }

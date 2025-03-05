@@ -15,14 +15,17 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
+import com.swd392.skincare_products_sales_system.model.Otp;
 import com.swd392.skincare_products_sales_system.model.Role;
 import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.service.OtpService;
 import com.swd392.skincare_products_sales_system.service.PostmarkService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
+import com.swd392.skincare_products_sales_system.util.OtpUtil;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -48,6 +51,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     JwtUtil jwtUtil;
     InvalidatedTokenRepository invalidatedTokenRepository;
     PostmarkService postmarkService;
+    OtpService otpService;
 
     @NonFinal
     @Value("${base.be.url}")
@@ -81,15 +85,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRole(customRole);
         user.setIsDeleted(false);
         userRepository.save(user);
+        Otp otp = otpService.generateAndSaveOtp(user.getId());
+
+        user.addOtp(otp);
+        userRepository.save(user);
 //         Send verification email
-        String verificationUrl = backendUrl + "/auth/verify?token=" + jwtUtil.generateToken(user);
-        log.info(verificationUrl);
+//        String verificationUrl = backendUrl + "/auth/verify?token=" + jwtUtil.generateToken(user);
+//        log.info(verificationUrl);
         try {
-            postmarkService.sendVerificationEmail(user.getEmail(), user.getUsername(), verificationUrl);
+//            postmarkService.sendVerificationEmail(user.getEmail(), user.getUsername(), verificationUrl);
+            postmarkService.sendVerificationEmailWithOTP(user.getEmail(), user.getUsername(), otp.getOtp());
         } catch (Exception e) {
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }
         return RegisterResponse.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .gender(user.getGender())
                 .email(user.getEmail())
@@ -101,6 +111,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_LOGIN));
+        if(user.getStatus().equals(Status.INACTIVE))
+            throw new AppException(ErrorCode.ACCOUNT_HAS_BEEN_DISABLE);
         // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_LOGIN);
@@ -248,12 +260,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String resetPasswordUrl = frontEndUrl + "/reset-password?token=" + token;
         log.info(resetPasswordUrl);
 
-//        try {
-//            // Gửi email qua Postmark
+        try {
+            // Gửi email qua Postmark
 //            postmarkService.sendForgotPassword(user.getEmail(), user.getUsername(), resetPasswordUrl);
-//        } catch (Exception e) {
-//            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
-//        }
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+        }
     }
 
     @Override

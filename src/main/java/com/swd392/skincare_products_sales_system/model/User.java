@@ -101,4 +101,17 @@ public class User extends AbstractEntity {
 
 
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<Otp> otps = new ArrayList<>();
+
+
+    public void addOtp(Otp obj){
+        if (this.otps == null) {
+            this.otps = new ArrayList<>();
+        }
+        otps.add(obj);
+        obj.setUser(this);
+    }
+
 }

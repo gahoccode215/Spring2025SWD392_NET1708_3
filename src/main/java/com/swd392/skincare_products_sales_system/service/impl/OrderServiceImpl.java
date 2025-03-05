@@ -173,7 +173,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         User user = getAuthenticatedUser();
 //        orderRepository.updateOrderStatus(id, orderStatus);
-        if (orderStatus.equals(OrderStatus.CANCELED)) {
+        if (orderStatus.equals(OrderStatus.CANCELLED)) {
             order.getOrderItems().forEach(orderItem -> {
                 Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
                 product.setStock(product.getStock() + orderItem.getQuantity());

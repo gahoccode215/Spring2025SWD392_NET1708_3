@@ -85,7 +85,10 @@ public class BatchServiceImpl implements BatchService {
     }
     private BatchResponse toBatchResponse(Batch batch){
         return BatchResponse.builder()
+                .id(batch.getId())
+                .batchCode(batch.getBatchCode())
                 .productId(batch.getProduct().getId())
+                .productName(batch.getProduct().getName())
                 .importPrice(batch.getImportPrice())
                 .expirationDate(batch.getExpirationDate())
                 .manufactureDate(batch.getManufactureDate())
