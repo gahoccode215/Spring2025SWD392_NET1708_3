@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -176,6 +177,29 @@ public class ProductServiceImpl implements ProductService {
     public void changeProductStatus(String productId, Status status) {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         productRepository.updateProductStatus(product.getId(), status);
+    }
+
+    @Override
+    public List<ProductResponse> getLatestProducts(int limit) {
+        PageRequest pageRequest = PageRequest.of(0, limit);
+        List<Product> products = productRepository.findLatestProductsByStatus(Status.ACTIVE, pageRequest).getContent();
+        return products.stream()
+                .map(this::convertToProductResponse)
+                .collect(Collectors.toList());
+    }
+    private ProductResponse convertToProductResponse(Product product) {
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .description(product.getDescription())
+                .thumbnail(product.getThumbnail())
+                .stock(product.getStock())
+                .slug(product.getSlug())
+                .status(product.getStatus())
+                .category(product.getCategory())
+                .brand(product.getBrand())
+                .build();
     }
 
     private Sort getSort(String sortBy, String order) {

@@ -122,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
-        if(user.getRole().getName().equals(PredefinedRole.STAFF)){
+        if (user.getRole().getName().equals(PredefinedRole.STAFF)) {
             Page<Order> orders = orderRepository.findAll(pageable);
             List<OrderResponse> orderResponses = orders.getContent().stream()
                     .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
@@ -135,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
             response.setPageSize(orders.getSize());
             return response;
         }
-        if(user.getRole().getName().equals(PredefinedRole.DELIVERY)){
+        if (user.getRole().getName().equals(PredefinedRole.DELIVERY)) {
             Page<Order> orders = orderRepository.findAllByFiltersDelivery(pageable);
             List<OrderResponse> orderResponses = orders.getContent().stream()
                     .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
@@ -173,9 +173,16 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         User user = getAuthenticatedUser();
 //        orderRepository.updateOrderStatus(id, orderStatus);
+        if (orderStatus.equals(OrderStatus.CANCELED)) {
+            order.getOrderItems().forEach(orderItem -> {
+                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                product.setStock(product.getStock() + orderItem.getQuantity());
+            });
+        }
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
+
         orderRepository.save(order);
     }
 
@@ -185,6 +192,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         User user = getAuthenticatedUser();
 //        orderRepository.updateOrderStatus(id, orderStatus);
+        if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
+            order.getOrderItems().forEach(orderItem -> {
+                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                product.setStock(product.getStock() + orderItem.getQuantity());
+            });
+        }
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
@@ -230,7 +243,7 @@ public class OrderServiceImpl implements OrderService {
                         .build())
                 .collect(Collectors.toList());
         UpdatedResponse updatedResponse = new UpdatedResponse();
-        if(order.getUpdatedBy() != null){
+        if (order.getUpdatedBy() != null) {
             User user = userRepository.findByUsernameOrThrow(order.getUpdatedBy());
             updatedResponse.setUpdatedAt(order.getUpdatedAt());
             updatedResponse.setUpdatedBy(user);
@@ -263,7 +276,6 @@ public class OrderServiceImpl implements OrderService {
         cart.setTotalPrice(0.0);
         cartRepository.save(cart);
     }
-
 
 
 }

@@ -184,11 +184,13 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(request.getAvatar());
         return toUserResponse(user);
     }
+
     private User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameOrThrow(username);
     }
-    private UserResponse toUserResponse(User user){
+
+    private UserResponse toUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())

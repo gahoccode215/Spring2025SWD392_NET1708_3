@@ -5,12 +5,15 @@ import com.swd392.skincare_products_sales_system.dto.response.product.ProductPag
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -31,7 +34,16 @@ public class ProductController {
                 .result(productService.getProductBySlug(slug))
                 .build();
     }
-
+    @GetMapping("/latest")
+    @Operation(summary = "Get latest product with limit input", description = "Get latest product with limit input")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<List<ProductResponse>> getLatestProducts(@RequestParam int limit) {
+        return ApiResponse.<List<ProductResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get successfully")
+                .result(productService.getLatestProducts(limit))
+                .build();
+    }
     @GetMapping()
     @Operation(summary = "Get all products with options: search, pagination, sort, filter", description = "Retrieve all active products with search, pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
@@ -50,4 +62,5 @@ public class ProductController {
                 .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, originSlug, sortBy, order))
                 .build();
     }
+
 }

@@ -48,7 +48,7 @@ public class AdminOrderController {
                 .result(orderService.getOrderById(orderId))
                 .build();
     }
-    @PatchMapping("/change-status/{orderId}")
+    @PatchMapping("/confirm-order/{orderId}")
     @Operation(summary = "Change order status", description = "Change order status")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

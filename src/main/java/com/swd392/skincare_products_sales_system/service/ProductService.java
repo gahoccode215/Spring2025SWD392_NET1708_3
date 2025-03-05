@@ -6,6 +6,8 @@ import com.swd392.skincare_products_sales_system.dto.response.product.ProductPag
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 
+import java.util.List;
+
 public interface ProductService {
     ProductResponse createProduct(ProductCreationRequest request) ;
     void deleteProduct(String productId);
@@ -14,5 +16,5 @@ public interface ProductService {
     ProductResponse getProductBySlug(String slug);
     ProductResponse getProductById(String id);
     void changeProductStatus(String productId, Status status);
-
+    List<ProductResponse> getLatestProducts(int limit);
 }
