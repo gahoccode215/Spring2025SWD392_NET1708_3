@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.enums.TimeOfDayStatus;
 import com.swd392.skincare_products_sales_system.model.product.Product;
@@ -40,10 +41,12 @@ public class Step extends AbstractEntity {
     RoutineStatusEnum routineStatus;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "product_id")
     Product product;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "daily_routine_id")
     DailyRoutine dailyRoutine;
 

@@ -51,6 +51,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .description(request.getDescription())
                 .discountAmount(request.getDiscountAmount())
                 .status(Status.ACTIVE)
+                .quantity(request.getQuantity())
                 .build();
         voucher.setIsDeleted(false);
         voucherRepository.save(voucher);
@@ -65,6 +66,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .description(voucher.getDescription())
                 .discountAmount(voucher.getDiscountAmount())
                 .status(voucher.getStatus())
+                .quantity(voucher.getQuantity())
                 .build();
     }
 
@@ -92,6 +94,7 @@ public class VoucherServiceImpl implements VoucherService {
         checkVoucher.setPoint(request.getPoint());
         checkVoucher.setDescription(request.getDescription());
         checkVoucher.setDiscountAmount(request.getDiscountAmount());
+        checkVoucher.setQuantity(request.getQuantity());
 
         voucherRepository.save(checkVoucher);
 
@@ -105,6 +108,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .description(checkVoucher.getDescription())
                 .discountAmount(checkVoucher.getDiscountAmount())
                 .status(checkVoucher.getStatus())
+                .quantity(checkVoucher.getQuantity())
                 .build();
     }
 
@@ -147,6 +151,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .description(voucher.getDescription())
                 .discountAmount(voucher.getDiscountAmount())
                 .status(voucher.getStatus())
+                .quantity(voucher.getQuantity())
                 .build();
     }
 
@@ -162,7 +167,7 @@ public class VoucherServiceImpl implements VoucherService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         List<Voucher> list;
-        if(user.getRole().equals(RoleEnum.ADMIN) || user.getRole().equals(RoleEnum.MANAGER)) {
+        if(user.getRole().getId() == 2 || user.getRole().getId() == 6) {
             list = voucherRepository.findAll()
                     .stream()
                     .toList();
