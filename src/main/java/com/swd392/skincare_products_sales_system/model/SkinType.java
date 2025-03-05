@@ -25,6 +25,6 @@ public class SkinType extends AbstractEntity{
     String type;
 
     @OneToMany(mappedBy = "skinType", fetch = FetchType.EAGER)
-            @JsonIgnore
+    @JsonIgnore
     Set<Product> products;
 }

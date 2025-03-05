@@ -36,5 +36,5 @@ public class BlogCreateRequest {
     @NotNull(message = "Description cannot be null")
     @Size(min = 5)
     String description;
-    User user;
+    String createdBy;
 }

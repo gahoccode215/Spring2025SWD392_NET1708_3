@@ -57,7 +57,7 @@ public class BlogServiceImpl implements BlogService {
                 .content(request.getContent())
                 .date(LocalDateTime.now())
                 .status(Status.ACTIVE)
-                .user(user)
+                .createdBy(user.getFirstName() + " " + user.getLastName())
                 .build();
         blog.setIsDeleted(false);
         blogRepository.save(blog);
@@ -69,7 +69,7 @@ public class BlogServiceImpl implements BlogService {
                 .id(blog.getId())
                 .description(blog.getDescription())
                 .date(LocalDate.now())
-                .user(user)
+                .createdBy(user.getFirstName() + " " + user.getLastName())
                 .build();
     }
 
@@ -80,6 +80,7 @@ public class BlogServiceImpl implements BlogService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
@@ -87,20 +88,24 @@ public class BlogServiceImpl implements BlogService {
         Blog existingBlog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
 
-        if (blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName()).isPresent()) {
-            throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
-        }
-
         if (request.getBlogName() == null || request.getBlogName().isEmpty()) {
             throw new AppException(ErrorCode.INVALID_BLOG_NAME);
         }
+        boolean blogNameExists = blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName())
+                .filter(blog -> !blog.getId().equals(blogId))  // Exclude current blog from check
+                .isPresent();
+
+        if (blogNameExists) {
+            throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
+        }
+
         existingBlog.setBlogName(request.getBlogName());
         existingBlog.setImage(request.getImage());
         existingBlog.setDescription(request.getDescription());
         existingBlog.setContent(request.getContent());
         existingBlog.setDate(LocalDateTime.now());
         existingBlog.setStatus(Status.ACTIVE);
-        existingBlog.setUser(user);
+        existingBlog.setCreatedBy(user.getFirstName() + " " + user.getLastName());
 
         blogRepository.save(existingBlog);
 
@@ -112,9 +117,10 @@ public class BlogServiceImpl implements BlogService {
                 .id(existingBlog.getId())
                 .description(existingBlog.getDescription())
                 .date(existingBlog.getDate().toLocalDate())
-                .user(user)
+                .createdBy(existingBlog.getCreatedBy())
                 .build();
     }
+
 
 
     @Override
@@ -130,7 +136,6 @@ public class BlogServiceImpl implements BlogService {
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
         blog.setIsDeleted(true);
         blog.setStatus(Status.INACTIVE);
-        blog.setUser(user);
         return blogRepository.save(blog);
     }
 

@@ -61,12 +61,9 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         return list;
     }
 
-
-
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BookingOrder asignBookingOrder(AsignExpertRequest request) {
+    public BookingOrder asignBookingOrder(AsignExpertRequest request, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -75,7 +72,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
@@ -108,7 +105,13 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .build();
     }
 
-
+    @Override
+    public List<BookingOrder> listAllBookingOrder() {
+        List<BookingOrder> list = bookingRepository.findAll()
+                .stream()
+                .toList();
+        return list;
+    }
 
     @Override
     public List<BookingOrder> getBookingOrder() {
@@ -132,7 +135,18 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
-    public List<BookingOrder> getBookingOrderByExpertId(Long expertId) {
+    public List<BookingOrder> getBookingOrderByExpertId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        List<BookingOrder> list = bookingRepository.findAll()
+                .stream()
+                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
+                .toList();
         return List.of();
     }
 
@@ -334,5 +348,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameOrThrow(username);
     }
+
+
+
 
 }

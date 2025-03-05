@@ -19,5 +19,5 @@ public class BlogResponse {
     Status status;
     LocalDate date;
     String content;
-    User user;
+    String createdBy;
 }

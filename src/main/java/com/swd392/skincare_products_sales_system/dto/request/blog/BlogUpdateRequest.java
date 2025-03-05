@@ -36,5 +36,5 @@ public class BlogUpdateRequest {
     @NotNull
     @Size(min = 5)
     String description;
-    User user;
+    String createdBy;
 }

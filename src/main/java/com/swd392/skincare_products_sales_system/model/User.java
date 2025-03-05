@@ -99,8 +99,6 @@ public class User extends AbstractEntity {
     @JsonIgnore
     List<Routine> routines;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @JsonIgnore
-    List<Blog> blogs;
+
 
 }
