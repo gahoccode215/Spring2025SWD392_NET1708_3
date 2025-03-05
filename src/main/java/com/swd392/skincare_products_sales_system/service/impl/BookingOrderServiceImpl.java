@@ -5,10 +5,8 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.QuestionReques
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ImageSkinResponse;
-import com.swd392.skincare_products_sales_system.enums.BookingStatus;
-import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
-import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
+import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.repository.*;
@@ -23,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,25 +87,28 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
-    public BookingOrder paymentBookingOrder(Long bookingOrderId, PaymentBookingOrder paymentBookingOrder) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+    @Transactional
+    public PaymentOrderResponse paymentBookingOrder(PaymentBookingOrderRequest request, Long bookingOrderId, String isAddress) throws UnsupportedEncodingException {
+        User user = getAuthenticatedUser();
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-
         VNPayService service = new VNPayService();
-        String isAddress = "";
-//        service.createPaymentUrl(bookingOrderId, bookingOrder.getPrice().doubleValue(), );
-        bookingOrder.setStatus(BookingStatus.PAYMENT);
+        Float price = bookingOrder.getPrice();
+        request.setAmount(String.valueOf(price));
+        String url = service.createPaymentUrlBookingOrder(request, isAddress);
         bookingRepository.save(bookingOrder);
-        return null;
+
+
+        return PaymentOrderResponse.builder()
+                .bookingOrderId(bookingOrderId)
+                .dateTime(LocalDateTime.now())
+                .price(price)
+                .status(BookingStatus.PAYMENT)
+                .build();
     }
+
+
 
     @Override
     public List<BookingOrder> getBookingOrder() {
@@ -322,5 +324,10 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         return bookingOrder;
     }
 
+
+    private User getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsernameOrThrow(username);
+    }
 
 }

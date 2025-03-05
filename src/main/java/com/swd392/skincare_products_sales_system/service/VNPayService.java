@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.service;
 
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -72,19 +73,23 @@ public class VNPayService {
         return vnpUrl + "?" + query;
     }
 
-    public String createPaymentUrlBooking(Long bookingOrderId, Double amount, String ipAddress) throws UnsupportedEncodingException {
+
+
+    public String createPaymentUrlBookingOrder(PaymentBookingOrderRequest request, String isAddress) throws UnsupportedEncodingException {
+            String orderId = UUID.randomUUID().toString().substring(0,6);
+
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
         params.put("vnp_Command", "pay");
-        params.put("vnp_TmnCode", tmnCode);
-        params.put("vnp_Amount", String.valueOf(amount.longValue() * 100)); // Số tiền tính bằng VND, nhân với 100 theo yêu cầu của VNPay
+        params.put("vnp_TmnCode", "M0R9Z6E1");
+        params.put("vnp_Amount", request.getAmount() + "00");
         params.put("vnp_CurrCode", "VND");
-        params.put("vnp_TxnRef", bookingOrderId.toString());
-        params.put("vnp_OrderInfo", "Thanh toan don hang#" + bookingOrderId );
-        params.put("vnp_OrderType", "other"); // Loại hàng hóa, dịch vụ
+        params.put("vnp_TxnRef", orderId);
+        params.put("vnp_OrderInfo", "Thanh toan don hang#" + orderId );
+        params.put("vnp_OrderType", "other");
         params.put("vnp_Locale", "vn");
         params.put("vnp_ReturnUrl", returnUrl);
-        params.put("vnp_IpAddr", ipAddress);
+        params.put("vnp_IpAddr", isAddress);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String createDate = sdf.format(new Date());
@@ -110,10 +115,12 @@ public class VNPayService {
         }
         hashData.deleteCharAt(hashData.length() - 1); // Xóa ký tự '&' cuối cùng
         query.deleteCharAt(query.length() - 1); // Xóa ký tự '&' cuối cùng
-        String secureHash = hmacSHA512(hashSecret, hashData.toString());
+        String secureHash = hmacSHA512("6Z3AGDLVVDYXEAE3JKBNI6LN2ARZXXST", hashData.toString());
         query.append("&vnp_SecureHash=").append(URLEncoder.encode(secureHash, StandardCharsets.UTF_8.toString()));
         return vnpUrl + "?" + query;
     }
+
+
 
     private String hmacSHA512(String key, String data) {
         try {
@@ -150,7 +157,7 @@ public class VNPayService {
             }
         }
         if (hashData.length() > 0) {
-            hashData.deleteCharAt(hashData.length() - 1); // Loại bỏ ký tự '&' cuối cùng
+            hashData.deleteCharAt(hashData.length() - 1);
         }
         String calculatedHash = hmacSHA512(hashSecret, hashData.toString());
         if (!calculatedHash.equalsIgnoreCase(receivedHash)) {
