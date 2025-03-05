@@ -48,4 +48,8 @@ public class Blog extends AbstractEntity{
     @Column
     LocalDateTime date;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    User user;
+
 }

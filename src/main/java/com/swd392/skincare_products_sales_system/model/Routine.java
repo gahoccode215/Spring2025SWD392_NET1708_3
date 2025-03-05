@@ -47,7 +47,7 @@ public class Routine extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-            @JsonIgnore
+    @JsonIgnore
     User user;
 
     @OneToMany(mappedBy = "routine")

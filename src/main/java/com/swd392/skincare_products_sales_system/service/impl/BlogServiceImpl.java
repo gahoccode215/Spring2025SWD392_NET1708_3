@@ -7,13 +7,17 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.Blog;
+import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.BlogRepository;
+import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.BlogService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,12 +29,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class BlogServiceImpl implements BlogService {
 
-
+    UserRepository userRepository;
     BlogRepository blogRepository;
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public BlogResponse createBlog(BlogCreateRequest request) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         if(blogRepository.findBlogByBlogNameAndIsDeletedFalse(request.getBlogName()).isPresent()){
             throw new AppException(ErrorCode.BLOG_NAME_EXISTED);
         }
@@ -45,6 +57,7 @@ public class BlogServiceImpl implements BlogService {
                 .content(request.getContent())
                 .date(LocalDateTime.now())
                 .status(Status.ACTIVE)
+                .user(user)
                 .build();
         blog.setIsDeleted(false);
         blogRepository.save(blog);
@@ -56,12 +69,21 @@ public class BlogServiceImpl implements BlogService {
                 .id(blog.getId())
                 .description(blog.getDescription())
                 .date(LocalDate.now())
+                .user(user)
                 .build();
     }
 
     @Override
     @Transactional(rollbackOn = Exception.class)
     public BlogResponse updateBlog(BlogUpdateRequest request, Long blogId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
         Blog existingBlog = blogRepository.findById(blogId)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
 
@@ -78,6 +100,7 @@ public class BlogServiceImpl implements BlogService {
         existingBlog.setContent(request.getContent());
         existingBlog.setDate(LocalDateTime.now());
         existingBlog.setStatus(Status.ACTIVE);
+        existingBlog.setUser(user);
 
         blogRepository.save(existingBlog);
 
@@ -89,16 +112,25 @@ public class BlogServiceImpl implements BlogService {
                 .id(existingBlog.getId())
                 .description(existingBlog.getDescription())
                 .date(existingBlog.getDate().toLocalDate())
+                .user(user)
                 .build();
     }
 
 
     @Override
     public Blog deleteBlog(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         Blog blog = blogRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BLOG_NOT_EXIST));
         blog.setIsDeleted(true);
         blog.setStatus(Status.INACTIVE);
+        blog.setUser(user);
         return blogRepository.save(blog);
     }
 
