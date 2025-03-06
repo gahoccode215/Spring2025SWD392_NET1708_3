@@ -27,8 +27,8 @@ public class RoutineController {
     @PostMapping("/{bookingOrderId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
-            summary = "Submit an quiz",
-            description = "API to get an existing quiz by providing the quiz ID and updated attributes such as title, questions, and answers."
+            summary = "Create a routine skincare for customer",
+            description = "A Booking Order have only one routine skincare of customer"
     )
     public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest, @PathVariable Long bookingOrderId) {
         return ApiResponse.<RoutineResponse>builder()

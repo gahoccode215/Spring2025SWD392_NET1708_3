@@ -15,7 +15,6 @@ public class ChangeStatus {
     Long bookingOrderId;
     @Enumerated(EnumType.STRING)
     BookingStatus status;
-    @NotNull(message = "Image cannot be null")
-    String image;
-    String note;
+    @NotNull
+    String response;
 }

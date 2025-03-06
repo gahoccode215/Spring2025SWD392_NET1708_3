@@ -15,11 +15,14 @@ public interface BookingOrderService {
     //Booking
     FormResponse bookingAdvise(FormCreateRequest request);
     FormResponse updateBookingAdvise(FormUpdateRequest request, Long bookingOrderId);
-    BookingOrder changeStatus(ChangeStatus status);
+    BookingOrder changeStatus(ChangeStatus status, Long bookingOrderId);
     List<BookingOrder> getBookingOrder(); // View
     List<BookingOrder> getBookingOrderByExpertId();
     List<ExpertResponse> filterListExpert();
     BookingOrder asignBookingOrder(AsignExpertRequest request, Long bookingOrderId);
-    PaymentOrderResponse paymentBookingOrder(PaymentBookingOrderRequest paymentBookingOrderRequest, Long bookingOrderId, String isAddress) throws UnsupportedEncodingException;
+    PaymentOrderResponse paymentBookingOrder(Long bookOrderId,String isAddress) throws UnsupportedEncodingException;
     List<BookingOrder> listAllBookingOrder();
+    BookingOrder cancelBookingOrder(Long bookingOrderId, String note);
+    void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid);
+
 }

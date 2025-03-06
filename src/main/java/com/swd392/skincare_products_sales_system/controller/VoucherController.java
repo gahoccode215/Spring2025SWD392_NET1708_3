@@ -27,12 +27,12 @@ public class VoucherController {
     VoucherRepository voucherRepository;
 
     @GetMapping("/{voucherId}")
-    @Operation(summary = "Get a voucher", description = "API retrieve id to get service")
+    @Operation(summary = "Get a voucher by Id", description = "API lấy voucher bởi Id")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<VoucherResponse> getVoucher(@PathVariable Long voucherId) {
         return ApiResponse.<VoucherResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delete service successfully")
+                .message("Get voucher successfully")
                 .result(service.getVoucherById(voucherId))
                 .build();
     }

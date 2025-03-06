@@ -24,7 +24,7 @@ public class Blog extends AbstractEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     @NotNull(message = "Content cannot be null")
     @Size(min = 20)
     String content;

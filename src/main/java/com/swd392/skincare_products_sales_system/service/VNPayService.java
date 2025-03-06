@@ -75,20 +75,20 @@ public class VNPayService {
 
 
 
-    public String createPaymentUrlBookingOrder(PaymentBookingOrderRequest request, String isAddress) throws UnsupportedEncodingException {
-            String orderId = UUID.randomUUID().toString().substring(0,6);
-
+    public String createPaymentUrlBookingOrder(Long bookingOrderId, Double amount, String isAddress) throws UnsupportedEncodingException {
+        String orderId = UUID.randomUUID().toString().substring(0,6);
+        String returnUrl1 = "http://localhost:5173/api/v1/swd392-skincare-products-sales-system/payment?bookingOrderId  =" + bookingOrderId;
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
         params.put("vnp_Command", "pay");
         params.put("vnp_TmnCode", "M0R9Z6E1");
-        params.put("vnp_Amount", request.getAmount() + "00");
+        params.put("vnp_Amount", String.valueOf(amount.longValue() * 100));
         params.put("vnp_CurrCode", "VND");
-        params.put("vnp_TxnRef", orderId);
-        params.put("vnp_OrderInfo", "Thanh toan don hang#" + orderId );
+        params.put("vnp_TxnRef", bookingOrderId.toString());
+        params.put("vnp_OrderInfo", "Thanh toan don hang#" + bookingOrderId );
         params.put("vnp_OrderType", "other");
         params.put("vnp_Locale", "vn");
-        params.put("vnp_ReturnUrl", returnUrl);
+        params.put("vnp_ReturnUrl", returnUrl1);
         params.put("vnp_IpAddr", isAddress);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
