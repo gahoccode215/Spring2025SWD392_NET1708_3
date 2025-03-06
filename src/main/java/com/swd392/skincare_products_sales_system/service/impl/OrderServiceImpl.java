@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
         orderItems.forEach(orderItem -> {
             Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-            product.setStock(product.getStock() - orderItem.getQuantity());
+//            product.setStock(product.getStock() - orderItem.getQuantity());
         });
 
         orderItemRepository.saveAll(orderItems);
@@ -173,12 +173,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         User user = getAuthenticatedUser();
 //        orderRepository.updateOrderStatus(id, orderStatus);
-        if (orderStatus.equals(OrderStatus.CANCELLED)) {
-            order.getOrderItems().forEach(orderItem -> {
-                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-                product.setStock(product.getStock() + orderItem.getQuantity());
-            });
-        }
+//        if (orderStatus.equals(OrderStatus.CANCELED)) {
+//            order.getOrderItems().forEach(orderItem -> {
+//                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+//                product.setStock(product.getStock() + orderItem.getQuantity());
+//            });
+//        }
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
@@ -195,7 +195,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
             order.getOrderItems().forEach(orderItem -> {
                 Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
-                product.setStock(product.getStock() + orderItem.getQuantity());
+//                product.setStock(product.getStock() + orderItem.getQuantity());
             });
         }
         order.setStatus(orderStatus);

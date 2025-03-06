@@ -41,7 +41,7 @@ public class AdminBatchController {
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<BatchPageResponse> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "1000") int size
     ) {
         return ApiResponse.<BatchPageResponse>builder()
                 .code(HttpStatus.OK.value())

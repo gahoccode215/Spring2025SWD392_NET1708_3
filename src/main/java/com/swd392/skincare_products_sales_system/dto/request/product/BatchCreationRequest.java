@@ -18,7 +18,6 @@ import java.util.List;
 public class BatchCreationRequest {
     private String productId;
     private Integer quantity;
-    private Double importPrice;
     private LocalDate manufactureDate;
     private LocalDate expirationDate;
 }

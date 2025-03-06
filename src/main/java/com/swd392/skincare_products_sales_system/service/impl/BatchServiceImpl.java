@@ -3,7 +3,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
-import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
+
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.product.Batch;
@@ -44,14 +44,13 @@ public class BatchServiceImpl implements BatchService {
                 .batchCode("BATCH-" + System.currentTimeMillis())
                 .product(product)
                 .quantity(request.getQuantity())
-                .importPrice(request.getImportPrice())
+//                .importPrice(request.getImportPrice())
                 .manufactureDate(request.getManufactureDate())
                 .expirationDate(request.getExpirationDate())
                 .build();
         batchRepository.save(batch);
 
         // Cập nhật tồn kho
-        product.setStock(product.getStock() + request.getQuantity());
         productRepository.save(product);
 
         return toBatchResponse(batch);
@@ -70,9 +69,10 @@ public class BatchServiceImpl implements BatchService {
             batchResponse.setId(batch.getId());
             batchResponse.setBatchCode(batch.getBatchCode());
             batchResponse.setQuantity(batch.getQuantity());
-            batchResponse.setImportPrice(batch.getImportPrice());
+//            batchResponse.setImportPrice(batch.getImportPrice());
             batchResponse.setManufactureDate(batch.getManufactureDate());
             batchResponse.setExpirationDate(batch.getExpirationDate());
+            batchResponse.setProductName(batch.getProduct().getName());
 
             batchResponses.add(batchResponse);
         }
@@ -89,7 +89,7 @@ public class BatchServiceImpl implements BatchService {
                 .batchCode(batch.getBatchCode())
                 .productId(batch.getProduct().getId())
                 .productName(batch.getProduct().getName())
-                .importPrice(batch.getImportPrice())
+//                .importPrice(batch.getImportPrice())
                 .expirationDate(batch.getExpirationDate())
                 .manufactureDate(batch.getManufactureDate())
                 .quantity(batch.getQuantity())

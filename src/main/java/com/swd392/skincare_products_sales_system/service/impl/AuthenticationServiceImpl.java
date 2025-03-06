@@ -65,12 +65,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new AppException(ErrorCode.USERNAME_EXISTED);
-        }
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -79,21 +77,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .status(Status.INACTIVE)
                 .email(request.getEmail())
                 .build();
-        // Lấy Role từ Database gắn vào
         Role customRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         user.setRole(customRole);
         user.setIsDeleted(false);
         userRepository.save(user);
         Otp otp = otpService.generateAndSaveOtp(user.getId());
-
         user.addOtp(otp);
         userRepository.save(user);
-//         Send verification email
-//        String verificationUrl = backendUrl + "/auth/verify?token=" + jwtUtil.generateToken(user);
-//        log.info(verificationUrl);
         try {
-//            postmarkService.sendVerificationEmail(user.getEmail(), user.getUsername(), verificationUrl);
             postmarkService.sendVerificationEmailWithOTP(user.getEmail(), user.getUsername(), otp.getOtp());
         } catch (Exception e) {
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
@@ -111,7 +103,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_LOGIN));
-        if(user.getStatus().equals(Status.INACTIVE))
+        if (user.getStatus().equals(Status.INACTIVE))
             throw new AppException(ErrorCode.ACCOUNT_HAS_BEEN_DISABLE);
         // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -253,16 +245,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
-        // Tạo token reset password
-        String token = jwtUtil.generateToken(user);
-
-        // URL để người dùng click để đặt lại mật khẩu
-        String resetPasswordUrl = frontEndUrl + "/reset-password?token=" + token;
-        log.info(resetPasswordUrl);
+        Otp otp = otpService.generateAndSaveOtp(user.getId());
 
         try {
             // Gửi email qua Postmark
-//            postmarkService.sendForgotPassword(user.getEmail(), user.getUsername(), resetPasswordUrl);
+            postmarkService.sendForgotPassword(user.getEmail(),user.getUsername() ,otp.getOtp());
         } catch (Exception e) {
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }

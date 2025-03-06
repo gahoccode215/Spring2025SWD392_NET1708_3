@@ -67,7 +67,6 @@ public class ProductServiceImpl implements ProductService {
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
-        product.setStock(0);
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);
@@ -145,7 +144,6 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setSlug(product.getSlug());
             productResponse.setThumbnail(product.getThumbnail());
             productResponse.setStatus(product.getStatus());
-            productResponse.setStock(product.getStock());
             if (product.getCategory() != null) {
                 productResponse.setCategory(product.getCategory());
             }
@@ -194,7 +192,6 @@ public class ProductServiceImpl implements ProductService {
                 .price(product.getPrice())
                 .description(product.getDescription())
                 .thumbnail(product.getThumbnail())
-                .stock(product.getStock())
                 .slug(product.getSlug())
                 .status(product.getStatus())
                 .category(product.getCategory())
@@ -238,7 +235,6 @@ public class ProductServiceImpl implements ProductService {
                 .description(product.getDescription())
                 .slug(product.getSlug())
                 .thumbnail(product.getThumbnail())
-                .stock(product.getStock())
                 .status(product.getStatus())
                 .build();
         if (product.getCategory() != null) {

@@ -18,6 +18,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tbl_product")
 public class Product extends AbstractEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -34,14 +35,17 @@ public class Product extends AbstractEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     String description;
 
+    @Column(name = "ingredient")
+    String ingredient;
+
+    @Column(name = "usage_instruction")
+    String usageInstruction;
+
     @Column(name = "thumbnail")
     String thumbnail;
 
     @Column(name = "size")
     String size;
-
-    @Column(name = "stock")
-    Integer stock = 0; // Mặc định tồn kho = 0
 
     @Column(name = "rating")
     Double rating = 5.0;
@@ -57,7 +61,6 @@ public class Product extends AbstractEntity {
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonIgnore
     List<FeedBack> feedBacks;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

@@ -18,22 +18,21 @@ import java.time.LocalDate;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Batch extends AbstractEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(name = "batch_code", unique = true, nullable = false)
-    String batchCode; // Mã lô hàng
+    @Column(name = "batch_code", unique = true)
+    String batchCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "product_id", nullable = false)
-    Product product; // Mỗi batch thuộc về một sản phẩm
+    @JoinColumn(name = "product_id")
+    Product product;
 
-    @Column(name = "quantity", nullable = false)
-    Integer quantity; // Số lượng nhập
+    @Column(name = "quantity")
+    Integer quantity;
 
-    @Column(name = "import_price", nullable = false)
-    Double importPrice; // Giá nhập hàng
 
     @Column(name = "manufacture_date", nullable = false)
     LocalDate manufactureDate;
