@@ -33,7 +33,7 @@ public class AdminProductController {
 
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Create product successfully")
+                .message("Tạo mới sản phẩm thành công")
                 .result(productService.createProduct(request))
                 .build();
     }
@@ -46,7 +46,7 @@ public class AdminProductController {
         productService.deleteProduct(productId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delete product successfully")
+                .message("Xóa sản phẩm thành công")
                 .build();
     }
 
@@ -58,7 +58,7 @@ public class AdminProductController {
 
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Update product successfully")
+                .message("Cập nhật thành công")
                 .result(productService.updateProduct(request, productId))
                 .build();
     }
@@ -79,7 +79,7 @@ public class AdminProductController {
     ) {
         return ApiResponse.<ProductPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get products successfully")
+                .message("Lấy danh sách sản phẩm thành công")
                 .result(productService.getProducts(true, keyword, page, size, categorySlug, brandSlug, originSlug, sortBy, order))
                 .build();
     }
@@ -105,7 +105,7 @@ public class AdminProductController {
         productService.changeProductStatus(productId, status);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Change status successfully")
+                .message("Thay đổi trạng thái thành công")
                 .build();
     }
 }
