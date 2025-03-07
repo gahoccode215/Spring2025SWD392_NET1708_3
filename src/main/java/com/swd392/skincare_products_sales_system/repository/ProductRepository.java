@@ -20,6 +20,7 @@ import java.util.Optional;
 public interface ProductRepository extends JpaRepository<Product, String>, JpaSpecificationExecutor<Product> {
     @Query("SELECT p FROM Product p WHERE p.isDeleted = false AND p.status = :status ORDER BY p.createdAt DESC")
     Page<Product> findLatestProductsByStatus(Status status, PageRequest pageRequest);
+
     Optional<Product> findByIdAndIsDeletedFalse(String productId);
 
     @Query("SELECT x FROM Product x WHERE x.id = :productId AND x.isDeleted = false AND x.status = com.swd392.skincare_products_sales_system.enums.Status.ACTIVE")
@@ -30,14 +31,12 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
             "AND (p.name LIKE %:keyword% OR :keyword IS NULL) " +
             "AND (:category IS NULL OR p.category = :category) " +
             "AND (:brand IS NULL OR p.brand = :brand) " +
-            "AND (:origin IS NULL OR p.origin = :origin)" +
             "AND (:status is null OR p.status = :status)")
     Page<Product> findAllByFilters(
             @Param("keyword") String keyword,
             @Param("status") Status status,
             @Param("category") Category category,
             @Param("brand") Brand brand,
-            @Param("origin") Origin origin,
             Pageable pageable);
 
     @Modifying

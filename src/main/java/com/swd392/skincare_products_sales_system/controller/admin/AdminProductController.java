@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.controller.admin;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
@@ -15,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/admin/products")
@@ -55,7 +58,6 @@ public class AdminProductController {
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @Operation(summary = "Update a product (ADMIN, MANAGER)", description = "API update product by its id")
     public ApiResponse<ProductResponse> updateProduct(@RequestBody @Valid ProductUpdateRequest request, @PathVariable String productId) {
-
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Cập nhật thành công")
@@ -73,14 +75,13 @@ public class AdminProductController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String categorySlug,
             @RequestParam(required = false) String brandSlug,
-            @RequestParam(required = false) String originSlug,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String order
     ) {
         return ApiResponse.<ProductPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Lấy danh sách sản phẩm thành công")
-                .result(productService.getProducts(true, keyword, page, size, categorySlug, brandSlug, originSlug, sortBy, order))
+                .result(productService.getProducts(true, keyword, page, size, categorySlug, brandSlug, sortBy, order))
                 .build();
     }
 
@@ -106,6 +107,19 @@ public class AdminProductController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Thay đổi trạng thái thành công")
+                .build();
+    }
+
+    @GetMapping("/{productId}/batches")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<BatchPageResponse> getBatchesByProductId(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable String productId) {
+        return ApiResponse.<BatchPageResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy danh sách lô theo sản phẩm thành công")
+                .result(productService.getBatches(page, size, productId))
                 .build();
     }
 }

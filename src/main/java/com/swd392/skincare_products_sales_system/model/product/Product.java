@@ -52,6 +52,7 @@ public class Product extends AbstractEntity {
     Status status;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     Specification specification;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -67,11 +68,6 @@ public class Product extends AbstractEntity {
     @JsonIgnore
     @JoinColumn(name = "brand_id")
     Brand brand;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "origin_id")
-    Origin origin;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

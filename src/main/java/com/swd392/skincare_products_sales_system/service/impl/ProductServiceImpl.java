@@ -7,6 +7,8 @@ import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreati
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.SpecificationCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
@@ -42,9 +44,8 @@ public class ProductServiceImpl implements ProductService {
     SlugUtil slugUtil;
     ProductRepository productRepository;
     BrandRepository brandRepository;
-    OriginRepository originRepository;
     CategoryRepository categoryRepository;
-
+    BatchRepository batchRepository;
 
     @Override
     @Transactional
@@ -108,18 +109,27 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
         }
+        if(request.getIngredient() != null){
+            product.setIngredient(request.getIngredient());
+        }
+        if(request.getUsageInstruction() != null){
+            product.setUsageInstruction(request.getUsageInstruction());
+        }
         if (request.getThumbnail() != null) {
             product.setThumbnail(request.getThumbnail());
         }
         if (request.getStatus() != null) {
             product.setStatus(request.getStatus());
         }
+        if(request.getSpecification() != null){
+            product.setSpecification(toSpecification(request.getSpecification()));
+        }
         productRepository.save(product);
         return toProductResponse(product);
     }
 
     @Override
-    public ProductPageResponse getProducts(boolean admin, String keyword, int page, int size, String categorySlug, String brandSlug, String originSlug, String sortBy, String order) {
+    public ProductPageResponse getProducts(boolean admin, String keyword, int page, int size, String categorySlug, String brandSlug, String sortBy, String order) {
         if (page > 0) page -= 1; // Hỗ trợ trang bắt đầu từ 0 hoặc 1
 
         Sort sort = getSort(sortBy, order);
@@ -127,13 +137,13 @@ public class ProductServiceImpl implements ProductService {
 
         Category category = categorySlug != null ? categoryRepository.findBySlugAndStatusAndIsDeletedFalse(categorySlug).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)) : null;
         Brand brand = brandSlug != null ? brandRepository.findBySlugAndStatusAndIsDeletedFalse(brandSlug).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)) : null;
-        Origin origin = originSlug != null ? originRepository.findBySlugAndStatusAndIsDeletedFalse(originSlug).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)) : null;
+
         Page<Product> products;
 
         if (admin) {
-            products = productRepository.findAllByFilters(keyword, null, category, brand, origin, pageable);
+            products = productRepository.findAllByFilters(keyword, null, category, brand, pageable);
         } else {
-            products = productRepository.findAllByFilters(keyword, Status.ACTIVE, category, brand, origin, pageable);
+            products = productRepository.findAllByFilters(keyword, Status.ACTIVE, category, brand, pageable);
         }
 
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
@@ -143,17 +153,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
         for (Product product : products.getContent()) {
-            ProductResponse productResponse = new ProductResponse();
-            productResponse.setId(product.getId());
-            productResponse.setName(product.getName());
-            productResponse.setPrice(product.getPrice());
-            productResponse.setDescription(product.getDescription());
-            productResponse.setSlug(product.getSlug());
-            productResponse.setThumbnail(product.getThumbnail());
-            productResponse.setStatus(product.getStatus());
-            if (product.getCategory() != null) {
-                productResponse.setCategory(product.getCategory());
-            }
+            ProductResponse productResponse = toProductResponse(product);
             productResponses.add(productResponse);
         }
         response.setProductResponses(productResponses);
@@ -189,22 +189,30 @@ public class ProductServiceImpl implements ProductService {
         PageRequest pageRequest = PageRequest.of(0, limit);
         List<Product> products = productRepository.findLatestProductsByStatus(Status.ACTIVE, pageRequest).getContent();
         return products.stream()
-                .map(this::convertToProductResponse)
+                .map(this::toProductResponse)
                 .collect(Collectors.toList());
     }
 
-    private ProductResponse convertToProductResponse(Product product) {
-        return ProductResponse.builder()
-                .id(product.getId())
-                .name(product.getName())
-                .price(product.getPrice())
-                .description(product.getDescription())
-                .thumbnail(product.getThumbnail())
-                .slug(product.getSlug())
-                .status(product.getStatus())
-                .category(product.getCategory())
-                .brand(product.getBrand())
-                .build();
+    @Override
+    public BatchPageResponse getBatches(int page, int size, String productId) {
+        if (page > 0) page -= 1; // Hỗ trợ trang bắt đầu từ 0 hoặc 1
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Batch> batches;
+        batches = batchRepository.findAllByProductIdAnd(productId, pageable);
+        BatchPageResponse response = new BatchPageResponse();
+        List<BatchResponse> batchResponses = new ArrayList<>();
+        for(Batch batch : batches.getContent()){
+            BatchResponse batchResponse = toBatchResponse(batch);
+            batchResponses.add(batchResponse);
+        }
+        response.setContent(batchResponses);
+        response.setTotalElements(batches.getTotalElements());
+        response.setTotalPages(batches.getTotalPages());
+        response.setPageNumber(batches.getNumber());
+        response.setPageSize(batches.getSize());
+        return response;
+
     }
 
     private Sort getSort(String sortBy, String order) {
@@ -243,6 +251,11 @@ public class ProductServiceImpl implements ProductService {
                 .slug(product.getSlug())
                 .thumbnail(product.getThumbnail())
                 .status(product.getStatus())
+                .rating(product.getRating())
+                .usageInstruction(product.getUsageInstruction())
+                .ingredient(product.getIngredient())
+                .specification(product.getSpecification())
+                .stock(toQuantityProduct(product.getBatches()))
                 .build();
         if (product.getCategory() != null) {
             productResponse.setCategory(product.getCategory());
@@ -253,6 +266,17 @@ public class ProductServiceImpl implements ProductService {
         return productResponse;
     }
 
+    private BatchResponse toBatchResponse(Batch batch){
+
+        return BatchResponse.builder()
+                .id(batch.getId())
+                .product(batch.getProduct())
+                .batchCode(batch.getBatchCode())
+                .quantity(batch.getQuantity())
+                .manufactureDate(batch.getManufactureDate())
+                .expirationDate(batch.getExpirationDate())
+                .build();
+    }
     private Specification toSpecification(SpecificationCreationRequest request) {
         return Specification.builder()
                 .origin(request.getOrigin())
@@ -262,6 +286,13 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    private int toQuantityProduct(List<Batch> batches){
+        int stock = 0;
+        for(Batch batch : batches){
+            stock += batch.getQuantity();
+        }
+        return stock;
+    }
     private List<Batch> toListBatches(List<BatchCreationRequest> requests, Product product) {
         return requests.stream()
                 .map(dto -> Batch.builder()
@@ -272,4 +303,5 @@ public class ProductServiceImpl implements ProductService {
                         .expirationDate(dto.getExpirationDate())
                         .build()).collect(Collectors.toList());
     }
+
 }

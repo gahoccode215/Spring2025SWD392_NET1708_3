@@ -53,13 +53,12 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String categorySlug,
             @RequestParam(required = false) String brandSlug,
-            @RequestParam(required = false) String originSlug,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String order) {
         return ApiResponse.<ProductPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get products successfully")
-                .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, originSlug, sortBy, order))
+                .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, sortBy, order))
                 .build();
     }
 
