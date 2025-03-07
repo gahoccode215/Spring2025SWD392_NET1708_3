@@ -3,7 +3,6 @@ package com.swd392.skincare_products_sales_system.repository;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.product.Brand;
 import com.swd392.skincare_products_sales_system.model.product.Category;
-import com.swd392.skincare_products_sales_system.model.product.Origin;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,7 +14,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository

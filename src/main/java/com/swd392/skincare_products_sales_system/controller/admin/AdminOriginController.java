@@ -5,7 +5,6 @@ import com.swd392.skincare_products_sales_system.dto.request.product.OriginUpdat
 import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.dto.response.product.OriginPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.OriginResponse;
-import com.swd392.skincare_products_sales_system.service.OriginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
