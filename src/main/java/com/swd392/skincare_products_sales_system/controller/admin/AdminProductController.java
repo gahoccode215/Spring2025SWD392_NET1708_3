@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
@@ -107,6 +108,25 @@ public class AdminProductController {
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Thay đổi trạng thái thành công")
+                .build();
+    }
+    @DeleteMapping("/delete-batch/{batchId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Void> deleteBatch(@PathVariable String batchId){
+        productService.deleteBatch(batchId);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Xóa lô hàng thành công")
+                .build();
+    }
+
+    @PostMapping("/import-batch/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<ProductResponse> importBatch(@RequestBody BatchCreationRequest request, @PathVariable String productId) {
+        return ApiResponse.<ProductResponse>builder()
+                .result(productService.importBatch(request, productId))
+                .code(HttpStatus.OK.value())
+                .message("Nhập lô hàng thành công")
                 .build();
     }
 

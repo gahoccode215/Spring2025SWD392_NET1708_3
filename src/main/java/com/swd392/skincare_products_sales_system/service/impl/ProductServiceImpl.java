@@ -48,8 +48,30 @@ public class ProductServiceImpl implements ProductService {
     BatchRepository batchRepository;
 
     @Override
+    public void deleteBatch(String batchId) {
+        Batch batch = batchRepository.findById(batchId).orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
+        batchRepository.delete(batch);
+    }
+
+    @Override
+    @Transactional
+    public ProductResponse importBatch(BatchCreationRequest request, String productId) {
+        Batch batch = Batch.builder()
+                .batchCode("BATCH-" + System.currentTimeMillis())
+                .quantity(request.getQuantity())
+                .manufactureDate(request.getManufactureDate())
+                .expirationDate(request.getExpirationDate())
+                .build();
+        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.addBatch(batch);
+        productRepository.save(product);
+        return toProductResponse(product);
+    }
+
+    @Override
     @Transactional
     public ProductResponse createProduct(ProductCreationRequest request) {
+        log.info("ok");
         Specification specification = toSpecification(request.getSpecification());
         Product product = Product.builder()
                 .name(request.getName())
@@ -74,7 +96,9 @@ public class ProductServiceImpl implements ProductService {
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
         product.setRating(5.0);
-        product.setBatches(toListBatches(request.getBatches(), product));
+        if(request.getBatches() != null){
+            product.setBatches(toListBatches(request.getBatches(), product));
+        }
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);
@@ -196,7 +220,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public BatchPageResponse getBatches(int page, int size, String productId) {
         if (page > 0) page -= 1; // Hỗ trợ trang bắt đầu từ 0 hoặc 1
-
         Pageable pageable = PageRequest.of(page, size);
         Page<Batch> batches;
         batches = batchRepository.findAllByProductIdAnd(productId, pageable);
@@ -254,14 +277,18 @@ public class ProductServiceImpl implements ProductService {
                 .rating(product.getRating())
                 .usageInstruction(product.getUsageInstruction())
                 .ingredient(product.getIngredient())
-                .specification(product.getSpecification())
-                .stock(toQuantityProduct(product.getBatches()))
                 .build();
         if (product.getCategory() != null) {
             productResponse.setCategory(product.getCategory());
         }
         if (product.getBrand() != null) {
             productResponse.setBrand(product.getBrand());
+        }
+        if(product.getBatches() != null){
+            productResponse.setStock(toQuantityProduct(product.getBatches()));
+        }
+        if(product.getSpecification() != null){
+            productResponse.setSpecification(product.getSpecification());
         }
         return productResponse;
     }
@@ -296,7 +323,7 @@ public class ProductServiceImpl implements ProductService {
     private List<Batch> toListBatches(List<BatchCreationRequest> requests, Product product) {
         return requests.stream()
                 .map(dto -> Batch.builder()
-                        .batchCode("BATCH-" + UUID.randomUUID().toString())
+                        .batchCode("BATCH-" + System.currentTimeMillis())
                         .product(product)
                         .quantity(dto.getQuantity())
                         .manufactureDate(dto.getManufactureDate())

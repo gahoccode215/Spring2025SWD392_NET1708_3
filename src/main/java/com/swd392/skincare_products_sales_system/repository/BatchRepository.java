@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
-public interface BatchRepository extends JpaRepository<Batch, Long >{
+public interface BatchRepository extends JpaRepository<Batch, String >{
     @Query("SELECT p FROM Batch p WHERE p.product.id = :productId")
     Page<Batch> findAllByProductIdAnd(@Param("productId") String productId, Pageable pageable);
 }

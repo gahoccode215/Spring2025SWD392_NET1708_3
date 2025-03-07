@@ -7,6 +7,7 @@ import com.swd392.skincare_products_sales_system.model.product.Specification;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductCreationRequest {
     @NotBlank(message = "product name can not blank")
     String name;

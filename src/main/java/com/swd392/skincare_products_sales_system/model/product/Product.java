@@ -59,7 +59,6 @@ public class Product extends AbstractEntity {
     @JsonIgnore
     List<Batch> batches;
 
-
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonIgnore
     List<FeedBack> feedBacks;
@@ -76,4 +75,9 @@ public class Product extends AbstractEntity {
 
     @OneToMany(mappedBy = "product")
     List<Step> steps;
+
+    public void addBatch(Batch obj){
+        batches.add(obj);
+        obj.setProduct(this);
+    }
 }

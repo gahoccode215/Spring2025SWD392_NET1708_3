@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.service;
 
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
@@ -10,6 +11,8 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import java.util.List;
 
 public interface ProductService {
+    void deleteBatch(String batchId);
+    ProductResponse importBatch(BatchCreationRequest request, String productId);
     ProductResponse createProduct(ProductCreationRequest request) ;
     void deleteProduct(String productId);
     ProductResponse updateProduct(ProductUpdateRequest request, String productId) ;

@@ -39,7 +39,7 @@ public class Brand extends AbstractEntity {
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JsonIgnore
     Set<Product> products;
 }
