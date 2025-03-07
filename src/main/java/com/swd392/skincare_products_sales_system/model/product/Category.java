@@ -32,10 +32,6 @@ public class Category extends AbstractEntity {
     @Column(name = "description")
     String description;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
-
     @Column(name = "thumbnail")
     String thumbnail;
 

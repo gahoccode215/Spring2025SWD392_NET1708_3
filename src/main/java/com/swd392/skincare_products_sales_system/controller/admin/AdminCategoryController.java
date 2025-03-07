@@ -77,17 +77,6 @@ public class AdminCategoryController {
                 .build();
     }
 
-    @PatchMapping("/change-status/{categoryId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change category status (ADMIN, MANAGER)", description = "API to change category status (ACTIVE/INACTIVE)")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ApiResponse<Void> changeCategoryStatus(@PathVariable String categoryId, @RequestParam Status status) {
-        categoryService.changeCategoryStatus(categoryId, status);
-        return ApiResponse.<Void>builder()
-                .code(HttpStatus.OK.value())
-                .message("Change status successfully")
-                .build();
-    }
 
     @GetMapping
     @Operation(summary = "Get all categories (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
@@ -102,7 +91,7 @@ public class AdminCategoryController {
         return ApiResponse.<CategoryPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get categories successfully")
-                .result(categoryService.getCategories(true, keyword, page, size, sortBy, order))
+                .result(categoryService.getCategories(keyword, page, size, sortBy, order))
                 .build();
     }
 }

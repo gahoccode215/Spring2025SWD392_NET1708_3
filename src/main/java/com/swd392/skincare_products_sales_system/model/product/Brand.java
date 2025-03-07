@@ -26,10 +26,6 @@ public class Brand extends AbstractEntity {
     @Column(name = "name")
     String name;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
-
     @Column(name = "slug", unique = true)
     String slug;
 

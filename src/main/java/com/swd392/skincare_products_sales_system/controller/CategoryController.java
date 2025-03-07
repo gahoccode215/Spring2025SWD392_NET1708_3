@@ -31,7 +31,7 @@ public class CategoryController {
         return ApiResponse.<CategoryPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get categories successfully")
-                .result(categoryService.getCategories(false, keyword, page, size, sortBy, order))
+                .result(categoryService.getCategories(keyword, page, size, sortBy, order))
                 .build();
     }
 }

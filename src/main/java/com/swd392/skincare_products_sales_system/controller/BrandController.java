@@ -31,7 +31,7 @@ public class BrandController {
         return ApiResponse.<BrandPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get brands successfully")
-                .result(brandService.getBrands(false, keyword, page, size, sortBy, order))
+                .result(brandService.getBrands(keyword, page, size, sortBy, order))
                 .build();
     }
 }

@@ -59,17 +59,7 @@ public class AdminBrandController {
                 .result(brandService.getBrandById(brandId))
                 .build();
     }
-    @PatchMapping("/change-status/{brandId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change brand status (ADMIN, MANAGER)", description = "API to change brand status (ACTIVE/INACTIVE)")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ApiResponse<Void> changeBrandStatus(@PathVariable Long brandId, @RequestParam Status status) {
-        brandService.changeBrandStatus(brandId, status);
-        return ApiResponse.<Void>builder()
-                .code(HttpStatus.OK.value())
-                .message("Change status successfully")
-                .build();
-    }
+
     @PutMapping("/{brandId}")
     @Operation(summary = "Update a brand (ADMIN, MANAGER)", description = "API retrieve brand id to update brand")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
@@ -94,7 +84,7 @@ public class AdminBrandController {
         return ApiResponse.<BrandPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get brands successfully")
-                .result(brandService.getBrands(true, keyword, page, size, sortBy, order))
+                .result(brandService.getBrands( keyword, page, size, sortBy, order))
                 .build();
     }
 }

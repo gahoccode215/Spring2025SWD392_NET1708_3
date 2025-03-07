@@ -15,5 +15,4 @@ public class BrandResponse {
     String description;
     String thumbnail;
     String slug;
-    Status status;
 }

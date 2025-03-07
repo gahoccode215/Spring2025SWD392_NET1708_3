@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryCreationRequest {
-    @NotBlank(message = "category name can not blank")
+    @NotBlank(message = "Tên không được trống")
     String name;
     String description;
     String thumbnail;
