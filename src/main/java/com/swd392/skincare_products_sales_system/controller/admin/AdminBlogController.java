@@ -33,7 +33,7 @@ public class AdminBlogController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
+    @Operation(summary = "Create a Blog for ADMIN, MANAGER", description = "API create Blog ")
     public ApiResponse<BlogResponse> createBlog(@RequestBody @Valid BlogCreateRequest request) {
         return ApiResponse.<BlogResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -42,7 +42,7 @@ public class AdminBlogController {
                 .build();
     }
 
-    @PutMapping("/{blogId})")
+    @PutMapping("/{blogId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
     public ApiResponse<BlogResponse> updateBlog( @PathVariable Long blogId, @RequestBody @Valid BlogUpdateRequest request) {
@@ -55,7 +55,7 @@ public class AdminBlogController {
 
     @PatchMapping("/{blogId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change status Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
+    @Operation(summary = "Change status Blog for ADMIN, MANAGER", description = "API change a status Blog ")
     public ApiResponse<Void> updateBlog(@RequestParam Status status, @PathVariable Long blogId) {
         service.changeStatus(blogId, status);
         return ApiResponse.<Void>builder()
@@ -66,7 +66,7 @@ public class AdminBlogController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get status Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
+    @Operation(summary = "Get all Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
     public ApiResponse<List<Blog>> getBlogs() {
         List<Blog> list = blogRepository.findAll();
         return ApiResponse.<List<Blog>>builder()
@@ -78,7 +78,7 @@ public class AdminBlogController {
 
     @DeleteMapping("/{blogId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
+    @Operation(summary = "Delete Blog for ADMIN, MANAGER", description = "API delete Blog ")
     public ApiResponse<Blog> deleteBlog (@PathVariable Long blogId) {
         return ApiResponse.<Blog>builder()
                 .code(HttpStatus.OK.value())

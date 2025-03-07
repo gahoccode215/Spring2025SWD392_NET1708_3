@@ -38,7 +38,7 @@ public class SkincareServiceController {
     }
 
     @PutMapping("/{skincareServiceId}")
-    @Operation(summary = "Update a service", description = "API retrieve value to change service attribute")
+    @Operation(summary = "Update a service", description = "API Service")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<SkincareServiceResponse> updateSkincareService(@RequestBody @Valid SkincareUpdateRequest request, @PathVariable Long skincareServiceId) {
 

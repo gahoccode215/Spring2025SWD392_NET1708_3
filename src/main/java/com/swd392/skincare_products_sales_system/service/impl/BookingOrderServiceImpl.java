@@ -9,6 +9,8 @@ import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderRespon
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.cart.Cart;
+import com.swd392.skincare_products_sales_system.model.order.Order;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -85,17 +87,16 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
     @Override
     @Transactional
-    public PaymentOrderResponse paymentBookingOrder(PaymentBookingOrderRequest request, Long bookingOrderId, String isAddress) throws UnsupportedEncodingException {
+    public PaymentOrderResponse paymentBookingOrder(Long bookingOrderId,  String isAddress) throws UnsupportedEncodingException {
         User user = getAuthenticatedUser();
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
         VNPayService service = new VNPayService();
         Float price = bookingOrder.getPrice();
-        request.setAmount(String.valueOf(price));
-        String url = service.createPaymentUrlBookingOrder(request, isAddress);
+        Double amount = Double.valueOf(price);
+        String url = service.createPaymentUrlBookingOrder(bookingOrderId,amount, isAddress);
         bookingRepository.save(bookingOrder);
-
 
         return PaymentOrderResponse.builder()
                 .bookingOrderId(bookingOrderId)
@@ -111,6 +112,34 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .stream()
                 .toList();
         return list;
+    }
+
+    @Override
+    public BookingOrder cancelBookingOrder(Long bookingOrderId, String note) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        bookingOrder.setStatus(BookingStatus.CANCELED);
+        bookingOrder.setNote(note);
+        return bookingRepository.save(bookingOrder);
+    }
+
+    @Override
+    public void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid) {
+        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        bookingOrder.setPaymentStatus(isPaid ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
+        bookingOrder.setStatus(BookingStatus.PAYMENT);
+        bookingRepository.save(bookingOrder);
     }
 
     @Override
@@ -295,7 +324,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BookingOrder changeStatus(ChangeStatus status) {
+    public BookingOrder changeStatus(ChangeStatus status, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -305,13 +334,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(status.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
-        if (bookingOrder.getStatus() == BookingStatus.PAYMENT_SUCCESS){
-            bookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
-        }
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
+            bookingOrder.setResponse(bookingOrder.getResponse());
             bookingOrder.setStatus(BookingStatus.CONTACT_CUSTOMER);
         }
         if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
@@ -321,16 +348,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
             bookingOrder.setStatus(BookingStatus.FINISHED);
         }
-        //Làm đơn cho thằng Customer mua lộ trình
-        if(bookingOrder.getStatus() == BookingStatus.CUSTOMER_CONFIRM){
-            bookingOrder.setStatus(BookingStatus.PENDING_CONFIRM);
-        }
-        if (bookingOrder.getStatus() == BookingStatus.PENDING_CONFIRM){
-            bookingOrder.setStatus(BookingStatus.PAYMENT_ROUTINE);
-        }
-        if (bookingOrder.getStatus() == BookingStatus.PAYMENT_ROUTINE){
-            bookingOrder.setStatus(BookingStatus.EXPERT_MAKE_ROUTINE);
-        }
+
         // Export lên routine cho customer cho da
         if(bookingOrder.getStatus() == BookingStatus.EXPERT_MAKE_ROUTINE){
             bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);

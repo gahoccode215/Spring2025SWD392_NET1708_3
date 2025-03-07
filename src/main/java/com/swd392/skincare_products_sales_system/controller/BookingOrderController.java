@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.controller;
 
+import ch.qos.logback.classic.Logger;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
@@ -28,9 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/booking-order")
 @RequiredArgsConstructor
@@ -55,11 +58,11 @@ public class BookingOrderController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Change a status to do Booking Order", description = "API retrieve Booking Order ")
-    public ApiResponse<BookingOrder> changeStatus(@RequestBody @Valid ChangeStatus status) {
+    public ApiResponse<BookingOrder> changeStatus(@RequestBody @Valid ChangeStatus status, @PathVariable Long bookingOrderId) {
         return ApiResponse.<BookingOrder>builder()
                 .code(HttpStatus.OK.value())
                 .message("Change a status successfully ")
-                .result(service.changeStatus(status))
+                .result(service.changeStatus(status, bookingOrderId))
                 .build();
     }
 
@@ -101,41 +104,53 @@ public class BookingOrderController {
                 .build();
     }
 
-    @PostMapping("/payment/{bookingOrderId}")
+    @PostMapping("/payment")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Payment", description = "API get payment ")
-    public ApiResponse<PaymentOrderResponse> paymentBookingOrder(@RequestBody @Valid PaymentBookingOrderRequest request,
-                                                                 @PathVariable Long bookingOrderId,
-                                                                 HttpServletRequest http) throws UnsupportedEncodingException {
+    public ApiResponse<PaymentOrderResponse> paymentBookingOrder(@RequestParam @Valid Long bookingOrderId ,
+                                                                 HttpServletRequest http) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
         String clientIp = getClientIp(http);
 
-        PaymentOrderResponse bookingOrder = service.paymentBookingOrder(request, bookingOrderId, clientIp);
+        PaymentOrderResponse bookingOrder = service.paymentBookingOrder(bookingOrderId,clientIp);
         return ApiResponse.<PaymentOrderResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Payment successfully")
                 .result(bookingOrder)
-                .redirectUrl(vnPayService.createPaymentUrlBookingOrder(request, clientIp))
+                .redirectUrl(vnPayService.createPaymentUrlBookingOrder(bookingOrderId, Double.valueOf(bookingOrder.getPrice()), clientIp))
                 .build();
     }
 
-    @PostMapping("/test")
-    @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create Payment", description = "API to create a payment for booking order")
-    public ResponseEntity<String> test(
-            @RequestBody @Valid PaymentBookingOrderRequest request,
-            HttpServletRequest http) throws UnsupportedEncodingException {
+    @GetMapping("/payment-back")
+    public ApiResponse<String> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
 
-        try {
-            String clientIp = getClientIp(http);
-            String paymentUrl = vnPayService.createPaymentUrlBookingOrder(request, clientIp);
-            return ResponseEntity.ok(paymentUrl);
-        } catch (UnsupportedEncodingException e) {
-            // Log the error and return an appropriate response
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error creating payment URL: " + e.getMessage());
+        boolean isValid = vnPayService.validateCallback(params);
+        if (!isValid) {
+            return ApiResponse.<String>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Invalid Signature")
+                    .build();
+        }
+
+        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
+        String responseCode = params.get("vnp_ResponseCode");
+        boolean isPaid = "00".equals(responseCode);
+
+        // Cập nhật trạng thái đơn hàng
+        service.updateBookingOrderStatus(bookingOrderId, isPaid);
+
+        if (isPaid) {
+            return ApiResponse.<String>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Payment successful, order confirmed.")
+                    .build();
+        } else {
+            return ApiResponse.<String>builder()
+                    .code(HttpStatus.BAD_REQUEST.value())
+                    .message("Payment verification failed.")
+                    .build();
         }
     }
+
 
     private String getClientIp(HttpServletRequest request) {
         String clientIp = request.getHeader("X-Forwarded-For");
@@ -143,6 +158,17 @@ public class BookingOrderController {
             clientIp = request.getRemoteAddr();
         }
         return clientIp;
+    }
+
+    @PatchMapping("/{bookingOrderId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Cancel Booking Order", description = "Customer want to stop your order ")
+    public ApiResponse<BookingOrder> cancelBookingOrder(@PathVariable Long bookingOrderId, @RequestBody @Valid String note) {
+        return ApiResponse.<BookingOrder>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get filterListExpert successfully")
+                .result(service.cancelBookingOrder(bookingOrderId, note))
+                .build();
     }
 
 
