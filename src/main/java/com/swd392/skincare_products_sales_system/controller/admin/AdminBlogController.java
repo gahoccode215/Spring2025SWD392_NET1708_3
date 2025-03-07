@@ -42,7 +42,7 @@ public class AdminBlogController {
                 .build();
     }
 
-    @PutMapping("/{blogId})")
+    @PutMapping("/{blogId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update a Blog for ADMIN, MANAGER", description = "API retrieve Blog ")
     public ApiResponse<BlogResponse> updateBlog( @PathVariable Long blogId, @RequestBody @Valid BlogUpdateRequest request) {
