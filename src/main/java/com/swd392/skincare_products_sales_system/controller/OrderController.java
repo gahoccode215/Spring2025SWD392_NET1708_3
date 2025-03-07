@@ -39,28 +39,29 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ApiResponse<OrderResponse> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId,
-                                               @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
+    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId,
+                                      @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
         String clientIp = getClientIp(request);
-        OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
         if (paymentMethod == PaymentMethod.VNPAY) {
-            return ApiResponse.<OrderResponse>builder()
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
+            return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Redirecting to VNPay")
-                    .result(orderResponse)
+//                    .result(orderResponse)
                     .redirectUrl(vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp))
                     .build();
+        } else {
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
+            return ApiResponse.<Void>builder()
+                    .code(HttpStatus.OK.value())
+                    .message("Order created successfully")
+//                    .result(orderResponse)
+                    .build();
         }
-        return ApiResponse.<OrderResponse>builder()
-                .code(HttpStatus.OK.value())
-                .message("Order created successfully")
-                .result(orderResponse)
-                .build();
     }
 
     @GetMapping("/payment-callback")
     public ApiResponse<String> handlePaymentCallback(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-
         boolean isValid = vnPayService.validateCallback(params);
         if (!isValid) {
             log.error("Invalid signature in VNPay callback.");
@@ -74,7 +75,6 @@ public class OrderController {
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
 
-        // Cập nhật trạng thái đơn hàng
         orderService.updateOrderStatus(Long.parseLong(orderId), isPaid);
 
         if (isPaid) {
@@ -83,6 +83,7 @@ public class OrderController {
                     .message("Payment successful, order confirmed.")
                     .build();
         } else {
+            orderService.deleteOrder(Long.parseLong(orderId));
             return ApiResponse.<String>builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .message("Payment verification failed.")

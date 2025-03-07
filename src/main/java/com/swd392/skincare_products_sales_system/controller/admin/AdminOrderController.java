@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.controller.admin;
 
+import com.swd392.skincare_products_sales_system.dto.request.DeliveryRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
@@ -33,9 +34,10 @@ public class AdminOrderController {
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get orders successfully")
-                .result(orderService.getOrdersByAdmin(page,size))
+                .result(orderService.getOrdersByAdmin(page, size))
                 .build();
     }
+
     @GetMapping("/{orderId}")
     @Operation(summary = "Get a Order by id(ADMIN, MANAGER)  ", description = "Retrieve order by its id")
     @ResponseStatus(HttpStatus.OK)
@@ -48,27 +50,41 @@ public class AdminOrderController {
                 .result(orderService.getOrderById(orderId))
                 .build();
     }
+
     @PatchMapping("/confirm-order/{orderId}")
     @Operation(summary = "Change order status", description = "Change order status")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ApiResponse<Void> changeOrderStatus(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
-        orderService.changeOrderStatus(orderId, orderStatus);
+    public ApiResponse<Void> confirmOrderByStaff(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
+        orderService.confirmOrder(orderId, orderStatus);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Change status to " + orderStatus + " successfully")
 //                .result(orderService.changeOrderStatus(orderId, orderStatus))
                 .build();
     }
+
+    @PatchMapping("/change-to-delivery/{orderId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<Void> deliveringByDelivery(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
+        orderService.deliveringOrder(orderId, orderStatus);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Đổi trạng thái sang" + orderStatus + " Thành công")
+//                .result(orderService.changeOrderStatus(orderId, orderStatus))
+                .build();
+    }
+
     @PatchMapping("/delivery/{orderId}")
     @Operation(summary = "Delivery Order", description = "Delivery Order")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus, String thumbnail) {
-        orderService.changeOrderStatus(orderId, orderStatus);
+//        @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus
+            orderStatus, @RequestBody DeliveryRequest request) {
+        orderService.deliveryOrder(orderId, orderStatus, request);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delivery success")
+                .message("Cập nhật giao hàng thành công")
                 .build();
     }
 

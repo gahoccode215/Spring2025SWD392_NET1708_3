@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
+import com.swd392.skincare_products_sales_system.dto.request.DeliveryRequest;
 import com.swd392.skincare_products_sales_system.dto.response.UpdatedResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderItemResponse;
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageResponse;
@@ -11,6 +12,7 @@ import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.model.cart.Cart;
 import com.swd392.skincare_products_sales_system.model.order.Order;
 import com.swd392.skincare_products_sales_system.model.order.OrderItem;
+import com.swd392.skincare_products_sales_system.model.product.Batch;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
@@ -41,40 +43,29 @@ public class OrderServiceImpl implements OrderService {
     CartItemRepository cartItemRepository;
     OrderItemRepository orderItemRepository;
     BatchRepository batchRepository;
-    private final ProductRepository productRepository;
+    ProductRepository productRepository;
 
     @Override
     @Transactional
     public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod) {
         User user = getAuthenticatedUser();
-
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
-
         if (paymentMethod == null) {
             throw new AppException(ErrorCode.INVALID_PAYMENT_METHOD);
         }
-
         Order order = buildOrder(cart, address, paymentMethod);
         order = orderRepository.save(order);
-
         List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
         orderItems.forEach(orderItem -> {
             Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-//            product.setStock(product.getStock() - orderItem.getQuantity());
         });
-
         orderItemRepository.saveAll(orderItems);
-
         order.setOrderItems(orderItems);
         orderRepository.save(order);
-
-        if (paymentMethod == PaymentMethod.COD) {
-            clearCart(cart);
-        }
-        log.info("Den duoc day");
+        clearCart(cart);
         return mapToOrderResponse(order);
     }
 
@@ -167,40 +158,74 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void changeOrderStatus(Long id, OrderStatus orderStatus) {
+    public void confirmOrder(Long id, OrderStatus orderStatus) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        User user = getAuthenticatedUser();
-//        orderRepository.updateOrderStatus(id, orderStatus);
-//        if (orderStatus.equals(OrderStatus.CANCELED)) {
-//            order.getOrderItems().forEach(orderItem -> {
-//                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-//                product.setStock(product.getStock() + orderItem.getQuantity());
-//            });
-//        }
-        order.setStatus(orderStatus);
-        order.setUpdatedAt(LocalDateTime.now());
-        order.setUpdatedBy(user.getUsername());
-
+        if(orderStatus == OrderStatus.PROCESSING){
+            order.getOrderItems().forEach(orderItem -> {
+                List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
+                int quantityDu = 0;
+                for(Batch batch : batchList){
+                    if(orderItem.getQuantity() > batch.getQuantity()){
+                        quantityDu = orderItem.getQuantity() - batch.getQuantity();
+                        batch.setQuantity(batch.getQuantity() - orderItem.getQuantity() - quantityDu);
+                        batch.setOrderItem(orderItem);
+                    }else{
+                        batch.setQuantity(batch.getQuantity() - orderItem.getQuantity());
+                        batch.setOrderItem(orderItem);
+                    }
+                    batchRepository.save(batch);
+                    if(quantityDu == 0)
+                        break;
+                }
+            });
+            User user = getAuthenticatedUser();
+            order.setStatus(orderStatus);
+            order.setUpdatedAt(LocalDateTime.now());
+            order.setUpdatedBy(user.getUsername());
+        }
         orderRepository.save(order);
     }
 
     @Override
     @Transactional
-    public void deliveryOrder(Long id, OrderStatus orderStatus, String image) {
+    public void deliveringOrder(Long id, OrderStatus orderStatus) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         User user = getAuthenticatedUser();
-//        orderRepository.updateOrderStatus(id, orderStatus);
+        order.setStatus(orderStatus);
+        order.setUpdatedAt(LocalDateTime.now());
+        order.setUpdatedBy(user.getUsername());
+        orderRepository.save(order);
+    }
+
+    @Override
+    @Transactional
+    public void deliveryOrder(Long id, OrderStatus orderStatus, DeliveryRequest request) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        User user = getAuthenticatedUser();
         if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
             order.getOrderItems().forEach(orderItem -> {
-                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-//                product.setStock(product.getStock() + orderItem.getQuantity());
+                List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
+                for(Batch batch : batchList){
+                    if(batch.getOrderItem() != null){
+                        if (batch.getOrderItem().getId().equals(orderItem.getId())){
+                            batch.setQuantity(batch.getQuantity() + orderItem.getQuantity());
+                        }
+                    }
+                }
             });
         }
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
-        order.setImageOrderSuccess(image);
+        if(request.getImage() != null){
+            order.setImageOrderSuccess(request.getImage());
+        }
         orderRepository.save(order);
+    }
+
+    @Override
+    public void deleteOrder(Long id) {
+        orderRepository.deleteById(id);
     }
 
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {

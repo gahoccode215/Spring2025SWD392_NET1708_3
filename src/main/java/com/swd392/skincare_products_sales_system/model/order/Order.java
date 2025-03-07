@@ -56,6 +56,8 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
+
+
     Double shippingFee;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)

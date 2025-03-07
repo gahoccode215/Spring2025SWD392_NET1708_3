@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT x FROM Order x WHERE x.username = :username")
@@ -23,6 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT x FROM Order x WHERE x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.PROCESSING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DELIVERING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DONE ")
     Page<Order> findAllByFiltersDelivery(Pageable pageable);
+
 
     @Modifying
     @Transactional

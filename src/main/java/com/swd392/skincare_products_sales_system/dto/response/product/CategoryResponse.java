@@ -15,5 +15,4 @@ public class CategoryResponse {
     String description;
     String thumbnail;
     String slug;
-    Status status;
 }

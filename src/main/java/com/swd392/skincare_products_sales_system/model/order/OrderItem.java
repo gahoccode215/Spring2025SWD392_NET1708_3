@@ -2,10 +2,13 @@ package com.swd392.skincare_products_sales_system.model.order;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.model.product.Batch;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Entity
 @Table(name = "tbl_order_item")
@@ -25,6 +28,10 @@ public class OrderItem {
     @JsonIgnore
     @JoinColumn(name = "order_id", nullable = false)
     Order order; // Liên kết với đơn hàng
+
+    @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    List<Batch> batches;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
