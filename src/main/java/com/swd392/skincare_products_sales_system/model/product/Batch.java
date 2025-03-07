@@ -33,7 +33,6 @@ public class Batch extends AbstractEntity {
     @Column(name = "quantity")
     Integer quantity;
 
-
     @Column(name = "manufacture_date", nullable = false)
     LocalDate manufactureDate;
 

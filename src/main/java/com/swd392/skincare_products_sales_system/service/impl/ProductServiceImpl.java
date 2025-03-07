@@ -5,15 +5,13 @@ import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.SpecificationCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.product.Brand;
-import com.swd392.skincare_products_sales_system.model.product.Category;
-import com.swd392.skincare_products_sales_system.model.product.Origin;
-import com.swd392.skincare_products_sales_system.model.product.Product;
+import com.swd392.skincare_products_sales_system.model.product.*;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
@@ -49,11 +47,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductResponse createProduct(ProductCreationRequest request) {
+        Specification specification = toSpecification(request.getSpecification());
         Product product = Product.builder()
                 .name(request.getName())
                 .price(request.getPrice())
                 .description(request.getDescription())
-                .size(request.getSize())
+                .ingredient(request.getIngredient())
+                .specification(specification)
+                .usageInstruction(request.getUsageInstruction())
                 .build();
         if (request.getCategory_id() != null) {
             Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
@@ -63,10 +64,13 @@ public class ProductServiceImpl implements ProductService {
             Brand brand = brandRepository.findByIdAndIsDeletedFalse(request.getBrand_id()).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
             product.setBrand(brand);
         }
+
+        specification.setProduct(product);
         product.setThumbnail(request.getThumbnail());
         product.setStatus(Status.ACTIVE);
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
+        product.setRating(5.0);
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);
@@ -244,5 +248,12 @@ public class ProductServiceImpl implements ProductService {
             productResponse.setBrand(product.getBrand());
         }
         return productResponse;
+    }
+    private Specification toSpecification(SpecificationCreationRequest request){
+        return Specification.builder()
+                .brandOrigin(request.getBrandOrigin())
+                .manufacturingLocation(request.getManufacturingLocation())
+                .skinType(request.getSkinType())
+                .build();
     }
 }

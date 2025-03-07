@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,8 +12,8 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BatchCreationRequest {
-    Integer quantity;
-    LocalDate manufactureDate;
-    LocalDate expirationDate;
+public class SpecificationCreationRequest {
+    String brandOrigin;
+    String manufacturingLocation;
+    String skinType;
 }

@@ -44,19 +44,20 @@ public class Product extends AbstractEntity {
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @Column(name = "size")
-    String size;
-
     @Column(name = "rating")
-    Double rating = 5.0;
+    Double rating;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
+    Status status;
+
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    Specification specification;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonIgnore
     List<Batch> batches;
+
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonIgnore
@@ -71,13 +72,11 @@ public class Product extends AbstractEntity {
     @JsonIgnore
     @JoinColumn(name = "origin_id")
     Origin origin;
-    
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinColumn(name = "category_id")
     Category category;
-
 
     @OneToMany(mappedBy = "product")
     List<Step> steps;
