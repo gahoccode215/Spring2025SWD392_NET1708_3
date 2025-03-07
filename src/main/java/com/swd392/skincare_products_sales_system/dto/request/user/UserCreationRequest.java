@@ -21,6 +21,7 @@ import java.time.LocalDate;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserCreationRequest {
+    String avatar;
     @NotBlank(message = "firstName must be not blank")
     String firstName;
     @NotBlank(message = "lastName must be not blank")
@@ -34,7 +35,6 @@ public class UserCreationRequest {
     @Size(min = 6, message = "INVALID_PASSWORD")
     String password;
     String phone;
-
     @RoleConstraint(message = "INVALID_ROLE")
     String roleName;
 }
