@@ -16,7 +16,6 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductCreationRequest {
     @NotBlank(message = "product name can not blank")
     String name;

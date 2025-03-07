@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
-
     //10XX
     RESOURCE_NOT_FOUND(1000, "Resource not found", HttpStatus.NOT_FOUND),
-    USERNAME_EXISTED(1001, "Username existed", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1002, "User not existed", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_EXISTED(1003, "Product not existed", HttpStatus.BAD_REQUEST),
-    CATEGORY_NOT_EXISTED(1004, "Category not existed", HttpStatus.BAD_REQUEST),
-    USER_EXISTED(1005, "User existed", HttpStatus.BAD_REQUEST),
+    USERNAME_EXISTED(1001, "Tên tài khoản đã tồn tại", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1002, "Tài khoản không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_FOUND(1003, "Sản phẩm không tồn tại", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(1004, "Danh mục không tồn tại", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1005, "Tài khoản đã tồn tại", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(1006, "Role not found", HttpStatus.BAD_REQUEST),
     CART_NOT_FOUND(1007, "Cart not found", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED_IN_CART(1008, "Product not existed in cart", HttpStatus.BAD_REQUEST),
@@ -49,6 +48,9 @@ public enum ErrorCode {
     INVALID_OTP(1113, "Invalid Otp", HttpStatus.BAD_REQUEST),
     OTP_EXPIRED(1114, "Otp expired", HttpStatus.BAD_REQUEST),
     ACCOUNT_HAS_BEEN_DISABLE(1113, "Account has been disable", HttpStatus.BAD_REQUEST),
+    MANUFACTURE_DATE_CAN_NOT_AFTER_TODAY(1114, "Ngày sản xuất không thể lớn hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
+    MANUFACTURE_DATE_CAN_NOT_AFTER_EXPIRATION_DATE(1115, "Ngày sản xuất phải trước ngày hết hạn", HttpStatus.BAD_REQUEST),
+    EXPIRATION_DATE_CAN_NOT_BEFORE_TODAY(1116, "Ngày hết hạn không thể nhỏ hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

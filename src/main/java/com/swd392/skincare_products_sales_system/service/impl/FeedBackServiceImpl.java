@@ -29,7 +29,7 @@ public class FeedBackServiceImpl implements FeedBackService {
     @Override
     @Transactional
     public FeedBackResponse createFeedBack(FeedBackCreationRequest request, String productId) {
-        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         FeedBack feedBack = FeedBack.builder()
                 .description(request.getDescription())
                 .rating(request.getRating())

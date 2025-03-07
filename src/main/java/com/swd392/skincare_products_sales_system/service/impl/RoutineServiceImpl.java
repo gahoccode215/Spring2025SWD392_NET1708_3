@@ -22,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +96,7 @@ public class RoutineServiceImpl implements RoutineService {
                             .dailyRoutine(dailyRoutine)
                             .product(stepRequest.getProductId() != null
                                     ? productRepository.findById(stepRequest.getProductId())
-                                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED))
+                                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))
                                     : null)
                             .build();
 

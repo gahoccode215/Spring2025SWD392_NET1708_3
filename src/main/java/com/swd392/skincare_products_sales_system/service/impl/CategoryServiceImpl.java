@@ -55,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryResponse updateCategory(CategoryUpdateRequest request, String categoryId)  {
-        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         if(request.getName() != null){
             category.setName(request.getName());
         }
@@ -75,14 +75,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategory(String categoryId) {
-        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         category.setIsDeleted(true);
         categoryRepository.save(category);
     }
 
     @Override
     public CategoryResponse getCategoryById(String id) {
-        Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         return toCategoryResponse(category);
     }
 
@@ -129,7 +129,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void changeCategoryStatus(String categoryId, Status status) {
-        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+        Category category = categoryRepository.findByIdAndIsDeletedFalse(categoryId).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         categoryRepository.updateCategoryStatus(category.getId(), status);
     }
 

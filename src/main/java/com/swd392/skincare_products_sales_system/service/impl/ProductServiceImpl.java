@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
+import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.product.SpecificationCreationRequest;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
                 .usageInstruction(request.getUsageInstruction())
                 .build();
         if (request.getCategory_id() != null) {
-            Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+            Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
             product.setCategory(category);
         }
         if (request.getBrand_id() != null) {
@@ -71,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
         product.setRating(5.0);
+        product.setBatches(toListBatches(request.getBatches(), product));
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);
@@ -79,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void deleteProduct(String productId) {
-        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setIsDeleted(true);
         productRepository.save(product);
     }
@@ -87,9 +90,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductResponse updateProduct(ProductUpdateRequest request, String productId) {
-        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (request.getCategory_id() != null) {
-            Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
+            Category category = categoryRepository.findByIdAndIsDeletedFalse(request.getCategory_id()).orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
             product.setCategory(category);
         }
         if (request.getBrand_id() != null) {
@@ -164,20 +167,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse getProductBySlug(String slug) {
-        Product product = productRepository.findBySlugAndIsDeletedFalseAndStatus(slug).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findBySlugAndIsDeletedFalseAndStatus(slug).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return toProductResponse(product);
     }
 
     @Override
     public ProductResponse getProductById(String id) {
-        Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return toProductResponse(product);
     }
 
     @Override
     @Transactional
     public void changeProductStatus(String productId, Status status) {
-        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+        Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         productRepository.updateProductStatus(product.getId(), status);
     }
 
@@ -189,6 +192,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(this::convertToProductResponse)
                 .collect(Collectors.toList());
     }
+
     private ProductResponse convertToProductResponse(Product product) {
         return ProductResponse.builder()
                 .id(product.getId())
@@ -231,7 +235,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductResponse toProductResponse(Product product) {
-
         ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -249,11 +252,24 @@ public class ProductServiceImpl implements ProductService {
         }
         return productResponse;
     }
-    private Specification toSpecification(SpecificationCreationRequest request){
+
+    private Specification toSpecification(SpecificationCreationRequest request) {
         return Specification.builder()
+                .origin(request.getOrigin())
                 .brandOrigin(request.getBrandOrigin())
                 .manufacturingLocation(request.getManufacturingLocation())
                 .skinType(request.getSkinType())
                 .build();
+    }
+
+    private List<Batch> toListBatches(List<BatchCreationRequest> requests, Product product) {
+        return requests.stream()
+                .map(dto -> Batch.builder()
+                        .batchCode("BATCH-" + UUID.randomUUID().toString())
+                        .product(product)
+                        .quantity(dto.getQuantity())
+                        .manufactureDate(dto.getManufactureDate())
+                        .expirationDate(dto.getExpirationDate())
+                        .build()).collect(Collectors.toList());
     }
 }

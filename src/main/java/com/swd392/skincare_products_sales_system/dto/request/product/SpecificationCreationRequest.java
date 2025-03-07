@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SpecificationCreationRequest {
+    String origin;
     String brandOrigin;
     String manufacturingLocation;
     String skinType;

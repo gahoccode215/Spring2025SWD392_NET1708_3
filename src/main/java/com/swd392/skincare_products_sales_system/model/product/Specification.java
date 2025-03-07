@@ -16,6 +16,9 @@ public class Specification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(name = "origin")
+    String origin;
+
     @Column(name = "brand_origin")
     String brandOrigin;
 

@@ -26,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<OrderItem> orderItems = createOrderItemsFromCart(cart, order);
         orderItems.forEach(orderItem -> {
-            Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 //            product.setStock(product.getStock() - orderItem.getQuantity());
         });
 
@@ -175,7 +173,7 @@ public class OrderServiceImpl implements OrderService {
 //        orderRepository.updateOrderStatus(id, orderStatus);
 //        if (orderStatus.equals(OrderStatus.CANCELED)) {
 //            order.getOrderItems().forEach(orderItem -> {
-//                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+//                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 //                product.setStock(product.getStock() + orderItem.getQuantity());
 //            });
 //        }
@@ -194,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
 //        orderRepository.updateOrderStatus(id, orderStatus);
         if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
             order.getOrderItems().forEach(orderItem -> {
-                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+                Product product = productRepository.findByIdAndIsDeletedFalse(orderItem.getProduct().getId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 //                product.setStock(product.getStock() + orderItem.getQuantity());
             });
         }
