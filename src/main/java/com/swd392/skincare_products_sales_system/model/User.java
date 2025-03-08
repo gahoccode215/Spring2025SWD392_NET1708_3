@@ -79,17 +79,17 @@ public class User extends AbstractEntity {
     List<BookingOrder> bookingOrders;
 
     @OneToMany(mappedBy = "user")
-            @JsonIgnore
+    @JsonIgnore
     List<ImageSkin> imageSkins;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinTable(
             name = "tbl_user_voucher",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "voucher_id")
     )
-     Set<Voucher> vouchers;
+    List<Voucher> vouchers;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -100,13 +100,12 @@ public class User extends AbstractEntity {
     List<Routine> routines;
 
 
-
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
     List<Otp> otps = new ArrayList<>();
 
 
-    public void addOtp(Otp obj){
+    public void addOtp(Otp obj) {
         if (this.otps == null) {
             this.otps = new ArrayList<>();
         }
@@ -114,4 +113,11 @@ public class User extends AbstractEntity {
         obj.setUser(this);
     }
 
+    public void addVoucher(Voucher obj) {
+        if (this.vouchers == null) {
+            this.vouchers = new ArrayList<>();
+        }
+        vouchers.add(obj);
+        obj.addUser(this);
+    }
 }

@@ -12,6 +12,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -23,7 +24,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "tbl_voucher")
-public class Voucher extends AbstractEntity {
+public class Voucher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,8 +51,12 @@ public class Voucher extends AbstractEntity {
     @Column(name = "quantity")
     Integer quantity;
 
-    @ManyToMany(mappedBy = "vouchers")
+    @ManyToMany(mappedBy = "vouchers", cascade = CascadeType.ALL)
     @JsonIgnore
-    Set<User> users;
+    List<User> users;
+
+    public void addUser(User obj){
+        users.add(obj);
+    }
 
 }

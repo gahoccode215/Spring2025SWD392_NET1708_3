@@ -30,6 +30,7 @@ public enum ErrorCode {
     EMAIL_SEND_FAILED(1018, "Email send fail", HttpStatus.BAD_REQUEST),
     ACCOUNT_ALREADY_VERIFIED(1019, "Account already verified", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND(1020, "Email not found", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_FOUND(1021, "Voucher không tồn tại", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
@@ -51,6 +52,8 @@ public enum ErrorCode {
     MANUFACTURE_DATE_CAN_NOT_AFTER_TODAY(1114, "Ngày sản xuất không thể lớn hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
     MANUFACTURE_DATE_CAN_NOT_AFTER_EXPIRATION_DATE(1115, "Ngày sản xuất phải trước ngày hết hạn", HttpStatus.BAD_REQUEST),
     EXPIRATION_DATE_CAN_NOT_BEFORE_TODAY(1116, "Ngày hết hạn không thể nhỏ hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
+    NOT_ENOUGH_POINT(1117, "Không đủ điểm", HttpStatus.BAD_REQUEST),
+    INVALID_EXCHANGE_VOUCHER(1118, "Chỉ được sở hữu 1 Voucher mỗi loại", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),
