@@ -214,6 +214,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             });
         }
+        user.setPoint((int) Math.round(order.getTotalAmount() / 1000));
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());

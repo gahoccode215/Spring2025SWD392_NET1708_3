@@ -10,10 +10,5 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 public interface VoucherService {
-    VoucherResponse createVoucher(@Valid VoucherCreationRequest request);
-    VoucherResponse updateVoucher(@Valid VoucherUpdateRequest request, Long voucherId );
-    void deleteVoucher(Long voucherId);
-    void changeStatusVoucher(Long voucherId , Status status);
-    VoucherResponse getVoucherById ( Long voucherId);
-    List<Voucher> getAllVoucher();
+    VoucherResponse createVoucher(VoucherCreationRequest request);
 }

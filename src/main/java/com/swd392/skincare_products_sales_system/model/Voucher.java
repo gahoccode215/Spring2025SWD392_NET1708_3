@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.enums.DiscountType;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -28,40 +29,29 @@ public class Voucher extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false)
-    @Size(min = 5, message = "VoucherName must have at least 5 character")
-    String voucherName;
+    @Column(name = "code")
+    String code;
 
-    @Column(nullable = false)
-    @Size(min = 5, max = 100, message = "VoucherName must have at least 5 character")
-    String voucherCode;
+    @Enumerated(EnumType.STRING)
+    DiscountType discountType;
 
-    @Column(nullable = false)
-    LocalDate startDate;
+    @Column(name = "min_order_value")
+    Double minOrderValue;
 
-    @Column(nullable = false)
-    LocalDate endDate;
-
-    @Column(nullable = false)
-    @Size(min = 5, message = "Description must have at least 5 character")
+    @Column(name = "description")
     String description;
 
-    @Column(nullable = false)
-    @DecimalMin(value = "0", inclusive = true, message = "Point must be greater than or equal to 0")
+    @Column(name = "point")
     Integer point;
-
-    @Column(nullable = false)
-    @DecimalMin(value = "0.0", inclusive = true, message = "DiscountAmount must be greater than or equal to 0")
-    Float discountAmount;
 
     @Enumerated(EnumType.STRING)
     Status status;
 
-    @Column
+    @Column(name = "quantity")
     Integer quantity;
 
     @ManyToMany(mappedBy = "vouchers")
-            @JsonIgnore
+    @JsonIgnore
     Set<User> users;
 
 }

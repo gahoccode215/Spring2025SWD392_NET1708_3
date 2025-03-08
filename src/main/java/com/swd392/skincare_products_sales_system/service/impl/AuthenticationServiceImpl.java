@@ -80,6 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Role customRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         user.setRole(customRole);
+        user.setPoint(0);
         user.setIsDeleted(false);
         userRepository.save(user);
         Otp otp = otpService.generateAndSaveOtp(user.getId());

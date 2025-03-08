@@ -24,5 +24,6 @@ public class UserResponse {
     Status status;
     String roleName;
     String avatar;
+    Integer point;
     LocalDate birthday;
 }

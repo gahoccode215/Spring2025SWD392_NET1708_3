@@ -56,15 +56,7 @@ public class UserServiceImpl implements UserService {
         if (users == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : users.getContent()) {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setId(user.getId());
-            userResponse.setAvatar(user.getAvatar());
-            userResponse.setGender(user.getGender());
-            userResponse.setUsername(user.getUsername());
-            userResponse.setRoleName(user.getRole().getName());
-            userResponse.setEmail(user.getEmail());
-            userResponse.setFirstName(user.getFirstName());
-            userResponse.setLastName(user.getLastName());
+            UserResponse userResponse = toUserResponse(user);
             userResponses.add(userResponse);
         }
         response.setTotalElements(users.getTotalElements());
@@ -199,6 +191,7 @@ public class UserServiceImpl implements UserService {
                 .username(user.getUsername())
                 .birthday(user.getBirthday())
                 .roleName(user.getRole().getName())
+                .point(user.getPoint())
                 .avatar(user.getAvatar())
                 .status(user.getStatus())
                 .build();
