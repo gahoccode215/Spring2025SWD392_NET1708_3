@@ -30,9 +30,37 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class VoucherServiceImpl implements VoucherService {
 
+    VoucherRepository voucherRepository;
 
     @Override
+    @Transactional
     public VoucherResponse createVoucher(VoucherCreationRequest request) {
-        return null;
+        Voucher voucher = Voucher.builder()
+                .code(request.getCode())
+                .point(request.getPoint())
+                .description(request.getDescription())
+                .minOrderValue(request.getMinOrderValue())
+                .discountType(request.getDiscountType())
+                .status(Status.ACTIVE)
+                .build();
+        voucherRepository.save(voucher);
+        return toVoucherResponse(voucher);
+    }
+
+    @Override
+    public void deleteVoucher(Long voucherId) {
+        Voucher voucher = voucherRepository.findById()
+    }
+
+    private VoucherResponse toVoucherResponse(Voucher voucher){
+        return VoucherResponse.builder()
+                .id(voucher.getId())
+                .code(voucher.getCode())
+                .discountType(voucher.getDiscountType())
+                .minOrderValue(voucher.getMinOrderValue())
+                .description(voucher.getDescription())
+                .point(voucher.getPoint())
+                .quantity(voucher.getQuantity())
+                .build();
     }
 }

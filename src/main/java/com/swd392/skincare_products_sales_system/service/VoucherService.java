@@ -11,4 +11,5 @@ import java.util.List;
 
 public interface VoucherService {
     VoucherResponse createVoucher(VoucherCreationRequest request);
+    void deleteVoucher(Long voucherId);
 }
