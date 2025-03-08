@@ -40,6 +40,7 @@ public class VoucherServiceImpl implements VoucherService {
         Voucher voucher = Voucher.builder()
                 .code(request.getCode())
                 .point(request.getPoint())
+                .discount(request.getDiscount())
                 .description(request.getDescription())
                 .minOrderValue(request.getMinOrderValue())
                 .discountType(request.getDiscountType())
@@ -97,7 +98,27 @@ public class VoucherServiceImpl implements VoucherService {
     public VoucherPageResponse getVoucherByCustomer(int page, int size) {
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
-        Page<Voucher> vouchers = voucherRepository.findAllByFilter(Status.ACTIVE,pageable);
+        Page<Voucher> vouchers = voucherRepository.findAllMyVoucher(pageable);
+
+        VoucherPageResponse response = new VoucherPageResponse();
+        List<VoucherResponse> voucherResponses = new ArrayList<>();
+        for(Voucher voucher : vouchers.getContent()){
+            VoucherResponse voucherResponse = toVoucherResponse(voucher);
+            voucherResponses.add(voucherResponse);
+        }
+        response.setContent(voucherResponses);
+        response.setTotalElements(vouchers.getTotalElements());
+        response.setTotalPages(vouchers.getTotalPages());
+        response.setPageNumber(vouchers.getNumber());
+        response.setPageSize(vouchers.getSize());
+        return response;
+    }
+
+    @Override
+    public VoucherPageResponse getMyVouchers(int page, int size) {
+        User user = getAuthenticatedUser();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Voucher> vouchers = voucherRepository.findAllByUserId(user.getId(), pageable);
         VoucherPageResponse response = new VoucherPageResponse();
         List<VoucherResponse> voucherResponses = new ArrayList<>();
         for(Voucher voucher : vouchers.getContent()){
@@ -116,6 +137,7 @@ public class VoucherServiceImpl implements VoucherService {
         return VoucherResponse.builder()
                 .id(voucher.getId())
                 .code(voucher.getCode())
+                .discount(voucher.getDiscount())
                 .discountType(voucher.getDiscountType())
                 .minOrderValue(voucher.getMinOrderValue())
                 .description(voucher.getDescription())

@@ -10,4 +10,5 @@ public interface VoucherService {
     VoucherPageResponse getVouchersByAdmin(int page, int size);
     void exchangeVoucher(Long voucherId);
     VoucherPageResponse getVoucherByCustomer(int page, int size);
+    VoucherPageResponse getMyVouchers(int page, int size);
 }

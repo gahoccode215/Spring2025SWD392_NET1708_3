@@ -36,6 +36,9 @@ public class Voucher {
     @Enumerated(EnumType.STRING)
     DiscountType discountType;
 
+    @Column(name = "discount")
+    Integer discount;
+
     @Column(name = "min_order_value")
     Double minOrderValue;
 

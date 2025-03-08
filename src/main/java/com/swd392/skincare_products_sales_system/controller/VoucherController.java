@@ -51,4 +51,17 @@ public class VoucherController {
                 .result(service.getVoucherByCustomer(page, size))
                 .build();
     }
+    @GetMapping("my-voucher")
+    @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<VoucherPageResponse> getMyVouchers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.<VoucherPageResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy danh sách voucher thành công")
+                .result(service.getMyVouchers(page, size))
+                .build();
+    }
 }

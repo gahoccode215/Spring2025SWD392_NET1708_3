@@ -44,15 +44,17 @@ public class OrderServiceImpl implements OrderService {
     OrderItemRepository orderItemRepository;
     BatchRepository batchRepository;
     ProductRepository productRepository;
+    VoucherRepository voucherRepository;
 
     @Override
     @Transactional
-    public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod) {
+    public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod, Long voucherId) {
         User user = getAuthenticatedUser();
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
+
         if (paymentMethod == null) {
             throw new AppException(ErrorCode.INVALID_PAYMENT_METHOD);
         }
@@ -64,6 +66,21 @@ public class OrderServiceImpl implements OrderService {
         });
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
+        if (voucherId != null) {
+            Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+            if (voucher.getMinOrderValue() > cart.getTotalPrice()) {
+                throw new AppException(ErrorCode.VOUCHER_MIN_ORDER_INVALID);
+            }
+            if (voucher.getDiscountType() == DiscountType.FIXED_AMOUNT) {
+                double newTotal = order.getTotalAmount() - voucher.getDiscount();
+                order.setTotalAmount(Math.max(newTotal, 0));
+            }
+            if (voucher.getDiscountType() == DiscountType.PERCENTAGE) {
+                double discountAmount = order.getTotalAmount() * (voucher.getDiscount() / 100);
+                log.info("DEN DUOC DAY {}", discountAmount);
+                order.setTotalAmount(Math.max(order.getTotalAmount() - discountAmount, 0));
+            }
+        }
         orderRepository.save(order);
         clearCart(cart);
         return mapToOrderResponse(order);
@@ -160,21 +177,21 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void confirmOrder(Long id, OrderStatus orderStatus) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        if(orderStatus == OrderStatus.PROCESSING){
+        if (orderStatus == OrderStatus.PROCESSING) {
             order.getOrderItems().forEach(orderItem -> {
                 List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
                 int quantityDu = 0;
-                for(Batch batch : batchList){
-                    if(orderItem.getQuantity() > batch.getQuantity()){
+                for (Batch batch : batchList) {
+                    if (orderItem.getQuantity() > batch.getQuantity()) {
                         quantityDu = orderItem.getQuantity() - batch.getQuantity();
                         batch.setQuantity(batch.getQuantity() - orderItem.getQuantity() - quantityDu);
                         batch.setOrderItem(orderItem);
-                    }else{
+                    } else {
                         batch.setQuantity(batch.getQuantity() - orderItem.getQuantity());
                         batch.setOrderItem(orderItem);
                     }
                     batchRepository.save(batch);
-                    if(quantityDu == 0)
+                    if (quantityDu == 0)
                         break;
                 }
             });
@@ -205,9 +222,9 @@ public class OrderServiceImpl implements OrderService {
         if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
             order.getOrderItems().forEach(orderItem -> {
                 List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
-                for(Batch batch : batchList){
-                    if(batch.getOrderItem() != null){
-                        if (batch.getOrderItem().getId().equals(orderItem.getId())){
+                for (Batch batch : batchList) {
+                    if (batch.getOrderItem() != null) {
+                        if (batch.getOrderItem().getId().equals(orderItem.getId())) {
                             batch.setQuantity(batch.getQuantity() + orderItem.getQuantity());
                         }
                     }
@@ -218,7 +235,7 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(orderStatus);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
-        if(request.getImage() != null){
+        if (request.getImage() != null) {
             order.setImageOrderSuccess(request.getImage());
         }
         orderRepository.save(order);

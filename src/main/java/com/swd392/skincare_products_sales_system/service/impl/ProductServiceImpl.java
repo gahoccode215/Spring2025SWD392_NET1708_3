@@ -96,9 +96,6 @@ public class ProductServiceImpl implements ProductService {
         product.setSlug(generateUniqueSlug(product.getName()));
         product.setIsDeleted(false);
         product.setRating(5.0);
-        if(request.getBatches() != null){
-            product.setBatches(toListBatches(request.getBatches(), product));
-        }
         log.info("Product: {}", product);
         productRepository.save(product);
         return toProductResponse(product);

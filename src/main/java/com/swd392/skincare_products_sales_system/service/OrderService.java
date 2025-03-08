@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 
 public interface OrderService {
-    OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod);
+    OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod, Long voucherId);
     void updateOrderStatus(Long orderId, boolean isPaid);
     OrderPageResponse getOrdersByCustomer(int page, int size);
     OrderPageResponse getOrdersByAdmin(int page, int size);

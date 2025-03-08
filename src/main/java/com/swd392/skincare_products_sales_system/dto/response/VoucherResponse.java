@@ -15,6 +15,7 @@ import java.time.LocalDate;
 public class VoucherResponse {
     Long id;
     String code;
+    Integer discount;
     DiscountType discountType;
     Double minOrderValue;
     String description;

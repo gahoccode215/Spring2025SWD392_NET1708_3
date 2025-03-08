@@ -39,11 +39,11 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId,
+    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam Long voucherId,
                                       @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
         String clientIp = getClientIp(request);
         if (paymentMethod == PaymentMethod.VNPAY) {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherId);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Redirecting to VNPay")
@@ -51,7 +51,7 @@ public class OrderController {
                     .redirectUrl(vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp))
                     .build();
         } else {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod);
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod,voucherId);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Order created successfully")

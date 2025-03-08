@@ -54,6 +54,7 @@ public enum ErrorCode {
     EXPIRATION_DATE_CAN_NOT_BEFORE_TODAY(1116, "Ngày hết hạn không thể nhỏ hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
     NOT_ENOUGH_POINT(1117, "Không đủ điểm", HttpStatus.BAD_REQUEST),
     INVALID_EXCHANGE_VOUCHER(1118, "Chỉ được sở hữu 1 Voucher mỗi loại", HttpStatus.BAD_REQUEST),
+    VOUCHER_MIN_ORDER_INVALID(1119, "Không đủ điều kiện áp Voucher", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

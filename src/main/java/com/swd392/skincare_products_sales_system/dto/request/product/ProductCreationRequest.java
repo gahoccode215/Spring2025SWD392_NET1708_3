@@ -19,7 +19,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductCreationRequest {
-    @NotBlank(message = "product name can not blank")
     String name;
     Double price;
     String description;
@@ -27,7 +26,6 @@ public class ProductCreationRequest {
     String usageInstruction;
     String thumbnail;
     SpecificationCreationRequest specification;
-    List<BatchCreationRequest> batches;
     Long brand_id;
     String category_id;
 }

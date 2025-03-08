@@ -18,6 +18,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class VoucherCreationRequest {
     String code;
+    Integer discount;
     DiscountType discountType;
     Double minOrderValue;
     String description;
