@@ -4,14 +4,13 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
 import com.swd392.skincare_products_sales_system.dto.request.product.*;
-import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
-import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
-import com.swd392.skincare_products_sales_system.dto.response.product.ProductResponse;
+import com.swd392.skincare_products_sales_system.dto.response.product.*;
+import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.product.*;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
@@ -270,9 +269,14 @@ public class ProductServiceImpl implements ProductService {
         Batch batch = batchRepository.findFirstBatchByProductIdAndQuantityGreaterThanZero(product.getId());
 
         List<FeedBack> feedBacks = feedBackRepository.findAllByProductId(product.getId());
+
+        List<FeedBackResponse> feedBackResponses = feedBacks.stream()
+                .map(this::toFeedBackResponse)
+                .toList();
+
         ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
-                .feedBacks(feedBacks)
+                .feedBacks(feedBackResponses)
                 .name(product.getName())
                 .price(product.getPrice())
                 .description(product.getDescription())
@@ -296,7 +300,7 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         if (product.getSpecification() != null) {
-            productResponse.setSpecification(product.getSpecification());
+            productResponse.setSpecification(toSpecificationResponse(product.getSpecification()));
         }
         return productResponse;
     }
@@ -321,6 +325,15 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
+    private SpecificationResponse toSpecificationResponse(Specification specification){
+        return SpecificationResponse.builder()
+                .origin(specification.getOrigin())
+                .brandOrigin(specification.getBrandOrigin())
+                .manufacturingLocation(specification.getManufacturingLocation())
+                .skinType(specification.getSkinType())
+                .build();
+    }
+
     private Specification toSpecification(SpecificationCreationRequest request) {
         return Specification.builder()
                 .origin(request.getOrigin())
@@ -336,5 +349,30 @@ public class ProductServiceImpl implements ProductService {
             stock += batch.getQuantity();
         }
         return stock;
+    }
+
+    private FeedBackResponse toFeedBackResponse(FeedBack feedBack) {
+        return FeedBackResponse.builder()
+                .id(feedBack.getId())
+//                .product(feedBack.getProduct())
+                .rating(feedBack.getRating())
+                .description(feedBack.getDescription())
+                .userResponse(toUserResponse(feedBack.getUser()))
+                .build();
+    }
+    private UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .gender(user.getGender())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .birthday(user.getBirthday())
+                .roleName(user.getRole().getName())
+                .point(user.getPoint())
+                .avatar(user.getAvatar())
+                .status(user.getStatus())
+                .build();
     }
 }

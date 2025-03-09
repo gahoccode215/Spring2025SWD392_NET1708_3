@@ -7,6 +7,7 @@ import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class OrderController {
     @GetMapping("/history-order")
     @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        orderService.removeUnpaidVnpayOrders();
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Lấy danh sách mua hàng thành công")
@@ -53,7 +55,7 @@ public class OrderController {
                     .redirectUrl(vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp))
                     .build();
         } else {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherCode);
+            orderService.createOrder(cartId, addressId, paymentMethod, voucherCode);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Đặt hàng thành công")

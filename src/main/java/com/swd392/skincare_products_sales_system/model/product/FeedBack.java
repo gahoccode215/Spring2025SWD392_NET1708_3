@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -26,6 +27,11 @@ public class FeedBack {
     @JsonIgnore
     @JoinColumn(name = "product_id")
     Product product;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @JoinColumn(name = "user_id")
+    User user;
 
     Integer rating;
 

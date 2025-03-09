@@ -29,7 +29,8 @@ public class SecurityConfig {
             "/auth/**",
             "/products/**",
             "/brands/**",
-            "/categories/**"
+            "/categories/**",
+            "/orders/payment-callback/**"
     };
 
 

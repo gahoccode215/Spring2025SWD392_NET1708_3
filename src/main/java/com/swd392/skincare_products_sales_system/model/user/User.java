@@ -7,6 +7,7 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.*;
 import com.swd392.skincare_products_sales_system.model.authentication.Otp;
 import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.product.FeedBack;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -103,6 +104,10 @@ public class User extends AbstractEntity {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
     List<Otp> otps;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<FeedBack> feedBacks;
 
 
     public void addOtp(Otp obj) {

@@ -26,11 +26,11 @@ public class ProductResponse {
     String usageInstruction;
     Double rating;
     LocalDate expirationTime;
-    Specification specification;
+    SpecificationResponse specification;
     Integer stock;
     String slug;
     Status status;
     Category category;
     Brand brand;
-    List<FeedBack> feedBacks;
+    List<FeedBackResponse> feedBacks;
 }

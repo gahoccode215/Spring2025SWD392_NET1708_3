@@ -84,7 +84,9 @@ public class OrderServiceImpl implements OrderService {
         }
         log.info("TOTAL AMOUNT: {}", order.getTotalAmount());
         orderRepository.save(order);
-        clearCart(cart);
+        if(order.getPaymentMethod() == PaymentMethod.COD){
+            clearCart(cart);
+        }
         return mapToOrderResponse(order);
     }
 
@@ -247,6 +249,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void removeUnpaidVnpayOrders() {
+        orderItemRepository.deleteByOrderPaymentMethodAndStatus(PaymentMethod.VNPAY, PaymentStatus.NOT_PAID);
+
+        orderRepository.deleteUnpaidVnpayOrders();
     }
 
     private Order buildOrder(Cart cart, Address address, PaymentMethod paymentMethod) {

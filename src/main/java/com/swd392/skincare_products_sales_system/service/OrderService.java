@@ -16,4 +16,5 @@ public interface OrderService {
     void deliveringOrder(Long id, OrderStatus orderStatus);
     void deliveryOrder(Long id, OrderStatus orderStatus, DeliveryRequest request);
     void deleteOrder(Long id);
+    void removeUnpaidVnpayOrders();
 }

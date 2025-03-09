@@ -28,7 +28,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
     @Modifying
-    @Transactional
-    @Query("UPDATE Order x SET x.status = :orderStatus WHERE x.id = :id")
-    void updateOrderStatus(@Param("id") Long id, @Param("orderStatus") OrderStatus status);
+    @Query("DELETE FROM Order o WHERE o.paymentMethod = com.swd392.skincare_products_sales_system.enums.PaymentMethod.VNPAY AND o.paymentStatus = com.swd392.skincare_products_sales_system.enums.PaymentStatus.NOT_PAID")
+    void deleteUnpaidVnpayOrders();
 }
