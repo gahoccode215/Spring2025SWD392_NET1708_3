@@ -121,35 +121,30 @@ public class BookingOrderController {
     }
 
     @GetMapping("/payment-back")
-    public ApiResponse<String> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-
+    public ResponseEntity<ApiResponse<String>> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
         boolean isValid = vnPayService.validateCallback(params);
         if (!isValid) {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Invalid Signature")
-                    .build();
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<String>builder()
+                            .code(HttpStatus.BAD_REQUEST.value())
+                            .message("Invalid Signature")
+                            .build()
+            );
         }
 
         Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
 
-        // Cập nhật trạng thái đơn hàng
         service.updateBookingOrderStatus(bookingOrderId, isPaid);
-
-        if (isPaid) {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.OK.value())
-                    .message("Payment successful, order confirmed.")
-                    .build();
-        } else {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Payment verification failed.")
-                    .build();
-        }
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                        .message(isPaid ? "Payment successful" : "Payment failed")
+                        .build()
+        );
     }
+
 
 
     private String getClientIp(HttpServletRequest request) {

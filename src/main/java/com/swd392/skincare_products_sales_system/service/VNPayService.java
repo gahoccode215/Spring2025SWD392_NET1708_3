@@ -77,7 +77,7 @@ public class VNPayService {
 
     public String createPaymentUrlBookingOrder(Long bookingOrderId, Double amount, String isAddress) throws UnsupportedEncodingException {
         String orderId = UUID.randomUUID().toString().substring(0,6);
-        String returnUrl1 = "http://localhost:5173/api/v1/swd392-skincare-products-sales-system/payment?bookingOrderId  =" + bookingOrderId;
+        String returnUrl1 = "http://localhost:5173/payment-success?bookingOrderId=" + bookingOrderId;
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
         params.put("vnp_Command", "pay");
