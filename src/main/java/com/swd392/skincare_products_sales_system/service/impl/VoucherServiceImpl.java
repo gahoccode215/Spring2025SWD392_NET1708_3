@@ -133,6 +133,11 @@ public class VoucherServiceImpl implements VoucherService {
         return response;
     }
 
+    @Override
+    public VoucherResponse getVoucher(Long id) {
+        return toVoucherResponse(voucherRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND)));
+    }
+
     private VoucherResponse toVoucherResponse(Voucher voucher){
         return VoucherResponse.builder()
                 .id(voucher.getId())

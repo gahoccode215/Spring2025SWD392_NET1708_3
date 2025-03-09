@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod, Long voucherId) {
+    public OrderResponse createOrder(Long cartId, Long addressId, PaymentMethod paymentMethod, String voucherCode) {
         User user = getAuthenticatedUser();
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
@@ -68,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
         });
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
-        if (voucherId != null) {
-            Voucher voucher = voucherRepository.findById(voucherId).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+        if (voucherCode != null) {
+            Voucher voucher = voucherRepository.findByCode(voucherCode).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
             if (voucher.getMinOrderValue() > cart.getTotalPrice()) {
                 throw new AppException(ErrorCode.VOUCHER_MIN_ORDER_INVALID);
             }

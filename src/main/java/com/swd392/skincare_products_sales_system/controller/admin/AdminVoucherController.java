@@ -17,6 +17,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +31,7 @@ public class AdminVoucherController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<VoucherResponse> createVoucher(@RequestBody @Valid VoucherCreationRequest request) {
         return ApiResponse.<VoucherResponse>builder()
                 .code(HttpStatus.CREATED.value())
@@ -41,6 +42,7 @@ public class AdminVoucherController {
 
     @DeleteMapping("{voucherId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> deleteVoucher(@PathVariable Long voucherId) {
         service.deleteVoucher(voucherId);
         return ApiResponse.<Void>builder()
@@ -48,10 +50,21 @@ public class AdminVoucherController {
                 .message("Xóa voucher thành công")
                 .build();
     }
+    @GetMapping("/{voucherId}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
+    public ApiResponse<VoucherResponse> getVoucher(@PathVariable Long voucherId
+    ) {
+        return ApiResponse.<VoucherResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy chi tiết voucher thành công")
+                .result(service.getVoucher(voucherId))
+                .build();
+    }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<VoucherPageResponse> getAllVouchers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

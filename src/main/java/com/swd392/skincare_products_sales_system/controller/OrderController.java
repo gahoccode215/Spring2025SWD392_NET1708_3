@@ -39,18 +39,18 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
-    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam(required = false) Long voucherId,
+    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam(required = false) String voucherCode,
                                       @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
         String clientIp = getClientIp(request);
         if (paymentMethod == PaymentMethod.VNPAY) {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherId);
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherCode);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
-                    .message("Redirecting to VNPay")
+                    .message("Chuyển hướng sang VNPay")
                     .redirectUrl(vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp))
                     .build();
         } else {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherId);
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherCode);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Đặt hàng thành công")
@@ -62,7 +62,6 @@ public class OrderController {
     public ApiResponse<String> handlePaymentCallback(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
         boolean isValid = vnPayService.validateCallback(params);
         if (!isValid) {
-            log.error("Invalid signature in VNPay callback.");
             return ApiResponse.<String>builder()
                     .code(HttpStatus.BAD_REQUEST.value())
                     .message("Invalid Signature")
@@ -78,13 +77,13 @@ public class OrderController {
         if (isPaid) {
             return ApiResponse.<String>builder()
                     .code(HttpStatus.OK.value())
-                    .message("Payment successful, order confirmed.")
+                    .message("Thanh toán thành công")
                     .build();
         } else {
             orderService.deleteOrder(Long.parseLong(orderId));
             return ApiResponse.<String>builder()
                     .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Payment verification failed.")
+                    .message("Thanh toán thất bại")
                     .build();
         }
     }

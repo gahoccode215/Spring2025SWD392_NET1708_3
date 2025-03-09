@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,61 +25,56 @@ public class AdminOrderController {
     OrderService orderService;
 
     @GetMapping()
-    @Operation(summary = "Get all orders with options: search, pagination, sort, filter (ADMIN, MANAGER)  ", description = "Retrieve all products with search, pagination, sorting, and filtering.")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF', 'DELIVERY')")
     public ApiResponse<OrderPageResponse> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get orders successfully")
+                .message("Xem danh sa đơn hàng thành công")
                 .result(orderService.getOrdersByAdmin(page, size))
                 .build();
     }
 
     @GetMapping("/{orderId}")
-    @Operation(summary = "Get a Order by id(ADMIN, MANAGER)  ", description = "Retrieve order by its id")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<OrderResponse> getOrder(@PathVariable Long orderId
     ) {
         return ApiResponse.<OrderResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get order successfully")
+                .message("Xem chi tiết đơn hàng thành công")
                 .result(orderService.getOrderById(orderId))
                 .build();
     }
 
     @PatchMapping("/confirm-order/{orderId}")
-    @Operation(summary = "Change order status", description = "Change order status")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<Void> confirmOrderByStaff(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
         orderService.confirmOrder(orderId, orderStatus);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Change status to " + orderStatus + " successfully")
-//                .result(orderService.changeOrderStatus(orderId, orderStatus))
+                .message("Đổi trạng thái sang" + orderStatus + " Thành công")
                 .build();
     }
 
     @PatchMapping("/change-to-delivery/{orderId}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DELIVERY', 'STAFF')")
     public ApiResponse<Void> deliveringByDelivery(@PathVariable Long orderId, @RequestParam OrderStatus orderStatus) {
         orderService.deliveringOrder(orderId, orderStatus);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
                 .message("Đổi trạng thái sang" + orderStatus + " Thành công")
-//                .result(orderService.changeOrderStatus(orderId, orderStatus))
                 .build();
     }
 
     @PatchMapping("/delivery/{orderId}")
-    @Operation(summary = "Delivery Order", description = "Delivery Order")
     @ResponseStatus(HttpStatus.OK)
-//        @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus
             orderStatus, @RequestBody DeliveryRequest request) {
         orderService.deliveryOrder(orderId, orderStatus, request);
