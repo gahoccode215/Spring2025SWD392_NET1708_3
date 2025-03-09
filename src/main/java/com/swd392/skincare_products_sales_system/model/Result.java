@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.model;
 
 import com.swd392.skincare_products_sales_system.enums.SkinType;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

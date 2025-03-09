@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 
 public class OtpUtil {
     private static final String CHARACTERS = "0123456789";
-    private static final int OTP_LENGTH = 6; // Độ dài OTP, ví dụ: 6 chữ số
+    private static final int OTP_LENGTH = 6;
 
     public static String generateOTP() {
         SecureRandom random = new SecureRandom();

@@ -8,7 +8,7 @@ import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import lombok.AccessLevel;

@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 
-import com.swd392.skincare_products_sales_system.model.Voucher;
+import com.swd392.skincare_products_sales_system.model.user.Voucher;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

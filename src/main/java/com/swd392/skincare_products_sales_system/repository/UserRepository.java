@@ -1,10 +1,11 @@
 package com.swd392.skincare_products_sales_system.repository;
 
+import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.authentication.Role;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -42,6 +44,22 @@ public interface UserRepository extends JpaRepository<User, String> {
             @Param("keyword") String keyword,
             @Param("status") Status status,
             @Param("role") Role role,
+            Pageable pageable);
+
+    @Query("SELECT x FROM User x WHERE x.isDeleted = false " +
+            "AND (:keyword IS NULL OR " +
+            "x.firstName LIKE %:keyword% OR " +
+            "x.lastName LIKE %:keyword% OR " +
+            "x.username LIKE %:keyword% OR " +
+            "x.email LIKE %:keyword%) " +
+            "AND (:status IS NULL OR x.status = :status) " +
+            "AND (:role IS NULL OR x.role = :role) " +
+            "AND (x.role.name NOT IN :excludedRoleNames)")
+    Page<User> findAllByFiltersExcludingRoles(
+            @Param("keyword") String keyword,
+            @Param("status") Status status,
+            @Param("role") Role role,
+            @Param("excludedRoleNames") List<String> excludedRoleNames,
             Pageable pageable);
 
     @Modifying

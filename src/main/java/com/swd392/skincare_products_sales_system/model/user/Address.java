@@ -1,7 +1,6 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
 import com.swd392.skincare_products_sales_system.model.order.Order;
 import jakarta.persistence.*;
 import lombok.*;

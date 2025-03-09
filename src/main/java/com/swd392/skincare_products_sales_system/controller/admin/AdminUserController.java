@@ -29,7 +29,7 @@ public class  AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Tạo mới tài khoản", description = "API Tạo mới tài khoản")
+    @Operation(summary = "Tạo mới tài khoản (ADMIN, MANAGER)", description = "API Tạo mới tài khoản")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
@@ -41,42 +41,42 @@ public class  AdminUserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete a user (ADMIN, MANAGER)", description = "API retrieve an id to delete user")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Xóa tài khoản (ADMIN, MANAGER)", description = "API Xóa tài khoản bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     ApiResponse<String> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .result("User has been deleted")
+                .result("Tài khoản đã xóa thành công")
                 .build();
     }
 
     @PutMapping("/{userId}")
-    @Operation(summary = "Update a user (ADMIN, MANAGER)", description = "API retrieve value to change user attribute")
+    @Operation(summary = "Cập nhật tài khoản (ADMIN, MANAGER)", description = "API Cập nhật tài khoản bằng Id")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     ApiResponse<UserResponse> updateUser(@PathVariable String userId, @RequestBody @Valid UserUpdateRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Update user successfully")
+                .message("Cập nhật tài khoản thành công")
                 .result(userService.updateUser(request, userId))
                 .build();
     }
     @GetMapping("/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get a user detail (ADMIN, MANAGER)", description = "API retrieve an id to get user")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Lấy thông tin chi tiết tài khoản (ADMIN, MANAGER)", description = "API lấy thông tin chi tiết tài khoản bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get user detail successfully")
+                .message("Lấy chi tiết tài khoản thành công")
                 .result(userService.getUser(userId))
                 .build();
     }
     @PatchMapping("/change-status/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change user status (ADMIN, MANAGER)", description = "API to change user status (ACTIVE/INACTIVE)")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Cập nhật trạng thái tài khoản (ADMIN, MANAGER)", description = "API Cập nhật trạng thái tài khoản bằng Id ( ACTIVE | INACTIVE )")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> changeUserStatus(@PathVariable String userId, @RequestParam Status status) {
         userService.changeUserStatus(userId, status);
         return ApiResponse.<Void>builder()
@@ -85,8 +85,9 @@ public class  AdminUserController {
                 .build();
     }
     @GetMapping()
-    @Operation(summary = "Get all users with options: search, pagination, sort, filter", description = "Retrieve all users with search, pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách tài khoản (ADMIN, MANAGER)", description = "API lấy danh sách tài khoản với phân trang, sort, filter")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<UserPageResponse> getAllUsers(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -98,8 +99,8 @@ public class  AdminUserController {
     ) {
         return ApiResponse.<UserPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get users successfully")
-                .result(userService.getUsers(true, keyword, page, size, roleName, status, sortBy, order))
+                .message("Lấy danh sách tài khoản thành công")
+                .result(userService.getUsers(keyword, page, size, roleName, status, sortBy, order))
                 .build();
     }
 }

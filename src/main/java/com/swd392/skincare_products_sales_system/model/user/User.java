@@ -1,12 +1,12 @@
-package com.swd392.skincare_products_sales_system.model.authentication;
+package com.swd392.skincare_products_sales_system.model.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.authentication.Otp;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

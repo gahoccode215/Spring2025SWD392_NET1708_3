@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderRespon
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;

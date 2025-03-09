@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.cart.Cart;
 import com.swd392.skincare_products_sales_system.model.cart.CartItem;
 import com.swd392.skincare_products_sales_system.model.product.Product;
-import com.swd392.skincare_products_sales_system.model.authentication.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.CartItemRepository;
 import com.swd392.skincare_products_sales_system.repository.CartRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
