@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,48 +28,46 @@ public class AdminCategoryController {
     CategoryService categoryService;
 
     @PostMapping
-    @Operation(summary = "Create category (ADMIN, MANAGER)", description = "API retrieve attribute to create category")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Tạo danh mục (ADMIN, MANAGER)", description = "API Tạo danh mục")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse<CategoryResponse> createCategory(@RequestBody @Valid CategoryCreationRequest request
     )  {
-
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Create category successfully")
+                .message("Tạo danh mục thành công")
                 .result(categoryService.createCategory(request))
                 .build();
     }
 
     @PutMapping("/{categoryId}")
-    @Operation(summary = "Update a category (ADMIN, MANAGER)", description = "API retrieve category id to update category")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Cập nhật danh mục (ADMIN, MANAGER)", description = "API Cập nhật danh mục")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<CategoryResponse> updateCategory(@RequestBody @Valid CategoryUpdateRequest request, @PathVariable String categoryId) {
-
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Update category successfully")
+                .message("Cập nhật danh mục thành công")
                 .result(categoryService.updateCategory(request, categoryId))
                 .build();
     }
 
     @DeleteMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Delete a category (ADMIN, MANAGER)", description = "API delete category by its id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Xóa danh mục (ADMIN, MANAGER)", description = "API xóa danh mục bằng Id")
     public ApiResponse<Void> deleteCategory(@PathVariable String categoryId) {
         categoryService.deleteCategory(categoryId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delete category successfully")
+                .message("Xóa danh mục thành công")
                 .build();
     }
 
     @GetMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Get a category (ADMIN, MANAGER)", description = "API get category by its id")
+    @Operation(summary = "Lấy chi tiết danh mục (ADMIN, MANAGER, STAFF)", description = "API Lấy chi tiết danh mục ")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<CategoryResponse> getCategory(@PathVariable String categoryId) {
         return ApiResponse.<CategoryResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -79,9 +78,9 @@ public class AdminCategoryController {
 
 
     @GetMapping
-    @Operation(summary = "Get all categories (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách danh mục (ADMIN, MANAGER, STAFF)", description = "Lấy danh sách danh mục với phân trang, search, sort")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<CategoryPageResponse> getAllCategories(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size,
@@ -90,7 +89,7 @@ public class AdminCategoryController {
             @RequestParam(required = false) String order) {
         return ApiResponse.<CategoryPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get categories successfully")
+                .message("Lấy danh sách danh mục thành công")
                 .result(categoryService.getCategories(keyword, page, size, sortBy, order))
                 .build();
     }
