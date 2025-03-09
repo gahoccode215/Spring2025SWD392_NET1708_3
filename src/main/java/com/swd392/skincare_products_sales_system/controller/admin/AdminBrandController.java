@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,56 +26,55 @@ public class AdminBrandController {
     BrandService brandService;
 
     @PostMapping
-    @Operation(summary = "Create brand (ADMIN, MANAGER)", description = "API retrieve attribute to create brand")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Tạo mới hãng (ADMIN, MANAGER)", description = "API Tạo mới hãng")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<BrandResponse> createBrand(@RequestBody @Valid BrandCreationRequest request)
                                                         {
-
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Create brand successfully")
+                .message("Tạo mới hãng thành công")
                 .result(brandService.createBrand(request))
                 .build();
     }
     @DeleteMapping("/{brandId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Delete a brand (ADMIN, MANAGER)", description = "API delete brand by its id")
+    @Operation(summary = "Xóa một hãng (ADMIN, MANAGER)", description = "API Xóa một hãng bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> deleteBrand(@PathVariable Long brandId) {
         brandService.deleteBrand(brandId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delete brand successfully")
+                .message("Xóa hãng thành công")
                 .build();
     }
     @GetMapping("/{brandId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Get a brand (ADMIN, MANAGER)", description = "API get brand by its id")
+    @Operation(summary = "Lấy chi tiết một hãng (ADMIN, MANAGER, STAFF)", description = "API Lấy chi tiết một hãng bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<BrandResponse> getBrand(@PathVariable Long brandId) {
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("get brand detail successfully")
+                .message("Lấy chi tiết hãng thành công")
                 .result(brandService.getBrandById(brandId))
                 .build();
     }
 
     @PutMapping("/{brandId}")
-    @Operation(summary = "Update a brand (ADMIN, MANAGER)", description = "API retrieve brand id to update brand")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Cập nhật một hãng (ADMIN, MANAGER)", description = "API Cập nhật một hãng bằng Id")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<BrandResponse> updateBrand(@RequestBody @Valid BrandUpdateRequest request, @PathVariable Long brandId) {
         return ApiResponse.<BrandResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Update brand successfully")
+                .message("Cập nhật hãng thành công")
                 .result(brandService.updateBrand(request, brandId))
                 .build();
     }
     @GetMapping
-    @Operation(summary = "Get all brands (ADMIN, MANAGER)", description = "Retrieve all brands with pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách hãng (ADMIN, MANAGER, STAFF)", description = "API Lấy danh sách hãng với phân trang, search, order")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<BrandPageResponse> getAllBrands(
             @RequestParam(required = false, defaultValue = "0") int page,
             @RequestParam(required = false, defaultValue = "100") int size,
@@ -83,7 +83,7 @@ public class AdminBrandController {
             @RequestParam(required = false) String order) {
         return ApiResponse.<BrandPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get brands successfully")
+                .message("Lấy danh sách hãng thành công")
                 .result(brandService.getBrands( keyword, page, size, sortBy, order))
                 .build();
     }

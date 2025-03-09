@@ -98,7 +98,6 @@ public class BrandServiceImpl implements BrandService {
         return response;
     }
 
-    // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);
         String uniqueSlug = baseSlug;
