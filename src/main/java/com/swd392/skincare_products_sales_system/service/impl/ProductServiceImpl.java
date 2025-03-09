@@ -128,10 +128,10 @@ public class ProductServiceImpl implements ProductService {
         if (request.getDescription() != null) {
             product.setDescription(request.getDescription());
         }
-        if(request.getIngredient() != null){
+        if (request.getIngredient() != null) {
             product.setIngredient(request.getIngredient());
         }
-        if(request.getUsageInstruction() != null){
+        if (request.getUsageInstruction() != null) {
             product.setUsageInstruction(request.getUsageInstruction());
         }
         if (request.getThumbnail() != null) {
@@ -140,7 +140,7 @@ public class ProductServiceImpl implements ProductService {
         if (request.getStatus() != null) {
             product.setStatus(request.getStatus());
         }
-        if(request.getSpecification() != null){
+        if (request.getSpecification() != null) {
             SpecificationUpdateRequest specRequest = request.getSpecification();
             Specification existingSpec = product.getSpecification();
             if (existingSpec == null) {
@@ -163,26 +163,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductPageResponse getProducts(boolean admin, String keyword, int page, int size, String categorySlug, String brandSlug, String sortBy, String order) {
         if (page > 0) page -= 1; // Hỗ trợ trang bắt đầu từ 0 hoặc 1
-
         Sort sort = getSort(sortBy, order);
         Pageable pageable = PageRequest.of(page, size, sort);
-
         Category category = categorySlug != null ? categoryRepository.findBySlugAndStatusAndIsDeletedFalse(categorySlug).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)) : null;
         Brand brand = brandSlug != null ? brandRepository.findBySlugAndStatusAndIsDeletedFalse(brandSlug).orElseThrow(() -> new AppException(ErrorCode.RESOURCE_NOT_FOUND)) : null;
-
         Page<Product> products;
-
         if (admin) {
             products = productRepository.findAllByFilters(keyword, null, category, brand, pageable);
         } else {
             products = productRepository.findAllByFilters(keyword, Status.ACTIVE, category, brand, pageable);
         }
-
         // Chuyển đổi từ `Page<Product>` sang `ProductPageResponse`
         ProductPageResponse response = new ProductPageResponse();
-
         List<ProductResponse> productResponses = new ArrayList<>();
-
         // Ánh xạ từng sản phẩm từ Page<Product> sang ProductResponse
         for (Product product : products.getContent()) {
             ProductResponse productResponse = toProductResponse(product);
@@ -233,7 +226,7 @@ public class ProductServiceImpl implements ProductService {
         batches = batchRepository.findAllByProductIdAnd(productId, pageable);
         BatchPageResponse response = new BatchPageResponse();
         List<BatchResponse> batchResponses = new ArrayList<>();
-        for(Batch batch : batches.getContent()){
+        for (Batch batch : batches.getContent()) {
             BatchResponse batchResponse = toBatchResponse(batch);
             batchResponses.add(batchResponse);
         }
@@ -274,8 +267,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductResponse toProductResponse(Product product) {
-
         Batch batch = batchRepository.findFirstBatchByProductIdAndQuantityGreaterThanZero(product.getId());
+
         List<FeedBack> feedBacks = feedBackRepository.findAllByProductId(product.getId());
         ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
@@ -296,17 +289,19 @@ public class ProductServiceImpl implements ProductService {
         if (product.getBrand() != null) {
             productResponse.setBrand(product.getBrand());
         }
-        if(product.getBatches() != null){
+        if (product.getBatches() != null) {
             productResponse.setStock(toQuantityProduct(product.getBatches()));
-            productResponse.setExpirationTime(batch.getExpirationDate());
+            if (!(product.getBatches().isEmpty())) {
+                productResponse.setExpirationTime(batch.getExpirationDate());
+            }
         }
-        if(product.getSpecification() != null){
+        if (product.getSpecification() != null) {
             productResponse.setSpecification(product.getSpecification());
         }
         return productResponse;
     }
 
-    private BatchResponse toBatchResponse(Batch batch){
+    private BatchResponse toBatchResponse(Batch batch) {
         return BatchResponse.builder()
                 .id(batch.getId())
                 .product(batch.getProduct())
@@ -316,15 +311,8 @@ public class ProductServiceImpl implements ProductService {
                 .expirationDate(batch.getExpirationDate())
                 .build();
     }
+
     private Specification toSpecificationUpdate(SpecificationUpdateRequest request) {
-        return  Specification.builder()
-                .origin(request.getOrigin())
-                .brandOrigin(request.getBrandOrigin())
-                .manufacturingLocation(request.getManufacturingLocation())
-                .skinType(request.getSkinType())
-                .build();
-    }
-    private Specification toSpecification(SpecificationCreationRequest request){
         return Specification.builder()
                 .origin(request.getOrigin())
                 .brandOrigin(request.getBrandOrigin())
@@ -333,9 +321,18 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    private int toQuantityProduct(List<Batch> batches){
+    private Specification toSpecification(SpecificationCreationRequest request) {
+        return Specification.builder()
+                .origin(request.getOrigin())
+                .brandOrigin(request.getBrandOrigin())
+                .manufacturingLocation(request.getManufacturingLocation())
+                .skinType(request.getSkinType())
+                .build();
+    }
+
+    private int toQuantityProduct(List<Batch> batches) {
         int stock = 0;
-        for(Batch batch : batches){
+        for (Batch batch : batches) {
             stock += batch.getQuantity();
         }
         return stock;
