@@ -16,6 +16,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +31,10 @@ public class AdminProductController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Create a product (ADMIN, MANAGER)", description = "API retrieve product attribute to create")
+    @Operation(summary = "Tạo mới sản phẩm (ADMIN, MANAGER)", description = "API tạo mới sản phẩm")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<ProductResponse> createProduct(@RequestBody @Valid ProductCreationRequest request
     ) {
-
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.CREATED.value())
                 .message("Tạo mới sản phẩm thành công")
@@ -44,8 +44,8 @@ public class AdminProductController {
 
     @DeleteMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Delete a product (ADMIN, MANAGER)", description = "API delete product by its id")
+    @Operation(summary = "Xóa sản phẩm (ADMIN, MANAGER)", description = "API Xóa sản phẩm bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> deleteProduct(@PathVariable String productId) {
         productService.deleteProduct(productId);
         return ApiResponse.<Void>builder()
@@ -56,8 +56,8 @@ public class AdminProductController {
 
     @PutMapping("{productId}")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    @Operation(summary = "Update a product (ADMIN, MANAGER)", description = "API update product by its id")
+    @Operation(summary = "Cập nhật sản phẩm (ADMIN, MANAGER)", description = "API Cập nhật sản phẩm bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<ProductResponse> updateProduct(@RequestBody @Valid ProductUpdateRequest request, @PathVariable String productId) {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -67,9 +67,9 @@ public class AdminProductController {
     }
 
     @GetMapping()
-    @Operation(summary = "Get all products with options: search, pagination, sort, filter (ADMIN, MANAGER)  ", description = "Retrieve all products with search, pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách sản phẩm (ADMIN, MANAGER, STAFF)  ", description = "API lấy danh sách sản phẩm với phân trang, filter, sort")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<ProductPageResponse> getAllProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -87,22 +87,22 @@ public class AdminProductController {
     }
 
     @GetMapping("/{productId}")
-    @Operation(summary = "Get a product by id (ADMIN, MANAGER)", description = "Retrieve product id to get product detail")
+    @Operation(summary = "Lấy chi tiết sản phẩm (ADMIN, MANAGER, STAFF)", description = "API Lấy chi tiết sản phẩm bằng Id")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<ProductResponse> getProductById(
             @PathVariable(required = false) String productId) {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get product detail successfully")
+                .message("Lấy chi tiết sản phẩm thành công")
                 .result(productService.getProductById(productId))
                 .build();
     }
 
     @PatchMapping("/change-status/{productId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Change product status (ADMIN, MANAGER)", description = "API to change product status (ACTIVE/INACTIVE)")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Đổi trạng thái sản phẩm (ADMIN, MANAGER)", description = "API Đổi trạng thái sản phẩm ")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<Void> changeProductStatus(@PathVariable String productId, @RequestParam Status status) {
         productService.changeProductStatus(productId, status);
         return ApiResponse.<Void>builder()
@@ -110,9 +110,12 @@ public class AdminProductController {
                 .message("Thay đổi trạng thái thành công")
                 .build();
     }
+
     @DeleteMapping("/delete-batch/{batchId}")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<Void> deleteBatch(@PathVariable String batchId){
+    @Operation(summary = "Xóa lô hàng (ADMIN, MANAGER)", description = "API Xóa lô hàng")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ApiResponse<Void> deleteBatch(@PathVariable String batchId) {
         productService.deleteBatch(batchId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
@@ -122,6 +125,8 @@ public class AdminProductController {
 
     @PostMapping("/import-batch/{productId}")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Nhập lô hàng (ADMIN, MANAGER)", description = "API Nhập lô hàng")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<ProductResponse> importBatch(@RequestBody BatchCreationRequest request, @PathVariable String productId) {
         return ApiResponse.<ProductResponse>builder()
                 .result(productService.importBatch(request, productId))
@@ -132,6 +137,8 @@ public class AdminProductController {
 
     @GetMapping("/{productId}/batches")
     @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Xem danh sách lô hàng của sản phẩm (ADMIN, MANAGER)", description = "API Xem danh sách lô hàng của sản phẩm bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<BatchPageResponse> getBatchesByProductId(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

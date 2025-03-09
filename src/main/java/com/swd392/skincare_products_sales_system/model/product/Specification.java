@@ -12,6 +12,7 @@ import lombok.*;
 @Entity
 @Table(name = "tbl_specification")
 public class Specification {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -28,7 +29,7 @@ public class Specification {
     @Column(name = "skin_type")
     String skinType;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     Product product;
 }

@@ -24,28 +24,30 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/{slug}")
-    @Operation(summary = "Get a product by slug", description = "Retrieve product slug to get product detail")
+    @Operation(summary = "Lấy chi tiết sản phẩm", description = "API Lấy chi tiết sản phẩm bằng slug")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<ProductResponse> getProductBySlug(
             @PathVariable(required = false) String slug) {
         return ApiResponse.<ProductResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get product successfully")
+                .message("Lấy chi tiết sản phẩm thành công")
                 .result(productService.getProductBySlug(slug))
                 .build();
     }
+
     @GetMapping("/latest")
-    @Operation(summary = "Get latest product with limit input", description = "Get latest product with limit input")
+    @Operation(summary = "Lấy danh sách sản phẩm mới nhất", description = "API lấy danh sách sản phẩm mới nhất với số lượng nhận vào")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<List<ProductResponse>> getLatestProducts(@RequestParam int limit) {
         return ApiResponse.<List<ProductResponse>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get successfully")
+                .message("Lấy danh sách sản phẩm mới nhất thành công")
                 .result(productService.getLatestProducts(limit))
                 .build();
     }
+
     @GetMapping()
-    @Operation(summary = "Get all products with options: search, pagination, sort, filter", description = "Retrieve all active products with search, pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách sản phẩm ở trạng thái ACTIVE", description = "API lấy danh sách sản phẩm ở trạng thái ACTIVE với phaân trang, filter, sort")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<ProductPageResponse> getAllProducts(
             @RequestParam(required = false) String keyword,
@@ -57,8 +59,8 @@ public class ProductController {
             @RequestParam(required = false) String order) {
         return ApiResponse.<ProductPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get products successfully")
-                .result(productService.getProducts(false, keyword,page, size, categorySlug, brandSlug, sortBy, order))
+                .message("Lấy danh sách sản phẩm thành công")
+                .result(productService.getProducts(false, keyword, page, size, categorySlug, brandSlug, sortBy, order))
                 .build();
     }
 

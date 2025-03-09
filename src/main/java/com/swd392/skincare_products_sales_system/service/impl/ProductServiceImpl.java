@@ -3,10 +3,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.github.slugify.Slugify;
 import com.swd392.skincare_products_sales_system.constant.Query;
-import com.swd392.skincare_products_sales_system.dto.request.product.BatchCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.product.ProductCreationRequest;
-import com.swd392.skincare_products_sales_system.dto.request.product.ProductUpdateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.product.SpecificationCreationRequest;
+import com.swd392.skincare_products_sales_system.dto.request.product.*;
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.ProductPageResponse;
@@ -46,6 +43,7 @@ public class ProductServiceImpl implements ProductService {
     BrandRepository brandRepository;
     CategoryRepository categoryRepository;
     BatchRepository batchRepository;
+    SpecificationRepository specificationRepository;
 
     @Override
     public void deleteBatch(String batchId) {
@@ -71,7 +69,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductResponse createProduct(ProductCreationRequest request) {
-        log.info("ok");
         Specification specification = toSpecification(request.getSpecification());
         Product product = Product.builder()
                 .name(request.getName())
@@ -143,7 +140,20 @@ public class ProductServiceImpl implements ProductService {
             product.setStatus(request.getStatus());
         }
         if(request.getSpecification() != null){
-            product.setSpecification(toSpecification(request.getSpecification()));
+            SpecificationUpdateRequest specRequest = request.getSpecification();
+            Specification existingSpec = product.getSpecification();
+            if (existingSpec == null) {
+                Specification newSpec = toSpecificationUpdate(specRequest);
+                newSpec.setProduct(product);
+                specificationRepository.save(newSpec);
+                product.setSpecification(newSpec);
+            } else {
+                existingSpec.setOrigin(specRequest.getOrigin());
+                existingSpec.setBrandOrigin(specRequest.getBrandOrigin());
+                existingSpec.setManufacturingLocation(specRequest.getManufacturingLocation());
+                existingSpec.setSkinType(specRequest.getSkinType());
+                specificationRepository.save(existingSpec);
+            }
         }
         productRepository.save(product);
         return toProductResponse(product);
@@ -291,7 +301,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private BatchResponse toBatchResponse(Batch batch){
-
         return BatchResponse.builder()
                 .id(batch.getId())
                 .product(batch.getProduct())
@@ -301,7 +310,15 @@ public class ProductServiceImpl implements ProductService {
                 .expirationDate(batch.getExpirationDate())
                 .build();
     }
-    private Specification toSpecification(SpecificationCreationRequest request) {
+    private Specification toSpecificationUpdate(SpecificationUpdateRequest request) {
+        return  Specification.builder()
+                .origin(request.getOrigin())
+                .brandOrigin(request.getBrandOrigin())
+                .manufacturingLocation(request.getManufacturingLocation())
+                .skinType(request.getSkinType())
+                .build();
+    }
+    private Specification toSpecification(SpecificationCreationRequest request){
         return Specification.builder()
                 .origin(request.getOrigin())
                 .brandOrigin(request.getBrandOrigin())
@@ -317,15 +334,4 @@ public class ProductServiceImpl implements ProductService {
         }
         return stock;
     }
-    private List<Batch> toListBatches(List<BatchCreationRequest> requests, Product product) {
-        return requests.stream()
-                .map(dto -> Batch.builder()
-                        .batchCode("BATCH-" + System.currentTimeMillis())
-                        .product(product)
-                        .quantity(dto.getQuantity())
-                        .manufactureDate(dto.getManufactureDate())
-                        .expirationDate(dto.getExpirationDate())
-                        .build()).collect(Collectors.toList());
-    }
-
 }

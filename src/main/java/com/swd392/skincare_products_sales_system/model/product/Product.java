@@ -51,7 +51,7 @@ public class Product extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     Status status;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     Specification specification;
 

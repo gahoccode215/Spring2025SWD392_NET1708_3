@@ -19,7 +19,7 @@ public class ProductUpdateRequest {
     String description;
     String ingredient;
     String usageInstruction;
-    SpecificationCreationRequest specification;
+    SpecificationUpdateRequest specification;
     String thumbnail;
     Long brand_id;
     String category_id;
