@@ -122,7 +122,7 @@ public class BookingOrderController {
 
     @GetMapping("/payment-back")
     public ResponseEntity<ApiResponse<String>> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-        boolean isValid = vnPayService.validateCallback(params);
+        boolean isValid = vnPayService.validateCallback(params); // 🔥 Có thể lỗi ở đây
         if (!isValid) {
             return ResponseEntity.badRequest().body(
                     ApiResponse.<String>builder()
@@ -132,11 +132,11 @@ public class BookingOrderController {
             );
         }
 
-        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
+        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef")); // 🔥 Có thể lỗi do params null
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
 
-        service.updateBookingOrderStatus(bookingOrderId, isPaid);
+        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
         return ResponseEntity.ok(
                 ApiResponse.<String>builder()
                         .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
@@ -144,8 +144,6 @@ public class BookingOrderController {
                         .build()
         );
     }
-
-
 
     private String getClientIp(HttpServletRequest request) {
         String clientIp = request.getHeader("X-Forwarded-For");
@@ -163,6 +161,17 @@ public class BookingOrderController {
                 .code(HttpStatus.OK.value())
                 .message("Get filterListExpert successfully")
                 .result(service.cancelBookingOrder(bookingOrderId, note))
+                .build();
+    }
+
+    @PutMapping("/updateStatus")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Cancel Booking Order", description = "Customer want to stop your order ")
+    public ApiResponse<String> updateStatus(@RequestBody Long bookingOrderId, @RequestParam @Valid boolean isPaid) {
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get filterListExpert successfully")
+                .result(service.updateBookingOrderStatus(bookingOrderId, isPaid))
                 .build();
     }
 

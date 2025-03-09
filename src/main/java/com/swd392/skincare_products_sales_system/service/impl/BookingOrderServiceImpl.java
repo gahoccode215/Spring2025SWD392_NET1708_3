@@ -133,13 +133,14 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
-    public void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid) {
+    public String updateBookingOrderStatus(Long bookingOrderId, boolean isPaid) {
         BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         bookingOrder.setPaymentStatus(isPaid ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
         bookingOrder.setStatus(BookingStatus.PAYMENT);
         bookingRepository.save(bookingOrder);
+        return "Thành công";
     }
 
     @Override
