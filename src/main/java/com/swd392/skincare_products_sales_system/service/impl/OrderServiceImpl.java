@@ -79,10 +79,10 @@ public class OrderServiceImpl implements OrderService {
             }
             if (voucher.getDiscountType() == DiscountType.PERCENTAGE) {
                 double discountAmount = order.getTotalAmount() * (voucher.getDiscount() / 100);
-                log.info("DEN DUOC DAY {}", discountAmount);
                 order.setTotalAmount(Math.max(order.getTotalAmount() - discountAmount, 0));
             }
         }
+        log.info("TOTAL AMOUNT: {}", order.getTotalAmount());
         orderRepository.save(order);
         clearCart(cart);
         return mapToOrderResponse(order);
@@ -127,7 +127,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderPageResponse getOrdersByAdmin(int page, int size) {
         User user = getAuthenticatedUser();
-
         if (page > 0) page -= 1;
         Pageable pageable = PageRequest.of(page, size);
         if (user.getRole().getName().equals(PredefinedRole.STAFF)) {
@@ -184,17 +183,19 @@ public class OrderServiceImpl implements OrderService {
                 List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
                 int quantityDu = 0;
                 for (Batch batch : batchList) {
-                    if (orderItem.getQuantity() > batch.getQuantity()) {
-                        quantityDu = orderItem.getQuantity() - batch.getQuantity();
-                        batch.setQuantity(batch.getQuantity() - orderItem.getQuantity() - quantityDu);
-                        batch.setOrderItem(orderItem);
-                    } else {
-                        batch.setQuantity(batch.getQuantity() - orderItem.getQuantity());
-                        batch.setOrderItem(orderItem);
+                    if(batch.getQuantity() > 0){
+                        if (orderItem.getQuantity() > batch.getQuantity()) {
+                            quantityDu = orderItem.getQuantity() - batch.getQuantity();
+                            batch.setQuantity(batch.getQuantity() - orderItem.getQuantity() - quantityDu);
+                            batch.setOrderItem(orderItem);
+                        } else {
+                            batch.setQuantity(batch.getQuantity() - orderItem.getQuantity());
+                            batch.setOrderItem(orderItem);
+                        }
+                        batchRepository.save(batch);
+                        if (quantityDu == 0)
+                            break;
                     }
-                    batchRepository.save(batch);
-                    if (quantityDu == 0)
-                        break;
                 }
             });
             User user = getAuthenticatedUser();

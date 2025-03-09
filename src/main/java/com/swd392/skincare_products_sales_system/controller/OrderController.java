@@ -25,21 +25,21 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class OrderController {
+
     OrderService orderService;
     VNPayService vnPayService;
-
 
     @GetMapping("/history-order")
     public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get order history")
+                .message("Lấy danh sách mua hàng thành công")
                 .result(orderService.getOrdersByCustomer(page, size))
                 .build();
     }
 
     @PostMapping("/checkout")
-    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam Long voucherId,
+    public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam(required = false) Long voucherId,
                                       @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
         String clientIp = getClientIp(request);
         if (paymentMethod == PaymentMethod.VNPAY) {
@@ -47,15 +47,13 @@ public class OrderController {
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Redirecting to VNPay")
-//                    .result(orderResponse)
                     .redirectUrl(vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp))
                     .build();
         } else {
-            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod,voucherId);
+            OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherId);
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
-                    .message("Order created successfully")
-//                    .result(orderResponse)
+                    .message("Đặt hàng thành công")
                     .build();
         }
     }
@@ -73,7 +71,7 @@ public class OrderController {
 
         String orderId = params.get("vnp_TxnRef");
         String responseCode = params.get("vnp_ResponseCode");
-        boolean isPaid = "00".equals(responseCode);
+        boolean isPaid = "00" .equals(responseCode);
 
         orderService.updateOrderStatus(Long.parseLong(orderId), isPaid);
 

@@ -7,6 +7,8 @@ import com.swd392.skincare_products_sales_system.model.product.Specification;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +23,7 @@ public class ProductResponse {
     String ingredient;
     String usageInstruction;
     Double rating;
+    LocalDate expirationTime;
     Specification specification;
     Integer stock;
     String slug;

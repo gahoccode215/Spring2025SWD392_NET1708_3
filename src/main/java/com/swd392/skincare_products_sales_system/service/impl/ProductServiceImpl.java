@@ -273,6 +273,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductResponse toProductResponse(Product product) {
+
+        Batch batch = batchRepository.findFirstBatchByProductIdAndQuantityGreaterThanZero(product.getId());
         ProductResponse productResponse = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -283,6 +285,7 @@ public class ProductServiceImpl implements ProductService {
                 .status(product.getStatus())
                 .rating(product.getRating())
                 .usageInstruction(product.getUsageInstruction())
+                .expirationTime(batch.getExpirationDate())
                 .ingredient(product.getIngredient())
                 .build();
         if (product.getCategory() != null) {
