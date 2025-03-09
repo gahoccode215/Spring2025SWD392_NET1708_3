@@ -137,8 +137,8 @@ public class AdminProductController {
 
     @GetMapping("/{productId}/batches")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Xem danh sách lô hàng của sản phẩm (ADMIN, MANAGER)", description = "API Xem danh sách lô hàng của sản phẩm bằng Id")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Xem danh sách lô hàng của sản phẩm (ADMIN, MANAGER, STAFF)", description = "API Xem danh sách lô hàng của sản phẩm bằng Id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
     public ApiResponse<BatchPageResponse> getBatchesByProductId(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,

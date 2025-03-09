@@ -56,6 +56,10 @@ public class ApplicationInitConfig {
 
                 User admin = initAccount(ADMIN_USER_NAME, ADMIN_PASSWORD, adminRole);
                 listAccount.add(admin);
+                User phuocAdmin = initAccount("phuocadmin", "phuocadmin", adminRole);
+                listAccount.add(phuocAdmin);
+                User minhAdmin = initAccount("minhadmin", "minhadmin", adminRole);
+                listAccount.add(minhAdmin);
                 User customer = initAccount("customer", "customer", customerRole);
                 listAccount.add(customer);
                 User manager = initAccount("manager", "manager", managerRole);

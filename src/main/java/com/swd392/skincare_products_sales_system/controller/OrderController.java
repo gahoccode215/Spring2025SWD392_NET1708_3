@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
@@ -30,6 +31,7 @@ public class OrderController {
     VNPayService vnPayService;
 
     @GetMapping("/history-order")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<OrderPageResponse> getHistoryOrder(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return ApiResponse.<OrderPageResponse>builder()
                 .code(HttpStatus.OK.value())
@@ -39,6 +41,7 @@ public class OrderController {
     }
 
     @PostMapping("/checkout")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<Void> checkout(@RequestParam("addressId") Long addressId, @RequestParam("cartId") Long cartId, @RequestParam(required = false) String voucherCode,
                                       @RequestParam("paymentMethod") PaymentMethod paymentMethod, HttpServletRequest request) throws UnsupportedEncodingException {
         String clientIp = getClientIp(request);

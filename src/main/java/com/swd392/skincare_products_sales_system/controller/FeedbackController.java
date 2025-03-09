@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,12 +22,13 @@ public class FeedbackController {
 
     @PostMapping("/{productId}")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<FeedBackResponse> createFeedback(@RequestBody FeedBackCreationRequest request,
                                                         @PathVariable("productId") String productId) {
         FeedBackResponse response = feedBackService.createFeedBack(request, productId);
         return ApiResponse.<FeedBackResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Feedback created successfully")
+                .message("Đánh giá sản phẩm thành công")
                 .result(response)
                 .build();
     }

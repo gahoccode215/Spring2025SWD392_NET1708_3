@@ -40,7 +40,7 @@ public class AdminOrderController {
 
     @GetMapping("/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'STAFF', 'DELIVERY')")
     public ApiResponse<OrderResponse> getOrder(@PathVariable Long orderId
     ) {
         return ApiResponse.<OrderResponse>builder()
@@ -74,7 +74,7 @@ public class AdminOrderController {
 
     @PatchMapping("/delivery/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DELIVERY')")
     public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus
             orderStatus, @RequestBody DeliveryRequest request) {
         orderService.deliveryOrder(orderId, orderStatus, request);
