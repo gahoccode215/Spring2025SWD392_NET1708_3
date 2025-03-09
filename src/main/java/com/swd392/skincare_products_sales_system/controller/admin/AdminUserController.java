@@ -29,12 +29,12 @@ public class  AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a user (ADMIN, MANAGER)", description = "API retrieve value to create user")
-//    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @Operation(summary = "Tạo mới tài khoản", description = "API Tạo mới tài khoản")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Create user successfully")
+                .message("Tạo mới tài khoản thành công")
                 .result(userService.createUser(request))
                 .build();
     }

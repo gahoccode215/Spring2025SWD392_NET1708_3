@@ -1,18 +1,13 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import ch.qos.logback.classic.Logger;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
-import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
-import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.BookingOrder;
-import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.BookingRepository;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -23,9 +18,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.aspectj.apache.bcel.Repository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;

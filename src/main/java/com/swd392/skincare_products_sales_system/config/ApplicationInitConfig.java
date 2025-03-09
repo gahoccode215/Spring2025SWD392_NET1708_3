@@ -2,8 +2,8 @@ package com.swd392.skincare_products_sales_system.config;
 
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.authentication.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import lombok.AccessLevel;

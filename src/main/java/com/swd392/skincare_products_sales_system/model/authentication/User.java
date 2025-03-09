@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.authentication;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.*;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +23,6 @@ import java.util.*;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "tbl_user")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User extends AbstractEntity {
 
     @Id
@@ -63,7 +63,7 @@ public class User extends AbstractEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
+    Status status;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
@@ -102,7 +102,7 @@ public class User extends AbstractEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
-    List<Otp> otps = new ArrayList<>();
+    List<Otp> otps;
 
 
     public void addOtp(Otp obj) {

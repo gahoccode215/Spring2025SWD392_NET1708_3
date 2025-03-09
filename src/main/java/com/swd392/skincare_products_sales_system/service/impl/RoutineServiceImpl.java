@@ -11,6 +11,7 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.authentication.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import lombok.AccessLevel;

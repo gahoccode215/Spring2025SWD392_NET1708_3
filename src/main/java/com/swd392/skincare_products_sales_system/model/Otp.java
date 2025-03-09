@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.swd392.skincare_products_sales_system.model.authentication.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.NoArgsConstructor;
