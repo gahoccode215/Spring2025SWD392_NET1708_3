@@ -288,7 +288,6 @@ public class ProductServiceImpl implements ProductService {
                 .status(product.getStatus())
                 .rating(product.getRating())
                 .usageInstruction(product.getUsageInstruction())
-                .expirationTime(batch.getExpirationDate())
                 .ingredient(product.getIngredient())
                 .build();
         if (product.getCategory() != null) {
@@ -299,6 +298,7 @@ public class ProductServiceImpl implements ProductService {
         }
         if(product.getBatches() != null){
             productResponse.setStock(toQuantityProduct(product.getBatches()));
+            productResponse.setExpirationTime(batch.getExpirationDate());
         }
         if(product.getSpecification() != null){
             productResponse.setSpecification(product.getSpecification());

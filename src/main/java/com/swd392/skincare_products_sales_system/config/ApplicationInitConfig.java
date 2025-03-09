@@ -62,6 +62,10 @@ public class ApplicationInitConfig {
                 listAccount.add(minhAdmin);
                 User customer = initAccount("customer", "customer", customerRole);
                 listAccount.add(customer);
+                User phuocCustomer = initAccount("phuoccustomer", "phuoccustomer", customerRole);
+                listAccount.add(phuocCustomer);
+                User minhCustomer = initAccount("minhcustomer", "minhcustomer", customerRole);
+                listAccount.add(minhCustomer);
                 User manager = initAccount("manager", "manager", managerRole);
                 listAccount.add(manager);
                 User staff = initAccount("staff", "staff", staffRole);
