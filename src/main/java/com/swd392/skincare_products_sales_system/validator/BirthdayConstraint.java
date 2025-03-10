@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Retention(RUNTIME)
 @Constraint(validatedBy = {BirthdayValidator.class})
 public @interface BirthdayConstraint {
-    String message() default "Invalid birthday";
+    String message() default "Ngày sinh không chính xác";
 
     int min();
 

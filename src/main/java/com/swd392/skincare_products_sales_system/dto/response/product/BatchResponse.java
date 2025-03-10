@@ -1,10 +1,9 @@
 package com.swd392.skincare_products_sales_system.dto.response.product;
 
-import com.swd392.skincare_products_sales_system.model.product.Product;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

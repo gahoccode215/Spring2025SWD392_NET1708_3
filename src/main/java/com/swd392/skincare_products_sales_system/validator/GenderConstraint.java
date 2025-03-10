@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GenderConstraint {
-    String message() default "Invalid gender";  // Thông báo lỗi mặc định
+    String message() default "Giới tính không chính xác";  // Thông báo lỗi mặc định
     Class<?>[] groups() default {};  // Dùng cho các nhóm kiểm tra
     Class<? extends Payload>[] payload() default {};  // Dùng cho payload
 }
