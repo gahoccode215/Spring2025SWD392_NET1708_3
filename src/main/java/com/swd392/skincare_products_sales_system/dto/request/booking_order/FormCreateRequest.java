@@ -5,7 +5,8 @@ import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -36,6 +37,8 @@ public class FormCreateRequest {
     @NotNull(message = "FirstName cannot be null")
     String firstName;
 
+    @NotNull(message = "Age cannot be null")
+    @Size(max = 100)
     Integer age;
 
     List<ImageSkinRequest> imageSkins;

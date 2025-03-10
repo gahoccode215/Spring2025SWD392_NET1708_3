@@ -2,6 +2,9 @@ package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBack;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
+
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
@@ -114,36 +117,29 @@ public class BookingOrderController {
     }
 
     @GetMapping("/payment-back")
-    public ApiResponse<String> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-
-        boolean isValid = vnPayService.validateCallback(params);
+    public ResponseEntity<ApiResponse<String>> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
+        boolean isValid = vnPayService.validateCallback(params); // 🔥 Có thể lỗi ở đây
         if (!isValid) {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Invalid Signature")
-                    .build();
+            return ResponseEntity.badRequest().body(
+                    ApiResponse.<String>builder()
+                            .code(HttpStatus.BAD_REQUEST.value())
+                            .message("Invalid Signature")
+                            .build()
+            );
         }
 
-        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
+        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef")); // 🔥 Có thể lỗi do params null
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
 
-        // Cập nhật trạng thái đơn hàng
-        service.updateBookingOrderStatus(bookingOrderId, isPaid);
-
-        if (isPaid) {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.OK.value())
-                    .message("Payment successful, order confirmed.")
-                    .build();
-        } else {
-            return ApiResponse.<String>builder()
-                    .code(HttpStatus.BAD_REQUEST.value())
-                    .message("Payment verification failed.")
-                    .build();
-        }
+//        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
+        return ResponseEntity.ok(
+                ApiResponse.<String>builder()
+                        .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
+                        .message(isPaid ? "Payment successful" : "Payment failed")
+                        .build()
+        );
     }
-
 
     private String getClientIp(HttpServletRequest request) {
         String clientIp = request.getHeader("X-Forwarded-For");
@@ -161,6 +157,17 @@ public class BookingOrderController {
                 .code(HttpStatus.OK.value())
                 .message("Get filterListExpert successfully")
                 .result(service.cancelBookingOrder(bookingOrderId, note))
+                .build();
+    }
+
+    @PutMapping("/updateStatus")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Cancel Booking Order", description = "Customer want to stop your order ")
+    public ApiResponse<String> updateStatus(@RequestBody PaymentBack paymentBack) {
+        return ApiResponse.<String>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get filterListExpert successfully")
+                .result(service.updateBookingOrderStatus(paymentBack))
                 .build();
     }
 
