@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatusCode;
 @Getter
 public enum ErrorCode {
     UNCATEGORIZED_EXCEPTION(9999, "Uncategorized error", HttpStatus.INTERNAL_SERVER_ERROR),
-
     //10XX
     RESOURCE_NOT_FOUND(1000, "Resource not found", HttpStatus.NOT_FOUND),
-    USERNAME_EXISTED(1001, "Username existed", HttpStatus.BAD_REQUEST),
-    USER_NOT_EXISTED(1002, "User not existed", HttpStatus.BAD_REQUEST),
-    PRODUCT_NOT_EXISTED(1003, "Product not existed", HttpStatus.BAD_REQUEST),
-    CATEGORY_NOT_EXISTED(1004, "Category not existed", HttpStatus.BAD_REQUEST),
-    USER_EXISTED(1005, "User existed", HttpStatus.BAD_REQUEST),
+    USERNAME_EXISTED(1001, "Tên tài khoản đã tồn tại", HttpStatus.BAD_REQUEST),
+    USER_NOT_EXISTED(1002, "Tài khoản không tồn tại", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_FOUND(1003, "Sản phẩm không tồn tại", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(1004, "Danh mục không tồn tại", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1005, "Tài khoản đã tồn tại", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND(1006, "Role not found", HttpStatus.BAD_REQUEST),
     CART_NOT_FOUND(1007, "Cart not found", HttpStatus.BAD_REQUEST),
     PRODUCT_NOT_EXISTED_IN_CART(1008, "Product not existed in cart", HttpStatus.BAD_REQUEST),
@@ -31,6 +30,9 @@ public enum ErrorCode {
     EMAIL_SEND_FAILED(1018, "Email send fail", HttpStatus.BAD_REQUEST),
     ACCOUNT_ALREADY_VERIFIED(1019, "Account already verified", HttpStatus.BAD_REQUEST),
     EMAIL_NOT_FOUND(1020, "Email not found", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_FOUND(1021, "Voucher không tồn tại", HttpStatus.BAD_REQUEST),
+    SPECIFICATION_NOT_FOUND(1022, "Không tìm thấy thông số", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_OWNED_BY_USER(1023, "Bạn không sở hữu Voucher này", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
@@ -42,11 +44,19 @@ public enum ErrorCode {
     INVALID_CHANGE_PASSWORD(1107, "Old password not correct", HttpStatus.BAD_REQUEST),
     INVALID_GENDER(1107, "Gender invalid", HttpStatus.BAD_REQUEST),
     INVALID_ROLE(1108, "Role invalid", HttpStatus.BAD_REQUEST),
-
     INVALID_JSON(1109, "Json invalid", HttpStatus.BAD_REQUEST),
-    INVALID_QUANTITY(1110, "Quantity invalid.Quantity must greater than 0", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(1110, "Quantity invalid", HttpStatus.BAD_REQUEST),
     INVALID_PAYMENT_METHOD(1111, "Invalid Payment Method", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(1112, "Invalid Email", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1113, "Invalid Otp", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(1114, "Otp expired", HttpStatus.BAD_REQUEST),
+    ACCOUNT_HAS_BEEN_DISABLE(1113, "Account has been disable", HttpStatus.BAD_REQUEST),
+    MANUFACTURE_DATE_CAN_NOT_AFTER_TODAY(1114, "Ngày sản xuất không thể lớn hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
+    MANUFACTURE_DATE_CAN_NOT_AFTER_EXPIRATION_DATE(1115, "Ngày sản xuất phải trước ngày hết hạn", HttpStatus.BAD_REQUEST),
+    EXPIRATION_DATE_CAN_NOT_BEFORE_TODAY(1116, "Ngày hết hạn không thể nhỏ hơn ngày hiện tại", HttpStatus.BAD_REQUEST),
+    NOT_ENOUGH_POINT(1117, "Không đủ điểm", HttpStatus.BAD_REQUEST),
+    INVALID_EXCHANGE_VOUCHER(1118, "Chỉ được sở hữu 1 Voucher mỗi loại", HttpStatus.BAD_REQUEST),
+    VOUCHER_MIN_ORDER_INVALID(1119, "Không đủ điều kiện áp Voucher", HttpStatus.BAD_REQUEST),
     // 12XX
     UNAUTHENTICATED(1201, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     FORBIDDEN(1202, "Forbidden", HttpStatus.FORBIDDEN),

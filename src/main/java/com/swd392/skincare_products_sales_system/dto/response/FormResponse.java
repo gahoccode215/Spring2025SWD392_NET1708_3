@@ -2,17 +2,11 @@ package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
-import com.swd392.skincare_products_sales_system.model.ImageSkin;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
+import com.swd392.skincare_products_sales_system.entity.ImageSkin;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Data

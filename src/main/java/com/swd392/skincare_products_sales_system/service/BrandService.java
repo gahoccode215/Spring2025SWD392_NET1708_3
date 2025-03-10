@@ -12,9 +12,8 @@ public interface BrandService {
 
     BrandResponse getBrandById(Long id);
 
-    void changeBrandStatus(Long brandId, Status status);
 
     BrandResponse updateBrand(BrandUpdateRequest request, Long id);
 
-    BrandPageResponse getBrands(boolean admin, String keyword , int page, int size, String sortBy, String order);
+    BrandPageResponse getBrands(String keyword , int page, int size, String sortBy, String order);
 }

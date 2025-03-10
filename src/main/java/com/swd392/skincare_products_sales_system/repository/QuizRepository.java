@@ -1,15 +1,9 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Quiz;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
-import org.hibernate.query.Page;
+import com.swd392.skincare_products_sales_system.entity.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.Optional;
 

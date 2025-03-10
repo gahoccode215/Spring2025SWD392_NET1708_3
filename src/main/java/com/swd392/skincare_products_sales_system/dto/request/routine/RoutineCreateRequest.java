@@ -1,7 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.request.routine;
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
-import com.swd392.skincare_products_sales_system.model.DailyRoutine;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

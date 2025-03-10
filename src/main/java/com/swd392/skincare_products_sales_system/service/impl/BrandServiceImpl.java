@@ -7,9 +7,8 @@ import com.swd392.skincare_products_sales_system.dto.request.product.BrandUpdate
 import com.swd392.skincare_products_sales_system.dto.response.product.BrandPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.BrandResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.product.Brand;
+import com.swd392.skincare_products_sales_system.entity.product.Brand;
 import com.swd392.skincare_products_sales_system.repository.BrandRepository;
 import com.swd392.skincare_products_sales_system.service.BrandService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;
@@ -44,7 +43,6 @@ public class BrandServiceImpl implements BrandService {
                 .description(request.getDescription())
                 .thumbnail(request.getThumbnail())
                 .build();
-        brand.setStatus(Status.ACTIVE);
         brand.setIsDeleted(false);
         brand.setSlug(generateUniqueSlug(brand.getName()));
         brandRepository.save(brand);
@@ -65,13 +63,6 @@ public class BrandServiceImpl implements BrandService {
         return toBrandResponse(brand);
     }
 
-    @Override
-    @Transactional
-    public void changeBrandStatus(Long brandId, Status status) {
-        Brand brand = brandRepository.findByIdAndIsDeletedFalse(brandId).orElseThrow(() -> new AppException(ErrorCode.BRAND_NOT_EXISTED));
-        brandRepository.updateBrandStatus(brandId, status);
-
-    }
 
     @Override
     @Transactional
@@ -80,34 +71,22 @@ public class BrandServiceImpl implements BrandService {
         if (request.getName() != null) brand.setName(request.getName());
         if (request.getDescription() != null) brand.setDescription(request.getDescription());
         if (request.getThumbnail() != null) brand.setThumbnail(request.getThumbnail());
-        if (request.getStatus() != null) brand.setStatus(request.getStatus());
         brandRepository.save(brand);
         return toBrandResponse(brand);
-
     }
 
     @Override
-    public BrandPageResponse getBrands(boolean admin, String keyword, int page, int size, String sortBy, String order) {
+    public BrandPageResponse getBrands(String keyword, int page, int size, String sortBy, String order) {
         if (page > 0) page -= 1;
         Pageable pageable;
         Sort sort = getSort(sortBy, order);
         pageable = PageRequest.of(page, size, sort);
         Page<Brand> brands;
-        if (admin) {
-            brands = brandRepository.findAllByFilters(keyword, null, pageable);
-        } else {
-            brands = brandRepository.findAllByFilters(keyword, Status.ACTIVE, pageable);
-        }
+        brands = brandRepository.findAllByFilters(keyword, pageable);
         BrandPageResponse response = new BrandPageResponse();
         List<BrandResponse> brandResponses = new ArrayList<>();
         for (Brand brand : brands.getContent()) {
-            BrandResponse brandResponse = new BrandResponse();
-            brandResponse.setId(brand.getId());
-            brandResponse.setName(brand.getName());
-            brandResponse.setDescription(brand.getDescription());
-            brandResponse.setStatus(brand.getStatus());
-            brandResponse.setSlug(brand.getSlug());
-            brandResponse.setThumbnail(brand.getThumbnail());
+            BrandResponse brandResponse = toBrandResponse(brand);
             brandResponses.add(brandResponse);
         }
         response.setBrandResponses(brandResponses);
@@ -118,7 +97,6 @@ public class BrandServiceImpl implements BrandService {
         return response;
     }
 
-    // Generate a unique slug
     private String generateUniqueSlug(String name) {
         String baseSlug = slugify.slugify(name);
         String uniqueSlug = baseSlug;
@@ -133,7 +111,6 @@ public class BrandServiceImpl implements BrandService {
         if (sortBy == null) {
             sortBy = Query.NAME; // mặc định là sắp xếp theo tên nếu không có sortBy
         }
-
         if (order == null || (!order.equals(Query.ASC) && !order.equals(Query.DESC))) {
             order = Query.ASC; // mặc định là theo chiều tăng dần nếu không có order hoặc order không hợp lệ
         }
@@ -150,7 +127,6 @@ public class BrandServiceImpl implements BrandService {
                 .description(brand.getDescription())
                 .thumbnail(brand.getThumbnail())
                 .slug(brand.getSlug())
-                .status(brand.getStatus())
                 .build();
     }
 }

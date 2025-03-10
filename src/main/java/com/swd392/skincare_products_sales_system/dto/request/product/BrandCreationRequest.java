@@ -13,9 +13,8 @@ import lombok.experimental.FieldDefaults;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BrandCreationRequest {
-    @NotBlank(message = "brand name can not blank")
+    @NotBlank(message = "Tên không được trống")
     String name;
     String description;
     String thumbnail;
-    String slug;
 }

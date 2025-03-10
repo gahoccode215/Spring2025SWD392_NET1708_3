@@ -9,12 +9,11 @@ import com.swd392.skincare_products_sales_system.dto.request.authentication.Intr
 import com.swd392.skincare_products_sales_system.dto.response.authentication.IntrospectResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -61,26 +60,16 @@ public class JwtUtil {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
-            log.error("Cannot create token", e);
             throw new RuntimeException(e);
         }
     }
 
     private String buildScope(User user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
-
         if (user.getRole() != null) {
             // Thêm tiền tố "ROLE_" vào tên của role
             stringJoiner.add("ROLE_" + user.getRole().getName()); // Thêm ROLE_ vào trước tên quyền
-
-            // Nếu role có permissions, thêm chúng vào phạm vi
-            if (!CollectionUtils.isEmpty(user.getRole().getPermissions())) {
-                user.getRole().getPermissions().forEach(permission -> {
-                    stringJoiner.add(permission.getName());
-                });
-            }
         }
-
         return stringJoiner.toString();
     }
 

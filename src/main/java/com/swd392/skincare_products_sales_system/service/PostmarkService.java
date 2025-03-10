@@ -1,5 +1,7 @@
 package com.swd392.skincare_products_sales_system.service;
 
+import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.exception.AppException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +25,6 @@ public class PostmarkService {
     private String fromAddress;
 
 
-
     private final RestTemplate restTemplate;
 
     public PostmarkService(RestTemplate restTemplate) {
@@ -31,88 +32,50 @@ public class PostmarkService {
     }
 
 
-    public void sendForgotPassword(String toAddress, String name, String resetPassword){
-        String url = "https://api.postmarkapp.com/email/withTemplate"; // Đảm bảo sử dụng endpoint đúng
+    public void sendForgotPassword(String email, String username,String otp) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("otpCode", otp);
+        templateModel.put("userName", username);
+        String templateId = "39218161";
 
+        sendEmailWithOTP(email, templateId, templateModel);
+
+    }
+
+    public void sendVerificationEmailWithOTP(String email, String username, String otp) {
+        Map<String, Object> templateModel = new HashMap<>();
+        templateModel.put("userName", username);
+        templateModel.put("otpCode", otp);
+        String templateId = "39217777";
+        sendEmailWithOTP(email, templateId, templateModel);
+    }
+
+
+    private void sendEmailWithOTP(String toAddress, String templateId, Map<String, Object> templateModel) {
+        String url = "https://api.postmarkapp.com/email/withTemplate";
         log.info("Postmark API Key: {}", apiKey);
         log.info("From Address: {}", fromAddress);
         log.info("Sending email to: {}", toAddress);
-
-        // Tạo headers cho HTTP Request
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         headers.set("X-Postmark-Server-Token", apiKey);
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-
-        // Tạo nội dung email
         Map<String, Object> email = new HashMap<>();
         email.put("From", fromAddress);
         email.put("To", toAddress);
-        email.put("TemplateId", 39218161);  // Đặt TemplateId của template bạn đã tạo trong Postmark
+        email.put("TemplateId", templateId);
         email.put("MessageStream", "outbound");
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("name", name);
-        templateModel.put("reset_url", resetPassword);
-
-        email.put("TemplateModel", templateModel); // Đặt TemplateModel vào email JSON
-
-
-        // Gửi email
+        email.put("TemplateModel", templateModel);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(email, headers);
-
         try {
             ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
             if (response.getStatusCode().is2xxSuccessful()) {
                 log.info("Email sent successfully to: {}", toAddress);
             } else {
-                throw new RuntimeException("Failed to send email. Response: " + response.getBody());
+                throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to send email due to exception: " + e.getMessage());
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
-
-    public void sendVerificationEmail(String toAddress, String name, String verifyUrl) {
-        String url = "https://api.postmarkapp.com/email/withTemplate"; // Đảm bảo sử dụng endpoint đúng
-
-        log.info("Postmark API Key: {}", apiKey);
-        log.info("From Address: {}", fromAddress);
-        log.info("Sending email to: {}", toAddress);
-
-        // Tạo headers cho HTTP Request
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", "application/json");
-        headers.set("X-Postmark-Server-Token", apiKey);
-        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-
-        // Tạo nội dung email
-        Map<String, Object> email = new HashMap<>();
-        email.put("From", fromAddress);
-        email.put("To", toAddress);
-        email.put("TemplateId", 39217777);  // Đặt TemplateId của template bạn đã tạo trong Postmark
-        email.put("MessageStream", "outbound");
-        Map<String, Object> templateModel = new HashMap<>();
-        templateModel.put("name", name);
-        templateModel.put("verify_url", verifyUrl);
-
-        email.put("TemplateModel", templateModel); // Đặt TemplateModel vào email JSON
-
-
-        // Gửi email
-        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(email, headers);
-
-        try {
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                log.info("Email sent successfully to: {}", toAddress);
-            } else {
-                throw new RuntimeException("Failed to send email. Response: " + response.getBody());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to send email due to exception: " + e.getMessage());
-        }
-    }
-
 }

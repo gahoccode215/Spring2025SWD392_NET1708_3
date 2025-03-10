@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.blog.BlogCreateRequ
 import com.swd392.skincare_products_sales_system.dto.request.blog.BlogUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.BlogResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Blog;
+import com.swd392.skincare_products_sales_system.entity.Blog;
 
 import java.util.List;
 

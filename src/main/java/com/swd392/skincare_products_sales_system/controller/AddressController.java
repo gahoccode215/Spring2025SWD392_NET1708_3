@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,53 +27,63 @@ public class AddressController {
     AddressService addressService;
 
     @PostMapping
-    @Operation(summary = "Add new address", description = "Add a new delivery address for the user")
+    @Operation(summary = "Thêm mới địa chỉ", description = "API Thêm mới địa chỉ")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<Void> addAddress(@RequestBody AddressCreationRequest addressDTO) {
         addressService.addAddress(addressDTO);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Address added successfully")
+                .message("Thêm mới địa chỉ thành công")
                 .build();
     }
 
     @PutMapping("/{addressId}")
-    @Operation(summary = "Update address", description = "Update an existing address")
+    @Operation(summary = "Cập nhật địa chỉ", description = "API Cập nhật địa chỉ")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<Void> updateAddress(@PathVariable Long addressId, @RequestBody AddressUpdateRequest addressDTO) {
         addressService.updateAddress(addressId, addressDTO);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Address updated successfully")
+                .message("Cập nhật địa chỉ thành công")
                 .build();
     }
 
     @DeleteMapping("/{addressId}")
-    @Operation(summary = "Delete address", description = "Delete an existing address")
+    @Operation(summary = "Xóa địa chỉ", description = "API Xóa địa chỉ")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<Void> deleteAddress(@PathVariable Long addressId) {
         addressService.deleteAddress(addressId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Address deleted successfully")
+                .message("Xóa địa chỉ thành công")
                 .build();
     }
 
     @GetMapping
-    @Operation(summary = "Get all addresses", description = "Retrieve all addresses for the authenticated user")
+    @Operation(summary = "Xem danh sách địa chỉ", description = "API Xem danh sách địa chỉ")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<List<AddressResponse>> getAllAddresses() {
         List<AddressResponse> addresses = addressService.getAllAddresses();
         return ApiResponse.<List<AddressResponse>>builder()
                 .code(HttpStatus.OK.value())
-                .message("Addresses fetched successfully")
+                .message("Xem danh sách địa chỉ thành công")
                 .result(addresses)
                 .build();
     }
 
     @PutMapping("/default/{addressId}")
-    @Operation(summary = "Set default address", description = "Set a specific address as the default")
+    @Operation(summary = "Cập nhật địa chỉ mặc định", description = "API Cập nhật địa chỉ mặc định")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<AddressResponse> setDefaultAddress(@PathVariable Long addressId) {
         AddressResponse addressDTO = addressService.setDefaultAddress(addressId);
         return ApiResponse.<AddressResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Address set as default successfully")
+                .message("Cập nhật địa chỉ mặc định thành công")
                 .result(addressDTO)
                 .build();
     }

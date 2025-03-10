@@ -20,7 +20,7 @@ public class CategoryController {
     CategoryService categoryService;
 
     @GetMapping
-    @Operation(summary = "Get all categories  ", description = "Retrieve all active categories with pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách danh mục", description = "API Lấy danh sách danh mục với phân trang, search, order")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<CategoryPageResponse> getAllCategories(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -30,8 +30,8 @@ public class CategoryController {
             @RequestParam(required = false) String order) {
         return ApiResponse.<CategoryPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get categories successfully")
-                .result(categoryService.getCategories(false, keyword, page, size, sortBy, order))
+                .message("Lấy danh sách danh mục thành công")
+                .result(categoryService.getCategories(keyword, page, size, sortBy, order))
                 .build();
     }
 }

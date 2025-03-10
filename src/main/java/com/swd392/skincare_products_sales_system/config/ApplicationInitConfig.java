@@ -2,8 +2,8 @@ package com.swd392.skincare_products_sales_system.config;
 
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.entity.authentication.Role;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import lombok.AccessLevel;
@@ -56,8 +56,16 @@ public class ApplicationInitConfig {
 
                 User admin = initAccount(ADMIN_USER_NAME, ADMIN_PASSWORD, adminRole);
                 listAccount.add(admin);
+                User phuocAdmin = initAccount("phuocadmin", "phuocadmin", adminRole);
+                listAccount.add(phuocAdmin);
+                User minhAdmin = initAccount("minhadmin", "minhadmin", adminRole);
+                listAccount.add(minhAdmin);
                 User customer = initAccount("customer", "customer", customerRole);
                 listAccount.add(customer);
+                User phuocCustomer = initAccount("phuoccustomer", "phuoccustomer", customerRole);
+                listAccount.add(phuocCustomer);
+                User minhCustomer = initAccount("minhcustomer", "minhcustomer", customerRole);
+                listAccount.add(minhCustomer);
                 User manager = initAccount("manager", "manager", managerRole);
                 listAccount.add(manager);
                 User staff = initAccount("staff", "staff", staffRole);
@@ -72,19 +80,25 @@ public class ApplicationInitConfig {
             log.info("Application initialization completed .....");
         };
     }
-    private Role initRole(String role){
-        Role newRole =  Role.builder()
+
+    private Role initRole(String role) {
+        Role newRole = Role.builder()
                 .name(role)
                 .description(role)
                 .build();
         newRole.setIsDeleted(false);
         return newRole;
     }
-    private User initAccount(String username, String password, Role role){
+
+    private User initAccount(String username, String password, Role role) {
         User user = User.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .role(role)
+                .point(0)
+                .lastName("")
+                .firstName("")
+                .avatar("https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")
                 .status(Status.ACTIVE)
                 .build();
         user.setIsDeleted(false);
