@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface ProductRepository extends JpaRepository<Product, String>, JpaSpecificationExecutor<Product> {
     @Query("SELECT p FROM Product p WHERE p.isDeleted = false AND p.status = :status ORDER BY p.createdAt DESC")
     Page<Product> findLatestProductsByStatus(Status status, PageRequest pageRequest);

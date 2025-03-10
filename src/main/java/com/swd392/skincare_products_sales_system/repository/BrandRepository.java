@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
+
 public interface BrandRepository extends JpaRepository<Brand, Long> {
     Optional<Brand> findByIdAndIsDeletedFalse(Long brandId);
 

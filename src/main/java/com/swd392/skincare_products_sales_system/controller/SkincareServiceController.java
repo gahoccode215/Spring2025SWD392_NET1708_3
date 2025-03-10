@@ -23,8 +23,8 @@ import java.util.List;
 @Tag(name = "SkincareService Controller")
 public class SkincareServiceController {
 
-    private final SkincareServiceInterface service;
-    SkincareServiceRepository serviceRepository;
+    SkincareServiceInterface service;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a service", description = "API to create a new skincare service")

@@ -125,4 +125,13 @@ public class User extends AbstractEntity {
         vouchers.add(obj);
         obj.addUser(this);
     }
+    public void removeVoucher(Voucher obj){
+        for(Voucher voucher : vouchers){
+            if(voucher.getCode().equals(obj.getCode())) {
+                vouchers.remove(voucher);
+                obj.getUsers().remove(this);
+                break;
+            }
+        }
+    }
 }
