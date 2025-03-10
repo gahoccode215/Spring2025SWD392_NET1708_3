@@ -23,6 +23,6 @@ public interface BookingOrderService {
     PaymentOrderResponse paymentBookingOrder(Long bookOrderId,String isAddress) throws UnsupportedEncodingException;
     List<BookingOrder> listAllBookingOrder();
     BookingOrder cancelBookingOrder(Long bookingOrderId, String note);
-    String updateBookingOrderStatus(Long bookingOrderId, boolean isPaid);
+    String updateBookingOrderStatus(PaymentBack paymentBack);
 
 }

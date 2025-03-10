@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.controller;
 import ch.qos.logback.classic.Logger;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
+import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBack;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
@@ -136,7 +137,7 @@ public class BookingOrderController {
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
 
-        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
+//        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
         return ResponseEntity.ok(
                 ApiResponse.<String>builder()
                         .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
@@ -167,11 +168,11 @@ public class BookingOrderController {
     @PutMapping("/updateStatus")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Cancel Booking Order", description = "Customer want to stop your order ")
-    public ApiResponse<String> updateStatus(@RequestBody Long bookingOrderId, @RequestParam @Valid boolean isPaid) {
+    public ApiResponse<String> updateStatus(@RequestBody PaymentBack paymentBack) {
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get filterListExpert successfully")
-                .result(service.updateBookingOrderStatus(bookingOrderId, isPaid))
+                .result(service.updateBookingOrderStatus(paymentBack))
                 .build();
     }
 
