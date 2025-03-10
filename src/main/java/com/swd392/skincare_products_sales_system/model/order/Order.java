@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
-import com.swd392.skincare_products_sales_system.model.Address;
+import com.swd392.skincare_products_sales_system.model.user.Address;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +36,12 @@ public class Order {
     @Column(name = "order_date")
     LocalDateTime orderDate;
 
+    @Column(name = "updated_at")
+    LocalDateTime updatedAt;
+
+    @Column(name = "updated_by")
+    String updatedBy;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", length = 50)
     OrderStatus status;
@@ -50,6 +56,8 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
+
+
     Double shippingFee;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
@@ -59,5 +67,8 @@ public class Order {
     String discountCode;
     Double discountAmount;
     String deliveryTime;
+
+    @Column(name = "image_order_success")
+    String imageOrderSuccess;
 
 }

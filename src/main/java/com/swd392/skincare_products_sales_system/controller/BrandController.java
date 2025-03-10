@@ -20,7 +20,7 @@ public class BrandController {
     BrandService brandService;
 
     @GetMapping
-    @Operation(summary = "Get all brands  ", description = "Retrieve all active brands with pagination, sorting, and filtering.")
+    @Operation(summary = "Lấy danh sách hãng", description = "API Lấy danh sách hãng với phân trang, search, order")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<BrandPageResponse> getAllCategories(
             @RequestParam(required = false, defaultValue = "0") int page,
@@ -30,8 +30,8 @@ public class BrandController {
             @RequestParam(required = false) String order) {
         return ApiResponse.<BrandPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get brands successfully")
-                .result(brandService.getBrands(false, keyword, page, size, sortBy, order))
+                .message("Lấy danh sách hãng thành công")
+                .result(brandService.getBrands(keyword, page, size, sortBy, order))
                 .build();
     }
 }

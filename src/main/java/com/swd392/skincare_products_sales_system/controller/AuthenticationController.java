@@ -5,12 +5,9 @@ import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.LoginResponse;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.RefreshTokenResponse;
 import com.swd392.skincare_products_sales_system.dto.response.authentication.RegisterResponse;
-import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.User;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.service.OtpService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +30,7 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
     JwtUtil jwtUtil;
     UserRepository userRepository;
+    OtpService otpService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -85,11 +83,11 @@ public class AuthenticationController {
                 .message("Change password successfully")
                 .build();
     }
-    @GetMapping("/verify")
+    @PostMapping("/verify-otp")
     @Operation(summary = "Verify account", description = "Verify account")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<String> verifyUser(@RequestParam String token) {
-        authenticationService.checkVerifyToken(token);
+    public ApiResponse<String> verifyOtp(@RequestParam String userId, @RequestParam String otpCode) {
+        otpService.verifyOtp(userId, otpCode);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message("Verify account successfully")
@@ -114,6 +112,14 @@ public class AuthenticationController {
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
                 .message("Password reset successfully.")
+                .build();
+    }
+    @PostMapping("/resend-otp")
+    public ApiResponse<Void> resendOtp(@RequestParam String userId){
+        otpService.resendOtp(userId);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.OK.value())
+                .message("Otp resend successfully")
                 .build();
     }
 }

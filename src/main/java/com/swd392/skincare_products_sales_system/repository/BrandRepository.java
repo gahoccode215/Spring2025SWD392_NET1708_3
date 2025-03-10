@@ -18,19 +18,14 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     boolean existsBySlug(String slug);
 
-    @Query("SELECT x FROM Brand x WHERE x.slug = :slug AND x.isDeleted = false AND x.status = com.swd392.skincare_products_sales_system.enums.Status.ACTIVE")
+    @Query("SELECT x FROM Brand x WHERE x.slug = :slug AND x.isDeleted = false")
     Optional<Brand> findBySlugAndStatusAndIsDeletedFalse(@Param("slug") String slug);
 
-    @Modifying
-    @Query("UPDATE Brand x SET x.status = :status WHERE x.id = :id AND x.isDeleted = false")
-    void updateBrandStatus(@Param("id") Long id, @Param("status") Status status);
 
     @Query("SELECT x FROM Brand x WHERE x.isDeleted = false " +
             "AND (x.name LIKE %:keyword% OR :keyword IS NULL) "
-            + "AND (:status is null OR x.status = :status)"
     )
     Page<Brand> findAllByFilters(
             @Param("keyword") String keyword,
-            @Param("status") Status status,
             Pageable pageable);
 }

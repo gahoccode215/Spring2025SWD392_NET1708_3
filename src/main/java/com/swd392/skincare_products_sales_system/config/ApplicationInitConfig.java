@@ -2,8 +2,8 @@ package com.swd392.skincare_products_sales_system.config;
 
 import com.swd392.skincare_products_sales_system.constant.PredefinedRole;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import lombok.AccessLevel;
@@ -56,8 +56,16 @@ public class ApplicationInitConfig {
 
                 User admin = initAccount(ADMIN_USER_NAME, ADMIN_PASSWORD, adminRole);
                 listAccount.add(admin);
+                User phuocAdmin = initAccount("phuocadmin", "phuocadmin", adminRole);
+                listAccount.add(phuocAdmin);
+                User minhAdmin = initAccount("minhadmin", "minhadmin", adminRole);
+                listAccount.add(minhAdmin);
                 User customer = initAccount("customer", "customer", customerRole);
                 listAccount.add(customer);
+                User phuocCustomer = initAccount("phuoccustomer", "phuoccustomer", customerRole);
+                listAccount.add(phuocCustomer);
+                User minhCustomer = initAccount("minhcustomer", "minhcustomer", customerRole);
+                listAccount.add(minhCustomer);
                 User manager = initAccount("manager", "manager", managerRole);
                 listAccount.add(manager);
                 User staff = initAccount("staff", "staff", staffRole);

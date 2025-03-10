@@ -1,12 +1,10 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swd392.skincare_products_sales_system.model.order.Order;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -15,28 +13,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "tbl_address")
+@Table(name = "tbl_feedback")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Address {
+public class FeedBack {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    String name;
-    String phone;
-    String city;
-    String district;
-    String ward;
-    String street;
-    String addressLine;
-    Boolean isDefault;
 
+    @Column(name = "description")
+    String description;
 
-    @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
-    List<Order> orders;
+    @JoinColumn(name = "product_id")
+    Product product;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinColumn(name = "user_id")
     User user;
+
+    Integer rating;
+
 }

@@ -1,16 +1,13 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
-import com.swd392.skincare_products_sales_system.dto.request.quiz.QuestionRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ImageSkinResponse;
-import com.swd392.skincare_products_sales_system.enums.BookingStatus;
-import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
-import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
+import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -23,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,33 +60,9 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         return list;
     }
 
-
-
-
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BookingOrder asignBookingOrder(AsignExpertRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
-                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-
-        User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
-                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
-
-        bookingOrder.setExpertName(expert.getId());
-        bookingRepository.save(bookingOrder);
-        return bookingOrder;
-    }
-
-    @Override
-    public BookingOrder paymentBookingOrder(Long bookingOrderId, PaymentBookingOrder paymentBookingOrder) {
+    public BookingOrder asignBookingOrder(AsignExpertRequest request, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -100,12 +74,69 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
+        User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
+                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+
+        bookingOrder.setExpertName(expert.getId());
+        bookingRepository.save(bookingOrder);
+        return bookingOrder;
+    }
+
+    @Override
+    @Transactional
+    public PaymentOrderResponse paymentBookingOrder(Long bookingOrderId,  String isAddress) throws UnsupportedEncodingException {
+        User user = getAuthenticatedUser();
+
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
         VNPayService service = new VNPayService();
-        String isAddress = "";
-//        service.createPaymentUrl(bookingOrderId, bookingOrder.getPrice().doubleValue(), );
+        Float price = bookingOrder.getPrice();
+        Double amount = Double.valueOf(price);
+        String url = service.createPaymentUrlBookingOrder(bookingOrderId,amount, isAddress);
+        bookingRepository.save(bookingOrder);
+
+        return PaymentOrderResponse.builder()
+                .bookingOrderId(bookingOrderId)
+                .dateTime(LocalDateTime.now())
+                .price(price)
+                .status(BookingStatus.PAYMENT)
+                .build();
+    }
+
+    @Override
+    public List<BookingOrder> listAllBookingOrder() {
+        List<BookingOrder> list = bookingRepository.findAll()
+                .stream()
+                .toList();
+        return list;
+    }
+
+    @Override
+    public BookingOrder cancelBookingOrder(Long bookingOrderId, String note) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        bookingOrder.setStatus(BookingStatus.CANCELED);
+        bookingOrder.setNote(note);
+        return bookingRepository.save(bookingOrder);
+    }
+
+    @Override
+    public void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid) {
+        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+
+        bookingOrder.setPaymentStatus(isPaid ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
         bookingOrder.setStatus(BookingStatus.PAYMENT);
         bookingRepository.save(bookingOrder);
-        return null;
     }
 
     @Override
@@ -127,6 +158,22 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             list = bookingRepository.findAll();
         }
         return list;
+    }
+
+    @Override
+    public List<BookingOrder> getBookingOrderByExpertId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        List<BookingOrder> list = bookingRepository.findAll()
+                .stream()
+                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
+                .toList();
+        return List.of();
     }
 
     @Override
@@ -274,7 +321,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public BookingOrder changeStatus(ChangeStatus status) {
+    public BookingOrder changeStatus(ChangeStatus status, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -284,13 +331,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(status.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
-        if (bookingOrder.getStatus() == BookingStatus.PAYMENT_SUCCESS){
-            bookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
-        }
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
+            bookingOrder.setResponse(bookingOrder.getResponse());
             bookingOrder.setStatus(BookingStatus.CONTACT_CUSTOMER);
         }
         if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
@@ -300,16 +345,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
             bookingOrder.setStatus(BookingStatus.FINISHED);
         }
-        //Làm đơn cho thằng Customer mua lộ trình
-        if(bookingOrder.getStatus() == BookingStatus.CUSTOMER_CONFIRM){
-            bookingOrder.setStatus(BookingStatus.PENDING_CONFIRM);
-        }
-        if (bookingOrder.getStatus() == BookingStatus.PENDING_CONFIRM){
-            bookingOrder.setStatus(BookingStatus.PAYMENT_ROUTINE);
-        }
-        if (bookingOrder.getStatus() == BookingStatus.PAYMENT_ROUTINE){
-            bookingOrder.setStatus(BookingStatus.EXPERT_MAKE_ROUTINE);
-        }
+
         // Export lên routine cho customer cho da
         if(bookingOrder.getStatus() == BookingStatus.EXPERT_MAKE_ROUTINE){
             bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
@@ -321,6 +357,14 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }
+
+
+    private User getAuthenticatedUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsernameOrThrow(username);
+    }
+
+
 
 
 }

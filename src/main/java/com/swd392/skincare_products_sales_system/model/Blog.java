@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -23,7 +24,7 @@ public class Blog extends AbstractEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Lob
+    @Column(name = "content", columnDefinition = "TEXT")
     @NotNull(message = "Content cannot be null")
     @Size(min = 20)
     String content;
@@ -47,5 +48,9 @@ public class Blog extends AbstractEntity{
 
     @Column
     LocalDateTime date;
+
+    @Column
+    String createdBy;
+
 
 }

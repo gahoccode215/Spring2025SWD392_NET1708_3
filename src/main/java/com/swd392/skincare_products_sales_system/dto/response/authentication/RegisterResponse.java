@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RegisterResponse {
+    String id;
     String username;
     Gender gender;
     LocalDate birthday;

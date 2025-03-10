@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.response.product;
 
+import com.swd392.skincare_products_sales_system.model.product.Product;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,9 +13,8 @@ import java.util.List;
 public class BatchResponse {
     String id;
     String batchCode;
-    String productId;
+    Product product;
     Integer quantity;
-    Double importPrice;
     LocalDate manufactureDate;
     LocalDate expirationDate;
 }

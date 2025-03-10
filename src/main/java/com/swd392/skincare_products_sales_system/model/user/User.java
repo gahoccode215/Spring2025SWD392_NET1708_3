@@ -1,9 +1,13 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.authentication.Otp;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.product.FeedBack;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -60,7 +64,7 @@ public class User extends AbstractEntity {
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
+    Status status;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
@@ -76,21 +80,49 @@ public class User extends AbstractEntity {
     List<BookingOrder> bookingOrders;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     List<ImageSkin> imageSkins;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     @JoinTable(
             name = "tbl_user_voucher",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "voucher_id")
     )
-     Set<Voucher> vouchers;
+    List<Voucher> vouchers;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     List<Address> addresses;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
     List<Routine> routines;
 
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<Otp> otps;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @JsonIgnore
+    List<FeedBack> feedBacks;
+
+
+    public void addOtp(Otp obj) {
+        if (this.otps == null) {
+            this.otps = new ArrayList<>();
+        }
+        otps.add(obj);
+        obj.setUser(this);
+    }
+
+    public void addVoucher(Voucher obj) {
+        if (this.vouchers == null) {
+            this.vouchers = new ArrayList<>();
+        }
+        vouchers.add(obj);
+        obj.addUser(this);
+    }
 }

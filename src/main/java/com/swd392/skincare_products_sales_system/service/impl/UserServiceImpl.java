@@ -8,11 +8,11 @@ import com.swd392.skincare_products_sales_system.dto.request.user.UserUpdateRequ
 import com.swd392.skincare_products_sales_system.dto.response.user.UserPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
+import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.mapper.UserMapper;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.UserService;
@@ -41,32 +41,34 @@ public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
     RoleRepository roleRepository;
-    UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserPageResponse getUsers(boolean admin, String keyword, int page, int size, String roleName, Status status, String sortBy, String order) {
+    public UserPageResponse getUsers(String keyword, int page, int size, String roleName, Status status, String sortBy, String order) {
         if (page > 0) page -= 1; // Hỗ trợ trang bắt đầu từ 0 hoặc 1
         Sort sort = getSort(sortBy, order);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Role role = roleName != null ? roleRepository.findByName(roleName).orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)) : null;
-        Page<User> users = null;
-        if (admin)
-            users = userRepository.findAllByFilters(keyword, status, role, pageable);
-        log.info("{}", users);
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        RoleEnum currentUserRole = RoleEnum.valueOf(currentUser.getRole().getName().toUpperCase());
+        Role role = roleName != null ? roleRepository.findByName(roleName)
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND)) : null;
+        List<RoleEnum> excludedRoles = new ArrayList<>();
+        List<String> excludedRoleNames = new ArrayList<>();
+        if (currentUserRole == RoleEnum.ADMIN) {
+            excludedRoleNames.add(RoleEnum.ADMIN.name());
+        } else if (currentUserRole == RoleEnum.MANAGER) {
+            excludedRoleNames.add(RoleEnum.ADMIN.name());
+            excludedRoleNames.add(RoleEnum.MANAGER.name());
+        }
+        Page<User> users = userRepository.findAllByFiltersExcludingRoles(
+                keyword, status, role, excludedRoleNames, pageable);
         UserPageResponse response = new UserPageResponse();
-        if (users == null) throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        if (users.isEmpty()) throw new AppException(ErrorCode.USER_NOT_EXISTED);
         List<UserResponse> userResponses = new ArrayList<>();
         for (User user : users.getContent()) {
-            UserResponse userResponse = new UserResponse();
-            userResponse.setId(user.getId());
-            userResponse.setAvatar(user.getAvatar());
-            userResponse.setGender(user.getGender());
-            userResponse.setUsername(user.getUsername());
-            userResponse.setRoleName(user.getRole().getName());
-            userResponse.setEmail(user.getEmail());
-            userResponse.setFirstName(user.getFirstName());
-            userResponse.setLastName(user.getLastName());
+            UserResponse userResponse = toUserResponse(user);
             userResponses.add(userResponse);
         }
         response.setTotalElements(users.getTotalElements());
@@ -185,11 +187,13 @@ public class UserServiceImpl implements UserService {
         user.setAvatar(request.getAvatar());
         return toUserResponse(user);
     }
+
     private User getAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByUsernameOrThrow(username);
     }
-    private UserResponse toUserResponse(User user){
+
+    private UserResponse toUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .firstName(user.getFirstName())
@@ -197,8 +201,11 @@ public class UserServiceImpl implements UserService {
                 .gender(user.getGender())
                 .email(user.getEmail())
                 .username(user.getUsername())
+                .birthday(user.getBirthday())
                 .roleName(user.getRole().getName())
+                .point(user.getPoint())
                 .avatar(user.getAvatar())
+                .status(user.getStatus())
                 .build();
     }
 

@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT x FROM Order x WHERE x.username = :username")
@@ -21,8 +23,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAll(Pageable pageable);
 
+    @Query("SELECT x FROM Order x WHERE x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.PROCESSING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DELIVERING OR x.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DONE ")
+    Page<Order> findAllByFiltersDelivery(Pageable pageable);
+
+
     @Modifying
-    @Transactional
-    @Query("UPDATE Order x SET x.status = :orderStatus WHERE x.id = :id")
-    void updateOrderStatus(@Param("id") Long id, @Param("orderStatus") OrderStatus status);
+    @Query("DELETE FROM Order o WHERE o.paymentMethod = com.swd392.skincare_products_sales_system.enums.PaymentMethod.VNPAY AND o.paymentStatus = com.swd392.skincare_products_sales_system.enums.PaymentStatus.NOT_PAID")
+    void deleteUnpaidVnpayOrders();
 }

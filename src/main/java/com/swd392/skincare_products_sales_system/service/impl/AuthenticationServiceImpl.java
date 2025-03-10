@@ -14,13 +14,15 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.authentication.InvalidatedToken;
+import com.swd392.skincare_products_sales_system.model.authentication.Otp;
+import com.swd392.skincare_products_sales_system.model.authentication.Role;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.AuthenticationService;
+import com.swd392.skincare_products_sales_system.service.OtpService;
 import com.swd392.skincare_products_sales_system.service.PostmarkService;
 import com.swd392.skincare_products_sales_system.util.JwtUtil;
 import lombok.experimental.NonFinal;
@@ -48,6 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     JwtUtil jwtUtil;
     InvalidatedTokenRepository invalidatedTokenRepository;
     PostmarkService postmarkService;
+    OtpService otpService;
 
     @NonFinal
     @Value("${base.be.url}")
@@ -61,12 +64,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent())
             throw new AppException(ErrorCode.USERNAME_EXISTED);
-        }
-        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
-        }
         User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -75,21 +76,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .status(Status.INACTIVE)
                 .email(request.getEmail())
                 .build();
-        // Lấy Role từ Database gắn vào
         Role customRole = roleRepository.findByName(PredefinedRole.CUSTOMER_ROLE)
                 .orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
         user.setRole(customRole);
+        user.setPoint(0);
         user.setIsDeleted(false);
         userRepository.save(user);
-//         Send verification email
-        String verificationUrl = backendUrl + "/auth/verify?token=" + jwtUtil.generateToken(user);
-        log.info(verificationUrl);
+        Otp otp = otpService.generateAndSaveOtp(user.getId());
+        user.addOtp(otp);
+        userRepository.save(user);
         try {
-            postmarkService.sendVerificationEmail(user.getEmail(), user.getUsername(), verificationUrl);
+            postmarkService.sendVerificationEmailWithOTP(user.getEmail(), user.getUsername(), otp.getOtp());
         } catch (Exception e) {
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }
         return RegisterResponse.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .gender(user.getGender())
                 .email(user.getEmail())
@@ -101,6 +103,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.INVALID_LOGIN));
+        if (user.getStatus().equals(Status.INACTIVE))
+            throw new AppException(ErrorCode.ACCOUNT_HAS_BEEN_DISABLE);
         // Kiểm tra mật khẩu có khớp không
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new AppException(ErrorCode.INVALID_LOGIN);
@@ -109,6 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return LoginResponse.builder()
                 .token(jwtUtil.generateToken(user)) //Token được generate
                 .authenticated(true)
+                .roleName(user.getRole().getName())
                 .build();
     }
 
@@ -240,19 +245,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
-        // Tạo token reset password
-        String token = jwtUtil.generateToken(user);
+        Otp otp = otpService.generateAndSaveOtp(user.getId());
 
-        // URL để người dùng click để đặt lại mật khẩu
-        String resetPasswordUrl = frontEndUrl + "/reset-password?token=" + token;
-        log.info(resetPasswordUrl);
-
-//        try {
-//            // Gửi email qua Postmark
-//            postmarkService.sendForgotPassword(user.getEmail(), user.getUsername(), resetPasswordUrl);
-//        } catch (Exception e) {
-//            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
-//        }
+        try {
+            // Gửi email qua Postmark
+            postmarkService.sendForgotPassword(user.getEmail(),user.getUsername() ,otp.getOtp());
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+        }
     }
 
     @Override

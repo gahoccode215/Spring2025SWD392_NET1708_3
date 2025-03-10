@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.authentication;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

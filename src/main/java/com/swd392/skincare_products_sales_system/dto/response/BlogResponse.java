@@ -18,4 +18,5 @@ public class BlogResponse {
     Status status;
     LocalDate date;
     String content;
+    String createdBy;
 }

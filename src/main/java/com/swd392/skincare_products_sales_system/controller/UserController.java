@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,21 +27,23 @@ public class UserController {
 
     @GetMapping("/profile")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get profile", description = "API to get profile")
+    @Operation(summary = "Lấy thông tin cá nhân của tài khoản hiện tại", description = "API Lấy thông tin cá nhân của tài khoản hiện tại")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     ApiResponse<UserResponse> getMyInfo() {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get profile successfully")
+                .message("Lấy thông tin cá nhân thành công")
                 .result(userService.getUserProfile())
                 .build();
     }
     @PutMapping("/profile")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Update profile", description = "API to update profile")
+    @Operation(summary = "Cập nhật thông tin cá nhân người dùng", description = "API Cập nhật thông tin cá nhân người dùng")
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
     ApiResponse<UserResponse> updateMyInfo(@RequestBody UserUpdateProfileRequest request) {
         return ApiResponse.<UserResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Update profile successfully")
+                .message("Cập nhật thông tin cá nhân thành công")
                 .result(userService.updateUserProfile(request))
                 .build();
     }

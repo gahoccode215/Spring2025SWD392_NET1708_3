@@ -1,20 +1,16 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
+import com.swd392.skincare_products_sales_system.dto.response.VoucherPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.VoucherResponse;
-import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.Voucher;
-import com.swd392.skincare_products_sales_system.repository.VoucherRepository;
 import com.swd392.skincare_products_sales_system.service.VoucherService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/vouchers")
@@ -24,42 +20,52 @@ import java.util.List;
 public class VoucherController {
 
     VoucherService service;
-    VoucherRepository voucherRepository;
 
+    @PostMapping("/exchange-voucher/{voucherId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ApiResponse<Void> exchangeVoucher(@PathVariable Long voucherId) {
+        service.exchangeVoucher(voucherId);
+        return ApiResponse.<Void>builder()
+                .code(HttpStatus.CREATED.value())
+                .message("Đổi voucher thành công")
+                .build();
+    }
     @GetMapping("/{voucherId}")
-    @Operation(summary = "Get a voucher", description = "API retrieve id to get service")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<VoucherResponse> getVoucher(@PathVariable Long voucherId) {
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ApiResponse<VoucherResponse> getVoucher(@PathVariable Long voucherId
+    ) {
         return ApiResponse.<VoucherResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Delete service successfully")
-                .result(service.getVoucherById(voucherId))
+                .message("Lấy chi tiết voucher thành công")
+                .result(service.getVoucher(voucherId))
                 .build();
     }
-
-    @GetMapping("/system/all")
-    @Operation(summary = "For user login", description = "Dành cho user đã login, trong đây đã filter theo role rồi ")
+    @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<Voucher>> getAllVoucher() {
-        return ApiResponse.<List<Voucher>>builder()
-                .result(service.getAllVoucher())
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ApiResponse<VoucherPageResponse> getAllVouchers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.<VoucherPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("List Voucher")
+                .message("Lấy danh sách voucher thành công")
+                .result(service.getVoucherByCustomer(page, size))
                 .build();
     }
-
-    @GetMapping("/alls")
-    @Operation(summary = "For all role(guest) ", description = "Này dành cho tất cả các role kể cả guest sẽ thấy list đang hoạt động")
+    @GetMapping("my-voucher")
     @ResponseStatus(HttpStatus.OK)
-    public ApiResponse<List<Voucher>> getAllVouchers() {
-        List<Voucher> list = voucherRepository.findAll()
-                .stream()
-                .filter(voucher -> !voucher.getIsDeleted() || voucher.getStatus().equals(Status.ACTIVE))
-                .toList();
-        return ApiResponse.<List<Voucher>>builder()
-                .result(list)
+    @PreAuthorize("hasAnyRole('CUSTOMER')")
+    public ApiResponse<VoucherPageResponse> getMyVouchers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.<VoucherPageResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("List Voucher")
+                .message("Lấy danh sách voucher của tôi  thành công")
+                .result(service.getMyVouchers(page, size))
                 .build();
     }
 }

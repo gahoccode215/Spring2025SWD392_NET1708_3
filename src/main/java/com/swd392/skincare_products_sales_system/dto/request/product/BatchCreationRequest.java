@@ -16,9 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BatchCreationRequest {
-    private String productId;
-    private Integer quantity;
-    private Double importPrice;
-    private LocalDate manufactureDate;
-    private LocalDate expirationDate;
+    Integer quantity;
+    LocalDate manufactureDate;
+    LocalDate expirationDate;
 }

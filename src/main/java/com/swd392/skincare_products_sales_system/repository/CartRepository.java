@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.model.cart.Cart;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

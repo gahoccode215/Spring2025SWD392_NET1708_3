@@ -32,14 +32,10 @@ public class Category extends AbstractEntity {
     @Column(name = "description")
     String description;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    Status status = Status.ACTIVE;
-
     @Column(name = "thumbnail")
     String thumbnail;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.EAGER)
     @JsonIgnore
     List<Product> products;
 }

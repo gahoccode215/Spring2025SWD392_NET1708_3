@@ -11,6 +11,7 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import lombok.AccessLevel;
@@ -22,7 +23,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,7 +97,7 @@ public class RoutineServiceImpl implements RoutineService {
                             .dailyRoutine(dailyRoutine)
                             .product(stepRequest.getProductId() != null
                                     ? productRepository.findById(stepRequest.getProductId())
-                                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED))
+                                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND))
                                     : null)
                             .build();
 

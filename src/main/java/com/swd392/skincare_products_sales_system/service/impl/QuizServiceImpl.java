@@ -4,11 +4,11 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import lombok.AccessLevel;
@@ -229,7 +229,7 @@ public class QuizServiceImpl implements QuizService {
                     .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
             List<Quiz> list;
-            if(user.getRole().equals(RoleEnum.ADMIN) || user.getRole().equals(RoleEnum.MANAGER)) {
+            if(user.getRole().getId() == 2 || user.getRole().getId() ==  6) {
                  list = quizRepository.findAll()
                          .stream()
                          .toList();

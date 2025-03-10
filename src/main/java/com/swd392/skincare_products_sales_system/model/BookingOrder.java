@@ -2,16 +2,15 @@ package com.swd392.skincare_products_sales_system.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
+import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
+import com.swd392.skincare_products_sales_system.model.user.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -63,8 +62,16 @@ public class BookingOrder extends AbstractEntity {
     @Column
     String lastName;
 
+    @Enumerated(EnumType.STRING)
+    PaymentStatus paymentStatus;
+
     @Column
+    @NotNull(message = "Age cannot be null")
+    @Positive(message = "Age must be a positive number")
     Integer age;
+
+    @Column(name = "response", columnDefinition = "TEXT")
+    String response;
 
     @Enumerated(EnumType.STRING)
     BookingStatus status;
