@@ -6,6 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
+import com.swd392.skincare_products_sales_system.model.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.model.booking.ImageSkin;
+import com.swd392.skincare_products_sales_system.model.booking.ProcessBookingOrder;
+import com.swd392.skincare_products_sales_system.model.quiz.Result;
+import com.swd392.skincare_products_sales_system.model.routine.Routine;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -79,8 +84,12 @@ public class User extends AbstractEntity {
     List<BookingOrder> bookingOrders;
 
     @OneToMany(mappedBy = "user")
-            @JsonIgnore
+    @JsonIgnore
     List<ImageSkin> imageSkins;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<ProcessBookingOrder> processBookingOrders;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore

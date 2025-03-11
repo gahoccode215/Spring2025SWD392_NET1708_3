@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.model.product;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.routine.Step;
 import jakarta.persistence.*;
 import lombok.*;
 

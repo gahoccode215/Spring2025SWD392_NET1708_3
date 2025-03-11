@@ -1,6 +1,7 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.routine;
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.model.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.*;

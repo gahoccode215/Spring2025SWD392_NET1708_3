@@ -4,7 +4,9 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
-import com.swd392.skincare_products_sales_system.model.Quiz;
+import com.swd392.skincare_products_sales_system.model.quiz.Question;
+import com.swd392.skincare_products_sales_system.model.quiz.Quiz;
+import com.swd392.skincare_products_sales_system.repository.QuestionRepository;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +27,7 @@ import java.util.List;
 public class QuizController {
 
     QuizService service;
+    QuestionRepository questionRepository;
 
     @GetMapping("/{quizId}")
     @ResponseStatus(HttpStatus.OK)
@@ -64,6 +67,21 @@ public class QuizController {
         return ApiResponse.<List<Quiz>>builder()
                 .code(HttpStatus.OK.value())
                 .result(service.getAllQuiz())
+                .message("Get all quiz successfully")
+                .build();
+    }
+
+    @GetMapping("/question")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Get All question",
+            description = "Get all quiz (All Role)"
+    )
+    public ApiResponse<List<Question>> getQuestion() {
+        List<Question> list= questionRepository.findAll();
+        return ApiResponse.<List<Question>>builder()
+                .code(HttpStatus.OK.value())
+                .result(list)
                 .message("Get all quiz successfully")
                 .build();
     }

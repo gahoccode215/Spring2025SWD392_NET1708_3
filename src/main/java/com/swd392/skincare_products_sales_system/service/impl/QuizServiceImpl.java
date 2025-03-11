@@ -4,11 +4,14 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
+import com.swd392.skincare_products_sales_system.model.quiz.Answer;
+import com.swd392.skincare_products_sales_system.model.quiz.Question;
+import com.swd392.skincare_products_sales_system.model.quiz.Quiz;
+import com.swd392.skincare_products_sales_system.model.quiz.Result;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import lombok.AccessLevel;
@@ -23,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.swd392.skincare_products_sales_system.enums.RoleEnum.MANAGER;
 
 @Service
 @RequiredArgsConstructor

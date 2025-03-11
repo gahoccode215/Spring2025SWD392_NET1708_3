@@ -1,16 +1,15 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
-import com.swd392.skincare_products_sales_system.dto.request.quiz.QuestionRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ImageSkinResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.model.cart.Cart;
-import com.swd392.skincare_products_sales_system.model.order.Order;
+import com.swd392.skincare_products_sales_system.model.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.model.booking.ImageSkin;
+import com.swd392.skincare_products_sales_system.model.booking.ProcessBookingOrder;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -38,9 +37,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     UserRepository userRepository;
     BookingRepository bookingRepository;
     SkincareServiceRepository serviceRepository;
-    RoleRepository roleRepository;
-    private final ImageSkinRepository imageSkinRepository;
-
+    ProcessBookingOrderRepository processBookingOrderRepository;
+    ImageSkinRepository imageSkinRepository;
     @Override
     public List<ExpertResponse> filterListExpert() {
         List<User> listUser = userRepository.findAll().stream()
@@ -81,6 +79,13 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
 
         bookingOrder.setExpertName(expert.getId());
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .user(user)
+                .bookingOrder(bookingOrder)
+                .status(BookingStatus.ASSIGNED_EXPERT)
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }
@@ -129,6 +134,14 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         bookingOrder.setStatus(BookingStatus.CANCELED);
         bookingOrder.setNote(note);
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .bookingOrder(bookingOrder)
+                .user(user)
+                .time(LocalDateTime.now())
+                .status(BookingStatus.CANCELED)
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
         return bookingRepository.save(bookingOrder);
     }
 
@@ -144,11 +157,39 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         BookingOrder bookingOrder = bookingRepository.findById(paymentBack.getBookingOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-
         bookingOrder.setPaymentStatus(paymentBack.getIsPaid() ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
+        if(bookingOrder.getExpertName() != null){
+            bookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
+            ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                    .user(user)
+                    .bookingOrder(bookingOrder)
+                    .status(BookingStatus.PAYMENT)
+                    .time(LocalDateTime.now())
+                    .build();
+            processBookingOrder.setIsDeleted(false);
+            processBookingOrderRepository.save(processBookingOrder);
+
+            ProcessBookingOrder processBookingOrder1 = ProcessBookingOrder.builder()
+                    .user(user)
+                    .bookingOrder(bookingOrder)
+                    .status(BookingStatus.ASSIGNED_EXPERT)
+                    .time(LocalDateTime.now())
+                    .build();
+            processBookingOrder1.setIsDeleted(false);
+            processBookingOrderRepository.save(processBookingOrder1);
+            return "Đã cập nhật trạngt thái đơn thành công";
+        }
         bookingOrder.setStatus(BookingStatus.PAYMENT);
         bookingRepository.save(bookingOrder);
-        return "Thành công";
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .user(user)
+                .bookingOrder(bookingOrder)
+                .status(BookingStatus.PAYMENT)
+                .time(LocalDateTime.now())
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
+        return "Đơn của bạn đã đươc cập nhập";
     }
 
     @Override
@@ -258,7 +299,16 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         imageSkinRepository.saveAll(imageSkinList);
 
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .bookingOrder(bookingOrder)
+                .user(user)
+                .status(BookingStatus.PENDING)
+                .time(LocalDateTime.now())
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
         return FormResponse.builder()
+                .bookingOrderId(bookingOrder.getId())
                 .note(bookingOrder.getNote())
                 .skinType(bookingOrder.getSkinType())
                 .expertName(bookingOrder.getExpertName())
@@ -301,6 +351,15 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .bookingOrder(booking)
+                .user(user)
+                .status(BookingStatus.EXPERT_UPDATE_ORDER)
+                .time(LocalDateTime.now())
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
+
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
                 .orderDate(booking.getOrderDate())
@@ -328,8 +387,6 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .date(booking.getDate())
                 .build();
     }
-
-
 
     @Override
     @Transactional(rollbackFor = Exception.class)

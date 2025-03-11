@@ -1,6 +1,5 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.model.Question;
 import com.swd392.skincare_products_sales_system.model.Voucher;
 import org.springframework.data.jpa.repository.JpaRepository;
 

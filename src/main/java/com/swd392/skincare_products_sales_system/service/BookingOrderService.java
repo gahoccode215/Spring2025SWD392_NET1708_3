@@ -4,9 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
-import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
-import com.swd392.skincare_products_sales_system.model.BookingOrder;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.model.booking.BookingOrder;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;

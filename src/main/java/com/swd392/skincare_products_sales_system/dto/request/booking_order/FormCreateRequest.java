@@ -3,18 +3,13 @@ package com.swd392.skincare_products_sales_system.dto.request.booking_order;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
-import com.swd392.skincare_products_sales_system.model.ImageSkin;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -41,8 +36,6 @@ public class FormCreateRequest {
     @NotNull(message = "FirstName cannot be null")
     String firstName;
 
-    @NotNull(message = "Age cannot be null")
-    @Size(max = 100)
     Integer age;
 
     List<ImageSkinRequest> imageSkins;

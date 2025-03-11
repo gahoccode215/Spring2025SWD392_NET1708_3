@@ -1,8 +1,11 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.routine;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.model.AbstractEntity;
+import com.swd392.skincare_products_sales_system.model.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.model.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

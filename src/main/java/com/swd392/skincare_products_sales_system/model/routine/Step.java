@@ -1,8 +1,9 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.routine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.enums.TimeOfDayStatus;
+import com.swd392.skincare_products_sales_system.model.AbstractEntity;
 import com.swd392.skincare_products_sales_system.model.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

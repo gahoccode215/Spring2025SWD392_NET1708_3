@@ -1,7 +1,7 @@
-package com.swd392.skincare_products_sales_system.model;
+package com.swd392.skincare_products_sales_system.model.quiz;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swd392.skincare_products_sales_system.enums.QuestionType;
+import com.swd392.skincare_products_sales_system.model.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_question")
-public class Question extends AbstractEntity{
+public class Question extends AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
