@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AppConfig {
+
     @Bean
     public Slugify slugify() {
         return new Slugify();
