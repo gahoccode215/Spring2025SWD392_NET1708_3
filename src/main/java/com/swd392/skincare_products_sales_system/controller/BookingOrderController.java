@@ -117,7 +117,7 @@ public class BookingOrderController {
 
     @GetMapping("/payment-back")
     public ResponseEntity<ApiResponse<String>> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-        boolean isValid = vnPayService.validateCallback(params); // 🔥 Có thể lỗi ở đây
+        boolean isValid = vnPayService.validateCallback(params);
         if (!isValid) {
             return ResponseEntity.badRequest().body(
                     ApiResponse.<String>builder()
@@ -127,11 +127,9 @@ public class BookingOrderController {
             );
         }
 
-        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef")); // 🔥 Có thể lỗi do params null
+        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
-
-//        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
         return ResponseEntity.ok(
                 ApiResponse.<String>builder()
                         .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
