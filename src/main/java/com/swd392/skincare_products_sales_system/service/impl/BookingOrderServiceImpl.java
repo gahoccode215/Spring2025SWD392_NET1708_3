@@ -6,8 +6,8 @@ import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.model.user.User;
+import com.swd392.skincare_products_sales_system.entity.*;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -130,13 +130,22 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
-    public void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid) {
-        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
+    @Transactional
+    public String updateBookingOrderStatus(PaymentBack paymentBack) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        BookingOrder bookingOrder = bookingRepository.findById(paymentBack.getBookingOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
-        bookingOrder.setPaymentStatus(isPaid ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
+        bookingOrder.setPaymentStatus(paymentBack.getIsPaid() ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
         bookingOrder.setStatus(BookingStatus.PAYMENT);
         bookingRepository.save(bookingOrder);
+        return "Thành công";
     }
 
     @Override

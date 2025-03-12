@@ -12,7 +12,6 @@ public interface AuthenticationService {
     RegisterResponse register(RegisterRequest request);
     void logout(LogoutRequest request);
     void changePassword(ChangePasswordRequest request);
-    void checkVerifyToken(String token);
     void forgotPassword(ForgotPasswordRequest request);
     void resetPassword(ResetPasswordRequest request);
 }

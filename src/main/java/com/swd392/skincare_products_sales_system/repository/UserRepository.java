@@ -1,11 +1,10 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.authentication.Role;
-import com.swd392.skincare_products_sales_system.model.user.User;
+import com.swd392.skincare_products_sales_system.entity.authentication.Role;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,7 +20,11 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     boolean existsByUsername(String username);
 
+    boolean existsByEmailAndStatus(String email, Status status);
+
     Optional<User> findByEmail(String email);
+
+    User findByEmailAndStatus(String email, Status status);
 
     default User findByUsernameOrThrow(String username) {
         return findByUsername(username)

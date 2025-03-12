@@ -12,7 +12,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {ConfirmPasswordValidator.class})
 public @interface ConfirmPasswordConstraint {
-    String message() default "Invalid confirm password";
+    String message() default "Mật khẩu xác nhận không chính xác";
 
     Class<?>[] groups() default {};
 

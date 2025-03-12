@@ -28,90 +28,88 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     AuthenticationService authenticationService;
-    JwtUtil jwtUtil;
-    UserRepository userRepository;
     OtpService otpService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Register new account customer", description = "API retrieve user attribute to create account customer")
+    @Operation(summary = "Đăng ký tài khoản khách hàng", description = "API Đăng ký tài khoản khách hàng")
     public ApiResponse<RegisterResponse> register(@RequestBody @Valid RegisterRequest request){
         return ApiResponse.<RegisterResponse>builder()
                 .code(HttpStatus.CREATED.value())
-                .message("Register successfully")
+                .message("Đăng ký thành công")
                 .result(authenticationService.register(request))
                 .build();
     }
     @PostMapping("/login")
-    @Operation(summary = "Login", description = "API retrieve username and password to login")
+    @Operation(summary = "Đăng nhập", description = "API đăng nhập")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<LoginResponse> login(@RequestBody @Valid LoginRequest request){
         return ApiResponse.<LoginResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Login successfully")
+                .message("Đăng nhập thành công")
                 .result(authenticationService.login(request))
                 .build();
     }
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get new Access Token", description = "API retrieve old token to get new Access Token")
+    @Operation(summary = "Lấy Access Token mới", description = "API Lấy Access Token mới")
     ApiResponse<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         var result = authenticationService.refreshToken(request);
         return ApiResponse.<RefreshTokenResponse>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get new Access Token by old token successfully")
+                .message("Lấy Access Token mới thành công")
                 .result(result).build();
     }
     @PostMapping("/logout")
-    @Operation(summary = "Logout", description = "Invalidate JWT token to logout user")
+    @Operation(summary = "Đăng xuất", description = "Invalidate JWT token to logout user")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> logout(@RequestBody LogoutRequest request) {
         authenticationService.logout(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Logout successfully")
+                .message("Đăng xuất thành công")
                 .build();
     }
     @PostMapping("/change-password")
-    @Operation(summary = "Change password", description = "Change password with new password")
+    @Operation(summary = "Đổi mật khẩu", description = "API Đổi mật khẩu")
     @PreAuthorize("isAuthenticated()")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> changePassword(@RequestBody @Valid ChangePasswordRequest request) {
         authenticationService.changePassword(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Change password successfully")
+                .message("Đổi mật khẩu thành công")
                 .build();
     }
     @PostMapping("/verify-otp")
-    @Operation(summary = "Verify account", description = "Verify account")
+    @Operation(summary = "Xác minh tài khoản", description = "API Xác minh tài khoản")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> verifyOtp(@RequestParam String userId, @RequestParam String otpCode) {
         otpService.verifyOtp(userId, otpCode);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Verify account successfully")
+                .message("Xác minh tài khoản thành công")
                 .build();
     }
     @PostMapping("/forgot-password")
-    @Operation(summary = "Forgot Password", description = "Handle forgot password and send reset email")
+    @Operation(summary = "Quên mật khẩu", description = "API Quên mật khẩu")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         authenticationService.forgotPassword(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Password reset email sent successfully.")
+                .message("Đã gửi mail reset password")
                 .build();
     }
 
     @PostMapping("/reset-password")
-    @Operation(summary = "Reset Password", description = "Reset user password using token")
+    @Operation(summary = "Reset mật khẩu", description = "API Reset mật khẩu với token")
     @ResponseStatus(HttpStatus.OK)
     public ApiResponse<String> resetPassword(@RequestBody ResetPasswordRequest request) {
         authenticationService.resetPassword(request);
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Password reset successfully.")
+                .message("Reset mật khẩu thành công")
                 .build();
     }
     @PostMapping("/resend-otp")
@@ -119,7 +117,7 @@ public class AuthenticationController {
         otpService.resendOtp(userId);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Otp resend successfully")
+                .message("Otp gửi thành công")
                 .build();
     }
 }

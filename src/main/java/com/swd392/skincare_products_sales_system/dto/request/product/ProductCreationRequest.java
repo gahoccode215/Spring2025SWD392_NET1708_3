@@ -2,14 +2,8 @@ package com.swd392.skincare_products_sales_system.dto.request.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.swd392.skincare_products_sales_system.model.product.Batch;
-import com.swd392.skincare_products_sales_system.model.product.Specification;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.lang.Nullable;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

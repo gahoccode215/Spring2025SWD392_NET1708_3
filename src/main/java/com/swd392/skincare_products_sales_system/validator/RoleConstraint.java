@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = {RoleValidator.class})
 public @interface RoleConstraint {
-    String message() default "Invalid Role";
+    String message() default "Quyền không chính xác";
 
     Class<?>[] groups() default {};
 

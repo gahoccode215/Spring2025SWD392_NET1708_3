@@ -5,9 +5,9 @@ import com.swd392.skincare_products_sales_system.dto.response.product.FeedBackRe
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.product.FeedBack;
-import com.swd392.skincare_products_sales_system.model.product.Product;
-import com.swd392.skincare_products_sales_system.model.user.User;
+import com.swd392.skincare_products_sales_system.entity.product.FeedBack;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.repository.FeedBackRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;

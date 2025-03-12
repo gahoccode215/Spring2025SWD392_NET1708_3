@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
-import com.swd392.skincare_products_sales_system.model.BookingOrder;
+import com.swd392.skincare_products_sales_system.entity.BookingOrder;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -21,6 +21,6 @@ public interface BookingOrderService {
     PaymentOrderResponse paymentBookingOrder(Long bookOrderId,String isAddress) throws UnsupportedEncodingException;
     List<BookingOrder> listAllBookingOrder();
     BookingOrder cancelBookingOrder(Long bookingOrderId, String note);
-    void updateBookingOrderStatus(Long bookingOrderId, boolean isPaid);
+    String updateBookingOrderStatus(PaymentBack paymentBack);
 
 }

@@ -1,10 +1,8 @@
 package com.swd392.skincare_products_sales_system.dto.response.product;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.product.Brand;
-import com.swd392.skincare_products_sales_system.model.product.Category;
-import com.swd392.skincare_products_sales_system.model.product.FeedBack;
-import com.swd392.skincare_products_sales_system.model.product.Specification;
+import com.swd392.skincare_products_sales_system.entity.product.Brand;
+import com.swd392.skincare_products_sales_system.entity.product.Category;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

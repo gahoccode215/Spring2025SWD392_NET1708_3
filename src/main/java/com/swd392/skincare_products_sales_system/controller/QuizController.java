@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
-import com.swd392.skincare_products_sales_system.model.Quiz;
+import com.swd392.skincare_products_sales_system.entity.Quiz;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

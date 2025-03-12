@@ -8,14 +8,14 @@ import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageRes
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.user.Address;
-import com.swd392.skincare_products_sales_system.model.user.User;
-import com.swd392.skincare_products_sales_system.model.cart.Cart;
-import com.swd392.skincare_products_sales_system.model.order.Order;
-import com.swd392.skincare_products_sales_system.model.order.OrderItem;
-import com.swd392.skincare_products_sales_system.model.product.Batch;
-import com.swd392.skincare_products_sales_system.model.product.Product;
-import com.swd392.skincare_products_sales_system.model.user.Voucher;
+import com.swd392.skincare_products_sales_system.entity.user.Address;
+import com.swd392.skincare_products_sales_system.entity.user.User;
+import com.swd392.skincare_products_sales_system.entity.cart.Cart;
+import com.swd392.skincare_products_sales_system.entity.order.Order;
+import com.swd392.skincare_products_sales_system.entity.order.OrderItem;
+import com.swd392.skincare_products_sales_system.entity.product.Batch;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.user.Voucher;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import lombok.AccessLevel;
@@ -56,7 +56,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
-
+//        Voucher findVoucher = voucherRepository.fin
         if (paymentMethod == null) {
             throw new AppException(ErrorCode.INVALID_PAYMENT_METHOD);
         }
@@ -68,8 +68,11 @@ public class OrderServiceImpl implements OrderService {
         });
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
-        if (voucherCode != null) {
+        if (voucherCode != null  ) {
             Voucher voucher = voucherRepository.findByCode(voucherCode).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
+            if (!user.getVouchers().contains(voucher)) {
+                throw new AppException(ErrorCode.VOUCHER_NOT_OWNED_BY_USER);
+            }
             if (voucher.getMinOrderValue() > cart.getTotalPrice()) {
                 throw new AppException(ErrorCode.VOUCHER_MIN_ORDER_INVALID);
             }
@@ -81,6 +84,8 @@ public class OrderServiceImpl implements OrderService {
                 double discountAmount = order.getTotalAmount() * (voucher.getDiscount() / 100);
                 order.setTotalAmount(Math.max(order.getTotalAmount() - discountAmount, 0));
             }
+            user.removeVoucher(voucher);
+            userRepository.save(user);
         }
         log.info("TOTAL AMOUNT: {}", order.getTotalAmount());
         orderRepository.save(order);
@@ -238,6 +243,7 @@ public class OrderServiceImpl implements OrderService {
         }
         user.setPoint((int) Math.round(order.getTotalAmount() / 1000));
         order.setStatus(orderStatus);
+        order.setPaymentStatus(PaymentStatus.PAID);
         order.setUpdatedAt(LocalDateTime.now());
         order.setUpdatedBy(user.getUsername());
         if (request.getImage() != null) {

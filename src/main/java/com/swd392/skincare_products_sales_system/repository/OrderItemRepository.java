@@ -2,12 +2,11 @@ package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.enums.PaymentMethod;
 import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
-import com.swd392.skincare_products_sales_system.model.order.OrderItem;
+import com.swd392.skincare_products_sales_system.entity.order.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {

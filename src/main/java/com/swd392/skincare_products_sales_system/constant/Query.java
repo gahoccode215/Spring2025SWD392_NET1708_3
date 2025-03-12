@@ -1,7 +1,5 @@
 package com.swd392.skincare_products_sales_system.constant;
 
-import java.time.LocalDate;
-
 public class Query {
     public static final String PRICE = "price";
     public static final String NAME = "name";

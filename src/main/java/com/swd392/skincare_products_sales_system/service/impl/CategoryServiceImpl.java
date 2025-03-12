@@ -7,9 +7,8 @@ import com.swd392.skincare_products_sales_system.dto.request.product.CategoryUpd
 import com.swd392.skincare_products_sales_system.dto.response.product.CategoryPageResponse;
 import com.swd392.skincare_products_sales_system.dto.response.product.CategoryResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.product.Category;
+import com.swd392.skincare_products_sales_system.entity.product.Category;
 import com.swd392.skincare_products_sales_system.repository.CategoryRepository;
 import com.swd392.skincare_products_sales_system.service.CategoryService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;

@@ -32,6 +32,7 @@ public enum ErrorCode {
     EMAIL_NOT_FOUND(1020, "Email not found", HttpStatus.BAD_REQUEST),
     VOUCHER_NOT_FOUND(1021, "Voucher không tồn tại", HttpStatus.BAD_REQUEST),
     SPECIFICATION_NOT_FOUND(1022, "Không tìm thấy thông số", HttpStatus.BAD_REQUEST),
+    VOUCHER_NOT_OWNED_BY_USER(1023, "Bạn không sở hữu Voucher này", HttpStatus.BAD_REQUEST),
     //11XX
     INVALID_KEY(1100, "Invalid uncategorized error", HttpStatus.BAD_REQUEST),
     INVALID_LOGIN(1101, "Username or password not correct", HttpStatus.BAD_REQUEST),
