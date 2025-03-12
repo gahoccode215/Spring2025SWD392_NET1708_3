@@ -52,15 +52,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     PostmarkService postmarkService;
     OtpService otpService;
 
-    @NonFinal
-    @Value("${base.be.url}")
-    String backendUrl;
-
-    @Value("${base.fe.url}")
-    @NonFinal
-    String frontEndUrl;
-
-
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
