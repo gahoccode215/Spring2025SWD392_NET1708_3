@@ -18,7 +18,8 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build JAR file
+      # Bước này để clean và build lại ứng dụng
+      - name: Clean and build JAR file
         run: mvn clean package -DskipTests
 
       - name: Login to DockerHub
@@ -33,7 +34,7 @@ jobs:
       # Trigger Render Deploy khi Docker image đã push xong
       - name: Trigger Render Deploy
         run: |
-          curl -X POST "${{ secrets.RENDER_SERVICE_ID }}" \
+          curl -X POST "https://api.render.com/deploy/${{ secrets.RENDER_SERVICE_ID }}" \
           -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \

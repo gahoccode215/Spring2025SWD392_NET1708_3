@@ -61,11 +61,6 @@ public class OtpServiceImpl implements OtpService {
         return otpRecord.isPresent();
     }
 
-    @Override
-    public void deleteExpiredOtps() {
-        Date currentTime = new Date();
-        otpRepository.deleteByExpirationTimeBefore(currentTime);
-    }
 
     @Override
     @Transactional
