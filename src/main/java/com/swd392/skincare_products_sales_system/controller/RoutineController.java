@@ -3,7 +3,7 @@ package com.swd392.skincare_products_sales_system.controller;
 import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
-import com.swd392.skincare_products_sales_system.enity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import io.swagger.v3.oas.annotations.Operation;

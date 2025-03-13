@@ -1,8 +1,8 @@
 
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.enity.User;
-import com.swd392.skincare_products_sales_system.enity.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.entity.User;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;

@@ -5,10 +5,10 @@ import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageRes
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.enity.*;
-import com.swd392.skincare_products_sales_system.enity.cart.Cart;
-import com.swd392.skincare_products_sales_system.enity.order.Order;
-import com.swd392.skincare_products_sales_system.enity.order.OrderItem;
+import com.swd392.skincare_products_sales_system.entity.*;
+import com.swd392.skincare_products_sales_system.entity.cart.Cart;
+import com.swd392.skincare_products_sales_system.entity.order.Order;
+import com.swd392.skincare_products_sales_system.entity.order.OrderItem;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import lombok.AccessLevel;

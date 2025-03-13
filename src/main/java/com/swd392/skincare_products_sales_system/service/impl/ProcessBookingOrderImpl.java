@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
-import com.swd392.skincare_products_sales_system.enity.booking.ProcessBookingOrder;
+import com.swd392.skincare_products_sales_system.entity.booking.ProcessBookingOrder;
 import com.swd392.skincare_products_sales_system.repository.ProcessBookingOrderRepository;
 import com.swd392.skincare_products_sales_system.service.ProcessBookingOrderService;
 import lombok.AccessLevel;

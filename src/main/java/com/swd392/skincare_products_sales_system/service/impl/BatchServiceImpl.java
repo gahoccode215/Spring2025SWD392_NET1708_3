@@ -5,8 +5,8 @@ import com.swd392.skincare_products_sales_system.dto.response.product.BatchPageR
 import com.swd392.skincare_products_sales_system.dto.response.product.BatchResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.enity.product.Batch;
-import com.swd392.skincare_products_sales_system.enity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.product.Batch;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.repository.BatchRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.service.BatchService;

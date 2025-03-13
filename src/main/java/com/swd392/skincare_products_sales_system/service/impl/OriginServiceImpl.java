@@ -9,7 +9,7 @@ import com.swd392.skincare_products_sales_system.dto.response.product.OriginResp
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.enity.product.Origin;
+import com.swd392.skincare_products_sales_system.entity.product.Origin;
 import com.swd392.skincare_products_sales_system.repository.OriginRepository;
 import com.swd392.skincare_products_sales_system.service.OriginService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;

@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherCrea
 import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.VoucherResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.enity.Voucher;
+import com.swd392.skincare_products_sales_system.entity.Voucher;
 import jakarta.validation.Valid;
 
 import java.util.List;
