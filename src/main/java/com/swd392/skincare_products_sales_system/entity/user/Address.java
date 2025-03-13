@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import com.swd392.skincare_products_sales_system.entity.order.Order;
 import jakarta.persistence.*;
 import lombok.*;

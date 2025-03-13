@@ -1,13 +1,19 @@
-package com.swd392.skincare_products_sales_system.entity;
+
+package com.swd392.skincare_products_sales_system.entity.routine;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.enums.TimeOfDayStatus;
+
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
+
 import com.swd392.skincare_products_sales_system.entity.product.Product;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -39,6 +45,9 @@ public class Step extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     RoutineStatusEnum routineStatus;
+
+    @Column(name = "last_completed_date")
+    LocalDate lastCompletedDate;
 
     @ManyToOne
     @JsonIgnore

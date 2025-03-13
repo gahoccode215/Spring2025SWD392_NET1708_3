@@ -3,14 +3,12 @@ package com.swd392.skincare_products_sales_system.controller;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.ChangeStatus;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBack;
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBookingOrderRequest;
-
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.entity.BookingOrder;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.repository.BookingRepository;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import com.swd392.skincare_products_sales_system.service.VNPayService;
@@ -119,7 +117,7 @@ public class BookingOrderController {
 
     @GetMapping("/payment-back")
     public ResponseEntity<ApiResponse<String>> handlePaymentBack(@RequestParam Map<String, String> params) throws UnsupportedEncodingException {
-        boolean isValid = vnPayService.validateCallback(params); // 🔥 Có thể lỗi ở đây
+        boolean isValid = vnPayService.validateCallback(params);
         if (!isValid) {
             return ResponseEntity.badRequest().body(
                     ApiResponse.<String>builder()
@@ -129,11 +127,9 @@ public class BookingOrderController {
             );
         }
 
-        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef")); // 🔥 Có thể lỗi do params null
+        Long bookingOrderId = Long.valueOf(params.get("vnp_TxnRef"));
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00".equals(responseCode);
-
-//        service.updateBookingOrderStatus(bookingOrderId, isPaid); // 🔥 Nếu bookingOrderId sai, lỗi 500 có thể xuất hiện
         return ResponseEntity.ok(
                 ApiResponse.<String>builder()
                         .code(isPaid ? HttpStatus.OK.value() : HttpStatus.BAD_REQUEST.value())
@@ -161,16 +157,18 @@ public class BookingOrderController {
                 .build();
     }
 
-    @PutMapping("/updateStatus")
+    @PutMapping("/update-status")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Cancel Booking Order", description = "Customer want to stop your order ")
+    @Operation(summary = "Update Booking Order", description = "Customer want to stop your order ")
     public ApiResponse<String> updateStatus(@RequestBody PaymentBack paymentBack) {
         return ApiResponse.<String>builder()
                 .code(HttpStatus.OK.value())
-                .message("Get filterListExpert successfully")
+                .message("Đã cập nhật trạng thái đơn")
                 .result(service.updateBookingOrderStatus(paymentBack))
                 .build();
     }
+
+
 
 
 

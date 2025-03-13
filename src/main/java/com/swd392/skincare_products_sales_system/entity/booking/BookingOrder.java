@@ -1,10 +1,15 @@
-package com.swd392.skincare_products_sales_system.entity;
+
+package com.swd392.skincare_products_sales_system.entity.booking;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.entity.routine.Routine;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.entity.user.User;
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
+import com.swd392.skincare_products_sales_system.entity.SkincareService;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -73,6 +78,9 @@ public class BookingOrder extends AbstractEntity {
     @Column(name = "response", columnDefinition = "TEXT")
     String response;
 
+    @Column
+    String serviceName;
+
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 
@@ -93,4 +101,8 @@ public class BookingOrder extends AbstractEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "routine_id")
     private Routine routine;
+
+    @OneToMany(mappedBy = "bookingOrder")
+    @JsonIgnore
+    List<ProcessBookingOrder> processBookingOrders;
 }

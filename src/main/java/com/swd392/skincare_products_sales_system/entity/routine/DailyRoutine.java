@@ -1,12 +1,16 @@
-package com.swd392.skincare_products_sales_system.entity;
+
+package com.swd392.skincare_products_sales_system.entity.routine;
+
 
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -35,7 +39,7 @@ public class DailyRoutine extends AbstractEntity {
     Routine routine;
 
     @OneToMany(mappedBy = "dailyRoutine", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<Step> steps;
+    private List<Step> steps = new ArrayList<>();
 
 
 }

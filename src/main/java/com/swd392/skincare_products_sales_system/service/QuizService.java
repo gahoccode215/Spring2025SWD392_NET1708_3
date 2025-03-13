@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.entity.Quiz;
+import com.swd392.skincare_products_sales_system.entity.quiz.Quiz;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -21,6 +21,6 @@ public interface QuizService {
      QuizResponse getQuizById(long quizId);
      ResultResponse submitQuiz(SubmitQuiz submitQuiz, Long quizId );
      SkinType calculateQuizResult(Quiz quiz, Map<Long, Long> answers);
-     List<Quiz> getAllQuiz();
+     List<QuizResponse> getAllQuiz();
 
 }

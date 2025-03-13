@@ -6,6 +6,7 @@ import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.SkincareServiceResponse;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.entity.SkincareService;
+import com.swd392.skincare_products_sales_system.repository.SkincareServiceRepository;
 import com.swd392.skincare_products_sales_system.service.SkincareServiceInterface;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,8 +23,8 @@ import java.util.List;
 @Tag(name = "SkincareService Controller")
 public class SkincareServiceController {
 
-    SkincareServiceInterface service;
-
+    private final SkincareServiceInterface service;
+    SkincareServiceRepository serviceRepository;
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a service", description = "API to create a new skincare service")
