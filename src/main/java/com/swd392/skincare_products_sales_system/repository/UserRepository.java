@@ -3,7 +3,7 @@ package com.swd392.skincare_products_sales_system.repository;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.entity.Role;
+import com.swd392.skincare_products_sales_system.entity.authentication.Role;
 import com.swd392.skincare_products_sales_system.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

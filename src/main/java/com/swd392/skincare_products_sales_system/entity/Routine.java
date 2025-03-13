@@ -1,11 +1,8 @@
-package com.swd392.skincare_products_sales_system.entity.routine;
+package com.swd392.skincare_products_sales_system.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
-import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
-import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
-import com.swd392.skincare_products_sales_system.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

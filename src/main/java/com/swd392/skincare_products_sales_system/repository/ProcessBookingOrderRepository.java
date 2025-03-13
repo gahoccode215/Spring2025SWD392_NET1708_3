@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.entity.booking.ProcessBookingOrder;
+import com.swd392.skincare_products_sales_system.entity.ProcessBookingOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

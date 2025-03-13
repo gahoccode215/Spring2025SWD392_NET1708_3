@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.entity.quiz.Quiz;
+import com.swd392.skincare_products_sales_system.entity.Quiz;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

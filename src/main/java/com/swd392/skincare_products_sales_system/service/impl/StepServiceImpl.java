@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.entity.User;
-import com.swd392.skincare_products_sales_system.entity.routine.Step;
+import com.swd392.skincare_products_sales_system.entity.Step;
 import com.swd392.skincare_products_sales_system.repository.StepRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.StepService;

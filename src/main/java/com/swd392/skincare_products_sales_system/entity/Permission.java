@@ -1,5 +1,6 @@
 package com.swd392.skincare_products_sales_system.entity;
 
+import com.swd392.skincare_products_sales_system.entity.authentication.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

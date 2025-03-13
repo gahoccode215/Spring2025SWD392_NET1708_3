@@ -1,8 +1,6 @@
-package com.swd392.skincare_products_sales_system.entity.quiz;
+package com.swd392.skincare_products_sales_system.entity;
 
 import com.swd392.skincare_products_sales_system.enums.SkinType;
-import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
-import com.swd392.skincare_products_sales_system.entity.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

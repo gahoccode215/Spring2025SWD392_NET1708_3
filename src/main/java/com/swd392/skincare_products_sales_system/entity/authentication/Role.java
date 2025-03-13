@@ -1,6 +1,9 @@
-package com.swd392.skincare_products_sales_system.entity;
+package com.swd392.skincare_products_sales_system.entity.authentication;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
+import com.swd392.skincare_products_sales_system.entity.Permission;
+import com.swd392.skincare_products_sales_system.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
