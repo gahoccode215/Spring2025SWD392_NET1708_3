@@ -4,10 +4,10 @@ import com.swd392.skincare_products_sales_system.dto.response.cart.CartItemRespo
 import com.swd392.skincare_products_sales_system.dto.response.cart.CartResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.enity.cart.Cart;
-import com.swd392.skincare_products_sales_system.enity.cart.CartItem;
-import com.swd392.skincare_products_sales_system.enity.product.Product;
-import com.swd392.skincare_products_sales_system.enity.User;
+import com.swd392.skincare_products_sales_system.entity.cart.Cart;
+import com.swd392.skincare_products_sales_system.entity.cart.CartItem;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.User;
 import com.swd392.skincare_products_sales_system.repository.CartItemRepository;
 import com.swd392.skincare_products_sales_system.repository.CartRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;

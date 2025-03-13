@@ -5,8 +5,8 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.Skinc
 import com.swd392.skincare_products_sales_system.dto.response.SkincareServiceResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.enity.SkincareService;
-import com.swd392.skincare_products_sales_system.enity.User;
+import com.swd392.skincare_products_sales_system.entity.SkincareService;
+import com.swd392.skincare_products_sales_system.entity.User;
 import com.swd392.skincare_products_sales_system.repository.BookingRepository;
 import com.swd392.skincare_products_sales_system.repository.SkincareServiceRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
