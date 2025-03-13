@@ -69,11 +69,6 @@ public class RoutineServiceImpl implements RoutineService {
                 .build();
 
         routine.setIsDeleted(false);
-        bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
-        bookingOrder.setRoutine(routine);
-        bookingRepository.save(bookingOrder);
-
-        routineRepository.save(routine);
 
         List<DailyRoutine> dailyRoutines = new ArrayList<>();
 
@@ -88,8 +83,6 @@ public class RoutineServiceImpl implements RoutineService {
             List<Step> steps = new ArrayList<>();
             dailyRoutine.setSteps(steps);
 
-            dailyRoutineRepository.save(dailyRoutine);
-
             if (dailyRoutineRequest.getSteps() != null) {
                 for (StepRequest stepRequest : dailyRoutineRequest.getSteps()) {
                     Step step = Step.builder()
@@ -97,7 +90,7 @@ public class RoutineServiceImpl implements RoutineService {
                             .timeOfDay(stepRequest.getTimeOfDay())
                             .action(stepRequest.getAction())
                             .description(stepRequest.getDescription())
-                            .routineStatus(routine.getRoutineStatus())
+                            .routineStatus(RoutineStatusEnum.PROCESSING)
                             .dailyRoutine(dailyRoutine)
                             .product(stepRequest.getProductId() != null
                                     ? productRepository.findById(stepRequest.getProductId())
@@ -106,14 +99,21 @@ public class RoutineServiceImpl implements RoutineService {
                             .build();
 
                     step.setIsDeleted(false);
-                    stepRepository.save(step);
                     steps.add(step);
                 }
             }
 
             dailyRoutines.add(dailyRoutine);
         }
+
         routine.setDailyRoutines(dailyRoutines);
+
+        routineRepository.save(routine);
+
+        bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
+        bookingOrder.setRoutine(routine);
+        bookingRepository.save(bookingOrder);
+
         return convertToRoutineResponse(routine);
     }
 
@@ -142,6 +142,7 @@ public class RoutineServiceImpl implements RoutineService {
                                 stepResponse.setTimeOfDay(step.getTimeOfDay());
                                 stepResponse.setAction(step.getAction());
                                 stepResponse.setDescription(step.getDescription());
+                                stepResponse.setRoutineStatusEnum(step.getRoutineStatus());
                                 stepResponse.setProductId(step.getProduct() != null ? step.getProduct().getId() : null);
                                 return stepResponse;
                             }).collect(Collectors.toList()));

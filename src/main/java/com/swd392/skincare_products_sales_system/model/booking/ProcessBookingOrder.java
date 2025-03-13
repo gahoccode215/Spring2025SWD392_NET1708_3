@@ -32,7 +32,7 @@ public class ProcessBookingOrder extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
-
+    
     @ManyToOne
     @JoinColumn(name = "bookingOrder_id")
     @JsonIgnore

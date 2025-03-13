@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 
+import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.enums.TimeOfDayStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,4 +21,6 @@ public class StepResponse {
      String action;
      String description;
      String productId;
+     @Enumerated(EnumType.STRING)
+     RoutineStatusEnum routineStatusEnum;
 }

@@ -41,7 +41,7 @@ public class StepServiceImpl implements StepService {
 
         Step step = stepRepository.findById(stepId)
                 .orElseThrow(() -> new AppException(ErrorCode.STEP_NOT_EXISTED));
-
+        
         LocalDate today = LocalDate.now();
         if (!step.getDailyRoutine().getDate().equals(today)) {
             throw new AppException(ErrorCode.STEP_NOT_TODAY);

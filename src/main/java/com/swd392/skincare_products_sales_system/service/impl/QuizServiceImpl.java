@@ -1,4 +1,4 @@
-package com.swd392.skincare_products_sales_system.service.impl;
+    package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
 import com.swd392.skincare_products_sales_system.dto.response.AnswerResponse;
@@ -110,21 +110,18 @@ public class QuizServiceImpl implements QuizService {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
 
-        // Kiểm tra title trùng lặp
         if (!quiz.getTitle().equals(quizUpdateRequest.getTitle())) {
             if (quizRepository.findQuizByTitle(quizUpdateRequest.getTitle()).isPresent()) {
                 throw new AppException(ErrorCode.TITLE_EXISTED);
             }
         }
 
-        // Cập nhật thông tin Quiz
         quiz.setTitle(quizUpdateRequest.getTitle());
         quiz.setStatus(quizUpdateRequest.getStatus());
         quiz.setDescription(quizUpdateRequest.getDescription());
         quiz.setIsDeleted(false);
         quizRepository.save(quiz);
 
-        // Cập nhật Questions và Answers
         for (QuestionRequest questionRequest : quizUpdateRequest.getQuestions()) {
             Question question = questionRepository.findById(questionRequest.getQuestionId())
                     .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
@@ -321,8 +318,6 @@ public class QuizServiceImpl implements QuizService {
                 .question(questionResponses)
                 .build();
     }
-
-
 }
 
 
