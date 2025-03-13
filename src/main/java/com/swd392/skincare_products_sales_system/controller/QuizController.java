@@ -63,8 +63,8 @@ public class QuizController {
             summary = "Get All quiz",
             description = "Get all quiz (All Role)"
     )
-    public ApiResponse<List<Quiz>> getAllQuiz() {
-        return ApiResponse.<List<Quiz>>builder()
+    public ApiResponse<List<QuizResponse>> getAllQuiz() {
+        return ApiResponse.<List<QuizResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .result(service.getAllQuiz())
                 .message("Get all quiz successfully")

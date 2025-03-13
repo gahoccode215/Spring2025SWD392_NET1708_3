@@ -30,5 +30,6 @@ public class FormResponse {
     String lastName;
     Integer age;
     List<ImageSkin> imageSkins;
+    String serviceName;
     Long bookingOrderId;
 }

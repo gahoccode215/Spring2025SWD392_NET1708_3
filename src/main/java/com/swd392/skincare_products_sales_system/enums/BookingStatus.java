@@ -14,6 +14,7 @@ public enum BookingStatus {
     CUSTOMER_CONFIRM,
     EXPERT_MAKE_ROUTINE,
     IN_PROGRESS_ROUTINE,
+    FINISHED_ROUTINE,
     CANCELED,
     FINISHED,
 }

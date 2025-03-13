@@ -10,6 +10,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -40,6 +42,9 @@ public class Step extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     RoutineStatusEnum routineStatus;
+
+    @Column(name = "last_completed_date")
+    LocalDate lastCompletedDate;
 
     @ManyToOne
     @JsonIgnore

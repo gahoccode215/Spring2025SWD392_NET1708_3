@@ -21,6 +21,6 @@ public interface QuizService {
      QuizResponse getQuizById(long quizId);
      ResultResponse submitQuiz(SubmitQuiz submitQuiz, Long quizId );
      SkinType calculateQuizResult(Quiz quiz, Map<Long, Long> answers);
-     List<Quiz> getAllQuiz();
+     List<QuizResponse> getAllQuiz();
 
 }

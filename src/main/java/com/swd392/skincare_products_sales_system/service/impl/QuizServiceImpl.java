@@ -1,6 +1,8 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
+import com.swd392.skincare_products_sales_system.dto.response.AnswerResponse;
+import com.swd392.skincare_products_sales_system.dto.response.QuestionResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
@@ -58,6 +60,7 @@ public class QuizServiceImpl implements QuizService {
                     .title(questionRequest.getTitle())
                     .quiz(quiz)
                     .build();
+            question.setIsDeleted(false);
             questionRepository.save(question);
 
             for (AnswerRequest answerRequest : questionRequest.getAnswers()) {
@@ -66,6 +69,7 @@ public class QuizServiceImpl implements QuizService {
                         .skinType(answerRequest.getSkinType())
                         .question(question)
                         .build();
+                answer.setIsDeleted(false);
                 answerRepository.save(answer);
             }
         }
@@ -106,16 +110,21 @@ public class QuizServiceImpl implements QuizService {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
 
+        // Kiểm tra title trùng lặp
         if (!quiz.getTitle().equals(quizUpdateRequest.getTitle())) {
             if (quizRepository.findQuizByTitle(quizUpdateRequest.getTitle()).isPresent()) {
                 throw new AppException(ErrorCode.TITLE_EXISTED);
             }
         }
+
+        // Cập nhật thông tin Quiz
         quiz.setTitle(quizUpdateRequest.getTitle());
         quiz.setStatus(quizUpdateRequest.getStatus());
         quiz.setDescription(quizUpdateRequest.getDescription());
         quiz.setIsDeleted(false);
         quizRepository.save(quiz);
+
+        // Cập nhật Questions và Answers
         for (QuestionRequest questionRequest : quizUpdateRequest.getQuestions()) {
             Question question = questionRepository.findById(questionRequest.getQuestionId())
                     .orElseThrow(() -> new AppException(ErrorCode.QUESTION_NOT_FOUND));
@@ -134,24 +143,62 @@ public class QuizServiceImpl implements QuizService {
             }
         }
 
+        // Tạo danh sách QuestionResponse từ Quiz đã cập nhật
+        List<QuestionResponse> questionResponses = quiz.getQuestions().stream()
+                .map(question -> {
+                    List<AnswerResponse> answerResponses = question.getAnswers().stream()
+                            .map(answer -> AnswerResponse.builder()
+                                    .answerId(answer.getId())
+                                    .answerText(answer.getAnswerText())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return QuestionResponse.builder()
+                            .questionId(question.getId())
+                            .title(question.getTitle())
+                            .answers(answerResponses)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        // Trả về QuizResponse với đầy đủ thông tin
         return QuizResponse.builder()
                 .id(quiz.getId())
                 .title(quiz.getTitle())
                 .description(quiz.getDescription())
                 .status(quiz.getStatus())
+                .question(questionResponses)
                 .build();
     }
 
     @Override
     public QuizResponse getQuizById(long quizId) {
-        Quiz quiz = quizRepository.findSkincareServiceByIdAndIsDeletedIsFalse(quizId).orElseThrow(
-                () -> new AppException(ErrorCode.QUIZ_NOT_EXISTED)
-        );
+        Quiz quiz = quizRepository.findSkincareServiceByIdAndIsDeletedIsFalse(quizId)
+                .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_EXISTED));
+
+        List<QuestionResponse> questionResponses = quiz.getQuestions().stream()
+                .map(question -> {
+                    List<AnswerResponse> answerResponses = question.getAnswers().stream()
+                            .map(answer -> AnswerResponse.builder()
+                                    .answerId(answer.getId())
+                                    .answerText(answer.getAnswerText())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return QuestionResponse.builder()
+                            .questionId(question.getId())
+                            .title(question.getTitle())
+                            .answers(answerResponses)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
         return QuizResponse.builder()
                 .id(quiz.getId())
                 .title(quiz.getTitle())
                 .description(quiz.getDescription())
                 .status(quiz.getStatus())
+                .question(questionResponses)
                 .build();
     }
 
@@ -222,29 +269,58 @@ public class QuizServiceImpl implements QuizService {
 
 
     @Override
-        public List<Quiz> getAllQuiz() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                throw new AppException(ErrorCode.UNAUTHENTICATED);
-            }
-            String username = authentication.getName();
-            User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
-            List<Quiz> list;
-            if(user.getRole().getId() == 2 || user.getRole().getId() ==  6) {
-                 list = quizRepository.findAll()
-                         .stream()
-                         .toList();
-            }else{
-                 list = quizRepository.findAll()
-                         .stream()
-                         .filter(quiz -> !quiz.getIsDeleted()
-                                    && quiz.getStatus() == Status.ACTIVE)
-                         .collect(Collectors.toList());
-            }
-            return list;
+    public List<QuizResponse> getAllQuiz() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        List<Quiz> quizzes;
+        if (user.getRole().getId() == 2 || user.getRole().getId() == 6) {
+            quizzes = quizRepository.findAll()
+                    .stream()
+                    .toList();
+        } else {
+            quizzes = quizRepository.findAll()
+                    .stream()
+                    .filter(quiz -> !quiz.getIsDeleted() && quiz.getStatus() == Status.ACTIVE)
+                    .collect(Collectors.toList());
+        }
+
+        return quizzes.stream()
+                .map(this::convertToQuizResponse)
+                .collect(Collectors.toList());
+    }
+
+    private QuizResponse convertToQuizResponse(Quiz quiz) {
+        List<QuestionResponse> questionResponses = quiz.getQuestions().stream()
+                .map(question -> {
+                    List<AnswerResponse> answerResponses = question.getAnswers().stream()
+                            .map(answer -> AnswerResponse.builder()
+                                    .answerId(answer.getId())
+                                    .answerText(answer.getAnswerText())
+                                    .build())
+                            .collect(Collectors.toList());
+
+                    return QuestionResponse.builder()
+                            .questionId(question.getId())
+                            .title(question.getTitle())
+                            .answers(answerResponses)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return QuizResponse.builder()
+                .id(quiz.getId())
+                .title(quiz.getTitle())
+                .description(quiz.getDescription())
+                .status(quiz.getStatus())
+                .question(questionResponses)
+                .build();
+    }
 
 
 }

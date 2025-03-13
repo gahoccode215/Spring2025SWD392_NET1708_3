@@ -68,6 +68,7 @@ public class RoutineServiceImpl implements RoutineService {
                 .user(user)
                 .build();
 
+        routine.setIsDeleted(false);
         bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
         bookingOrder.setRoutine(routine);
         bookingRepository.save(bookingOrder);
@@ -158,15 +159,10 @@ public class RoutineServiceImpl implements RoutineService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-//        String username = authentication.getName();
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-//
-//        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
-//                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-//
-//        Routine routine = routineRepository.findByIdAndIsDeletedFalse()
-//                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
         return null;
     }
 
@@ -174,4 +170,41 @@ public class RoutineServiceImpl implements RoutineService {
     public RoutineResponse updateRoutine(RoutineCreateRequest request, Long bookingOrderId) {
         return null;
     }
+
+    @Override
+    public List<RoutineResponse> getAllRoutines() {
+        return routineRepository.findAll()
+                .stream()
+                .map(this::convertToRoutineResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RoutineResponse getRoutineById(Long id) {
+        Routine routine =  routineRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ROUTINE_NOT_EXISTED));
+        return convertToRoutineResponse(routine);
+    }
+
+    @Override
+    public List<RoutineResponse> getRoutineOfCustomer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        List<Routine> routines = routineRepository.findByUser(user);
+
+        return routines.stream()
+                .map(this::convertToRoutineResponse)
+                .collect(Collectors.toList());
+    }
+
+
+
 }

@@ -223,7 +223,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .stream()
                 .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
                 .toList();
-        return List.of();
+        return list;
     }
 
     @Override
@@ -291,8 +291,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .firstName(request.getFirstName())
                 .user(user)
                 .date(LocalDateTime.now())
+                .serviceName(service.getServiceName())
                 .build();
-
         bookingOrder.setIsDeleted(false);
         bookingRepository.save(bookingOrder);
 
@@ -327,6 +327,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .firstName(request.getFirstName())
                 .status(BookingStatus.PENDING)
                 .date(bookingOrder.getDate())
+                .serviceName(service.getServiceName())
                 .build();
     }
 
@@ -375,6 +376,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .skincareService(service)
                 .user(booking.getUser())
                 .date(booking.getDate())
+                .serviceName(service.getServiceName())
                 .build();
         bookingRepository.save(bookingOrder);
         return FormResponse.builder()
@@ -388,6 +390,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .userId(booking.getUser().getId())
                 .status(BookingStatus.CONTACT_CUSTOMER)
                 .date(booking.getDate())
+                .serviceName(service.getServiceName())
                 .build();
     }
 
@@ -408,20 +411,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
             bookingOrder.setResponse(bookingOrder.getResponse());
-            bookingOrder.setStatus(BookingStatus.CONTACT_CUSTOMER);
         }
-        if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
-            bookingOrder.setStatus(BookingStatus.CUSTOMER_CONFIRM);
-        }
-        if(bookingOrder.getStatus() == BookingStatus.CONTACT_CUSTOMER){
-            bookingOrder.setStatus(BookingStatus.FINISHED);
-        }
-        if(bookingOrder.getStatus() == BookingStatus.EXPERT_MAKE_ROUTINE){
-            bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
-        }
-        if(bookingOrder.getStatus() == BookingStatus.IN_PROGRESS_ROUTINE){
-            bookingOrder.setStatus(BookingStatus.FINISHED);
-        }
+
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }
@@ -483,9 +474,12 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         LocalDateTime endTime = bookDate.plusHours(1);
 
-        List<BookingOrder> expertBookings = bookingRepository.findByUserAndIsDeletedFalse(expert);
+        List<BookingOrder> list = bookingRepository.findAll()
+                .stream()
+                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
+                .toList();
 
-        for (BookingOrder existingBooking : expertBookings) {
+        for (BookingOrder existingBooking : list) {
             LocalDateTime existingStartTime = existingBooking.getOrderDate();
             LocalDateTime existingEndTime = existingStartTime.plusHours(1);
 

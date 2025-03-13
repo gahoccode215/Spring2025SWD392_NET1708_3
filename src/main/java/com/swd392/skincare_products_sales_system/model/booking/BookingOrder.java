@@ -76,6 +76,9 @@ public class BookingOrder extends AbstractEntity {
     @Column(name = "response", columnDefinition = "TEXT")
     String response;
 
+    @Column
+    String serviceName;
+
     @Enumerated(EnumType.STRING)
     BookingStatus status;
 

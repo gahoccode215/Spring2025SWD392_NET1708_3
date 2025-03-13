@@ -157,7 +157,7 @@ public class BookingOrderController {
                 .build();
     }
 
-    @PutMapping("/updateStatus")
+    @PutMapping("/update-status")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update Booking Order", description = "Customer want to stop your order ")
     public ApiResponse<String> updateStatus(@RequestBody PaymentBack paymentBack) {
@@ -167,6 +167,8 @@ public class BookingOrderController {
                 .result(service.updateBookingOrderStatus(paymentBack))
                 .build();
     }
+
+
 
 
 

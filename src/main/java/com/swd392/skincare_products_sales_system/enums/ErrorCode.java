@@ -94,6 +94,12 @@ public enum ErrorCode {
     BLOG_NOT_EXIST(2001, "Blog not existed", HttpStatus.BAD_REQUEST),
     BLOG_EXISTED(2002, "Blog existed", HttpStatus.BAD_REQUEST),
     INVALID_BLOG_NAME(2003, "Blog name not existed", HttpStatus.BAD_REQUEST),
+
+    //21xx
+    STEP_NOT_EXISTED(2100, "Step not existed", HttpStatus.BAD_REQUEST),
+    STEP_NOT_TODAY(2101, "Step not today", HttpStatus.BAD_REQUEST),
+    INVALID_DAILY_ROUTINE(2102, "Step not today", HttpStatus.BAD_REQUEST),
+    ROUTINE_NOT_EXISTED(2103, "Routine not existed", HttpStatus.BAD_REQUEST),
     ;
 
 
