@@ -4,7 +4,7 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.Asign
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.model.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.enity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

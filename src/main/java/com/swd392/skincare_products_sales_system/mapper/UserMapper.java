@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.mapper;
 
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.enity.User;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

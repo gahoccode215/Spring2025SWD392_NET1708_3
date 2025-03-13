@@ -4,11 +4,10 @@ import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherCrea
 import com.swd392.skincare_products_sales_system.dto.request.voucher.VoucherUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.VoucherResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
-import com.swd392.skincare_products_sales_system.enums.RoleEnum;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.User;
-import com.swd392.skincare_products_sales_system.model.Voucher;
+import com.swd392.skincare_products_sales_system.enity.User;
+import com.swd392.skincare_products_sales_system.enity.Voucher;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.repository.VoucherRepository;
 import com.swd392.skincare_products_sales_system.service.VoucherService;

@@ -1,7 +1,7 @@
 package com.swd392.skincare_products_sales_system.controller;
 
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.model.routine.Step;
+import com.swd392.skincare_products_sales_system.enity.routine.Step;
 import com.swd392.skincare_products_sales_system.service.StepService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

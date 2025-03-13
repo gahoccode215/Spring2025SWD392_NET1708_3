@@ -1,14 +1,9 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.booking_order.PaymentBack;
-import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
-import com.swd392.skincare_products_sales_system.model.product.Product;
-import com.swd392.skincare_products_sales_system.model.routine.Routine;
-import com.swd392.skincare_products_sales_system.model.routine.Step;
+import com.swd392.skincare_products_sales_system.enity.product.Product;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import io.swagger.v3.oas.annotations.Operation;

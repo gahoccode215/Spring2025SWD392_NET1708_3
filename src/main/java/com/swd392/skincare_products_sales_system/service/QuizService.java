@@ -7,7 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.quiz.Quiz;
+import com.swd392.skincare_products_sales_system.enity.quiz.Quiz;
 import jakarta.validation.Valid;
 
 import java.util.List;

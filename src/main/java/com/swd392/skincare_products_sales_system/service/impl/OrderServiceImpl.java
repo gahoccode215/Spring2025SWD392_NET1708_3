@@ -5,10 +5,10 @@ import com.swd392.skincare_products_sales_system.dto.response.order.OrderPageRes
 import com.swd392.skincare_products_sales_system.dto.response.order.OrderResponse;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.*;
-import com.swd392.skincare_products_sales_system.model.cart.Cart;
-import com.swd392.skincare_products_sales_system.model.order.Order;
-import com.swd392.skincare_products_sales_system.model.order.OrderItem;
+import com.swd392.skincare_products_sales_system.enity.*;
+import com.swd392.skincare_products_sales_system.enity.cart.Cart;
+import com.swd392.skincare_products_sales_system.enity.order.Order;
+import com.swd392.skincare_products_sales_system.enity.order.OrderItem;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.OrderService;
 import lombok.AccessLevel;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

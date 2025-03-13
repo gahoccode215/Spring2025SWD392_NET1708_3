@@ -1,9 +1,6 @@
 package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.SkincareService;
-import com.swd392.skincare_products_sales_system.model.quiz.Answer;
-import com.swd392.skincare_products_sales_system.model.quiz.Question;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

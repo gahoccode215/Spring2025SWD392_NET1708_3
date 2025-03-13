@@ -3,8 +3,8 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.User;
-import com.swd392.skincare_products_sales_system.model.routine.Step;
+import com.swd392.skincare_products_sales_system.enity.User;
+import com.swd392.skincare_products_sales_system.enity.routine.Step;
 import com.swd392.skincare_products_sales_system.repository.StepRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.StepService;
@@ -41,7 +41,7 @@ public class StepServiceImpl implements StepService {
 
         Step step = stepRepository.findById(stepId)
                 .orElseThrow(() -> new AppException(ErrorCode.STEP_NOT_EXISTED));
-        
+
         LocalDate today = LocalDate.now();
         if (!step.getDailyRoutine().getDate().equals(today)) {
             throw new AppException(ErrorCode.STEP_NOT_TODAY);

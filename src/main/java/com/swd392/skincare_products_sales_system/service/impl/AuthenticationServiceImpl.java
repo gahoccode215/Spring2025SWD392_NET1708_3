@@ -14,9 +14,9 @@ import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.InvalidatedToken;
-import com.swd392.skincare_products_sales_system.model.Role;
-import com.swd392.skincare_products_sales_system.model.User;
+import com.swd392.skincare_products_sales_system.enity.InvalidatedToken;
+import com.swd392.skincare_products_sales_system.enity.Role;
+import com.swd392.skincare_products_sales_system.enity.User;
 import com.swd392.skincare_products_sales_system.repository.InvalidatedTokenRepository;
 import com.swd392.skincare_products_sales_system.repository.RoleRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;

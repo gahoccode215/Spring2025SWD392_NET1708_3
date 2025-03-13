@@ -1,10 +1,10 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.enums.Status;
-import com.swd392.skincare_products_sales_system.model.product.Brand;
-import com.swd392.skincare_products_sales_system.model.product.Category;
-import com.swd392.skincare_products_sales_system.model.product.Origin;
-import com.swd392.skincare_products_sales_system.model.product.Product;
+import com.swd392.skincare_products_sales_system.enity.product.Brand;
+import com.swd392.skincare_products_sales_system.enity.product.Category;
+import com.swd392.skincare_products_sales_system.enity.product.Origin;
+import com.swd392.skincare_products_sales_system.enity.product.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -10,10 +10,10 @@ import com.swd392.skincare_products_sales_system.dto.response.product.ProductRes
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.model.product.Brand;
-import com.swd392.skincare_products_sales_system.model.product.Category;
-import com.swd392.skincare_products_sales_system.model.product.Origin;
-import com.swd392.skincare_products_sales_system.model.product.Product;
+import com.swd392.skincare_products_sales_system.enity.product.Brand;
+import com.swd392.skincare_products_sales_system.enity.product.Category;
+import com.swd392.skincare_products_sales_system.enity.product.Origin;
+import com.swd392.skincare_products_sales_system.enity.product.Product;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.ProductService;
 import com.swd392.skincare_products_sales_system.util.SlugUtil;

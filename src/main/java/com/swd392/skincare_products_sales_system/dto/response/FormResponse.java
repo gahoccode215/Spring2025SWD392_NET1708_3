@@ -2,7 +2,7 @@ package com.swd392.skincare_products_sales_system.dto.response;
 
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
-import com.swd392.skincare_products_sales_system.model.booking.ImageSkin;
+import com.swd392.skincare_products_sales_system.enity.booking.ImageSkin;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

@@ -1,6 +1,6 @@
 package com.swd392.skincare_products_sales_system.repository;
 
-import com.swd392.skincare_products_sales_system.model.product.Batch;
+import com.swd392.skincare_products_sales_system.enity.product.Batch;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
