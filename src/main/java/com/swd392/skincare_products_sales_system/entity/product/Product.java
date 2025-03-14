@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.entity.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.entity.routine.Step;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.entity.*;
 import jakarta.persistence.*;
@@ -71,6 +72,11 @@ public class Product extends AbstractEntity {
     @JsonIgnore
     @JoinColumn(name = "category_id")
     Category category;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @JoinColumn(name = "skin_type_id")
+    SkinType skinType;
 
     @OneToMany(mappedBy = "product")
     List<Step> steps;

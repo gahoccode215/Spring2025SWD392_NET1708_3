@@ -1,3 +1,4 @@
+
 package com.swd392.skincare_products_sales_system.enums;
 
 import lombok.Getter;
@@ -95,11 +96,20 @@ public enum ErrorCode {
     BOOKING_NOT_EXIST(1902, "Booking not existed", HttpStatus.BAD_REQUEST),
     BOOKING_ORDER_NOT_EXIST(1903, "Booking order not existed", HttpStatus.BAD_REQUEST),
     EXPERT_NOT_EXIST(1904, "Expert not existed", HttpStatus.BAD_REQUEST),
+    BOOKING_VALID_SPAM(1905, "Spam Booking", HttpStatus.BAD_REQUEST),
+    BOOKING_TIME_OUT(1906, "Spam Booking", HttpStatus.BAD_REQUEST),
+    EXPERT_TIME_SLOT_UNAVAILABLE(1907 , "Expert was booked", HttpStatus.BAD_REQUEST),
     //20XX
     BLOG_NAME_EXISTED(2000, "Blog name existed", HttpStatus.BAD_REQUEST),
     BLOG_NOT_EXIST(2001, "Blog not existed", HttpStatus.BAD_REQUEST),
     BLOG_EXISTED(2002, "Blog existed", HttpStatus.BAD_REQUEST),
     INVALID_BLOG_NAME(2003, "Blog name not existed", HttpStatus.BAD_REQUEST),
+
+    //21xx
+    STEP_NOT_EXISTED(2100, "Step not existed", HttpStatus.BAD_REQUEST),
+    STEP_NOT_TODAY(2101, "Step not today", HttpStatus.BAD_REQUEST),
+    INVALID_DAILY_ROUTINE(2102, "Step not today", HttpStatus.BAD_REQUEST),
+    ROUTINE_NOT_EXISTED(2103, "Routine not existed", HttpStatus.BAD_REQUEST),
     ;
 
 

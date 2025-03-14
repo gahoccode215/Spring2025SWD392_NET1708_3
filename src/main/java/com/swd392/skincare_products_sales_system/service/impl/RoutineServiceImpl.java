@@ -6,12 +6,16 @@ import com.swd392.skincare_products_sales_system.dto.request.routine.StepRequest
 import com.swd392.skincare_products_sales_system.dto.response.DailyRoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.StepResponse;
+import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.entity.*;
-import com.swd392.skincare_products_sales_system.entity.user.User;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.entity.routine.DailyRoutine;
+import com.swd392.skincare_products_sales_system.entity.routine.Routine;
+import com.swd392.skincare_products_sales_system.entity.routine.Step;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import lombok.AccessLevel;
@@ -42,7 +46,7 @@ public class RoutineServiceImpl implements RoutineService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RoutineResponse makeRoutine(RoutineCreateRequest request, Long bookingOrderId) {
+    public RoutineResponse makeRoutine(RoutineCreateRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -53,7 +57,7 @@ public class RoutineServiceImpl implements RoutineService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         Routine routine = Routine.builder()
@@ -65,11 +69,7 @@ public class RoutineServiceImpl implements RoutineService {
                 .user(user)
                 .build();
 
-        bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
-        bookingOrder.setRoutine(routine);
-        bookingRepository.save(bookingOrder);
-
-        routineRepository.save(routine);
+        routine.setIsDeleted(false);
 
         List<DailyRoutine> dailyRoutines = new ArrayList<>();
 
@@ -84,8 +84,6 @@ public class RoutineServiceImpl implements RoutineService {
             List<Step> steps = new ArrayList<>();
             dailyRoutine.setSteps(steps);
 
-            dailyRoutineRepository.save(dailyRoutine);
-
             if (dailyRoutineRequest.getSteps() != null) {
                 for (StepRequest stepRequest : dailyRoutineRequest.getSteps()) {
                     Step step = Step.builder()
@@ -93,7 +91,7 @@ public class RoutineServiceImpl implements RoutineService {
                             .timeOfDay(stepRequest.getTimeOfDay())
                             .action(stepRequest.getAction())
                             .description(stepRequest.getDescription())
-                            .routineStatus(routine.getRoutineStatus())
+                            .routineStatus(RoutineStatusEnum.PROCESSING)
                             .dailyRoutine(dailyRoutine)
                             .product(stepRequest.getProductId() != null
                                     ? productRepository.findById(stepRequest.getProductId())
@@ -102,14 +100,21 @@ public class RoutineServiceImpl implements RoutineService {
                             .build();
 
                     step.setIsDeleted(false);
-                    stepRepository.save(step);
                     steps.add(step);
                 }
             }
 
             dailyRoutines.add(dailyRoutine);
         }
+
         routine.setDailyRoutines(dailyRoutines);
+
+        routineRepository.save(routine);
+
+        bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
+        bookingOrder.setRoutine(routine);
+        bookingRepository.save(bookingOrder);
+
         return convertToRoutineResponse(routine);
     }
 
@@ -138,6 +143,7 @@ public class RoutineServiceImpl implements RoutineService {
                                 stepResponse.setTimeOfDay(step.getTimeOfDay());
                                 stepResponse.setAction(step.getAction());
                                 stepResponse.setDescription(step.getDescription());
+                                stepResponse.setRoutineStatusEnum(step.getRoutineStatus());
                                 stepResponse.setProductId(step.getProduct() != null ? step.getProduct().getId() : null);
                                 return stepResponse;
                             }).collect(Collectors.toList()));
@@ -155,15 +161,10 @@ public class RoutineServiceImpl implements RoutineService {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
-//        String username = authentication.getName();
-//        User user = userRepository.findByUsername(username)
-//                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-//
-//        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
-//                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-//
-//        Routine routine = routineRepository.findByIdAndIsDeletedFalse()
-//                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
         return null;
     }
 
@@ -171,4 +172,41 @@ public class RoutineServiceImpl implements RoutineService {
     public RoutineResponse updateRoutine(RoutineCreateRequest request, Long bookingOrderId) {
         return null;
     }
+
+    @Override
+    public List<RoutineResponse> getAllRoutines() {
+        return routineRepository.findAll()
+                .stream()
+                .map(this::convertToRoutineResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public RoutineResponse getRoutineById(Long id) {
+        Routine routine =  routineRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new AppException(ErrorCode.ROUTINE_NOT_EXISTED));
+        return convertToRoutineResponse(routine);
+    }
+
+    @Override
+    public List<RoutineResponse> getRoutineOfCustomer() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        List<Routine> routines = routineRepository.findByUser(user);
+
+        return routines.stream()
+                .map(this::convertToRoutineResponse)
+                .collect(Collectors.toList());
+    }
+
+
+
 }

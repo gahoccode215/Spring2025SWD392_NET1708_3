@@ -33,14 +33,9 @@ public class FormCreateRequest {
     LocalDateTime date;
     @NotNull(message = "LastName cannot be null")
     String lastName;
-
     @NotNull(message = "FirstName cannot be null")
     String firstName;
-
-    @NotNull(message = "Age cannot be null")
-    @Size(max = 100)
     Integer age;
-
     List<ImageSkinRequest> imageSkins;
     PaymentStatus paymentStatus;
 

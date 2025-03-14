@@ -4,7 +4,8 @@ import com.swd392.skincare_products_sales_system.dto.request.booking_order.Asign
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.FormUpdateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.entity.BookingOrder;
+
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/admin/booking-order")

@@ -2,12 +2,19 @@ package com.swd392.skincare_products_sales_system.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.entity.authentication.Role;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
+import com.swd392.skincare_products_sales_system.entity.booking.ImageSkin;
+import com.swd392.skincare_products_sales_system.entity.product.FeedBack;
+import com.swd392.skincare_products_sales_system.entity.quiz.Result;
+import com.swd392.skincare_products_sales_system.entity.routine.Routine;
 import com.swd392.skincare_products_sales_system.enums.Gender;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.entity.*;
 import com.swd392.skincare_products_sales_system.entity.authentication.Otp;
-import com.swd392.skincare_products_sales_system.entity.authentication.Role;
-import com.swd392.skincare_products_sales_system.entity.product.FeedBack;
+
+import com.swd392.skincare_products_sales_system.entity.booking.ProcessBookingOrder;
+
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -83,7 +90,11 @@ public class User extends AbstractEntity {
     @JsonIgnore
     List<ImageSkin> imageSkins;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    List<ProcessBookingOrder> processBookingOrders;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     @JoinTable(
             name = "tbl_user_voucher",

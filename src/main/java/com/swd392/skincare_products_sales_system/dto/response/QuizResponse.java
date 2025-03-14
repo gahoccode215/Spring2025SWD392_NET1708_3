@@ -4,6 +4,8 @@ import com.swd392.skincare_products_sales_system.enums.Status;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,4 +16,6 @@ public class QuizResponse {
     String description;
     String title;
     Status status;
+    List<QuestionResponse> question;
+
 }

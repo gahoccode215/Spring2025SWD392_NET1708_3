@@ -2,6 +2,10 @@ package com.swd392.skincare_products_sales_system.entity.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.entity.user.User;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

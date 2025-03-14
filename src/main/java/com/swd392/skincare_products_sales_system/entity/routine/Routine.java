@@ -1,15 +1,21 @@
-package com.swd392.skincare_products_sales_system.entity;
+
+package com.swd392.skincare_products_sales_system.entity.routine;
+
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.enums.RoutineStatusEnum;
 import com.swd392.skincare_products_sales_system.entity.user.User;
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -51,9 +57,9 @@ public class Routine extends AbstractEntity {
     @JsonIgnore
     User user;
 
-    @OneToMany(mappedBy = "routine")
-            @JsonIgnore
-    List<DailyRoutine> dailyRoutines;
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<DailyRoutine> dailyRoutines = new ArrayList<>();
 
     @OneToOne(mappedBy = "routine")
             @JsonIgnore

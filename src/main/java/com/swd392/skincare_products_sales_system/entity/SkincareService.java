@@ -1,7 +1,9 @@
 package com.swd392.skincare_products_sales_system.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.enums.Status;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

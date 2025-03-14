@@ -1,10 +1,10 @@
 package com.swd392.skincare_products_sales_system.controller;
 
-import com.swd392.skincare_products_sales_system.dto.request.quiz.SubmitQuiz;
 import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
+import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +15,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/routine")
 @RequiredArgsConstructor
@@ -23,18 +25,70 @@ import org.springframework.web.bind.annotation.*;
 public class RoutineController {
 
     RoutineService service;
+    ProductRepository productRepository;
 
-    @PostMapping("/{bookingOrderId}")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a routine skincare for customer",
             description = "A Booking Order have only one routine skincare of customer"
     )
-    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest, @PathVariable Long bookingOrderId) {
+    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest) {
         return ApiResponse.<RoutineResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Submit Quiz successfully")
-                .result(service.makeRoutine(routineCreateRequest, bookingOrderId))
+                .result(service.makeRoutine(routineCreateRequest))
                 .build();
     }
+
+    @GetMapping("/get-product")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Create a routine skincare for customer",
+            description = "A Booking Order have only one routine skincare of customer"
+    )
+    public ApiResponse<List<Product>> listProduct () {
+        List<Product> list = productRepository.findAll();
+        return ApiResponse.<List<Product>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Submit Quiz successfully")
+                .result(list)
+                .build();
+    }
+
+    @GetMapping("")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Lấy tất cả routine", description = "Customer want to stop your order ")
+    public ApiResponse<List<RoutineResponse>> getAllRoutine() {
+        return ApiResponse.<List<RoutineResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy tất cả routine thành công")
+                .result(service.getAllRoutines())
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Lấy tất cả routine", description = "Customer want to stop your order ")
+    public ApiResponse<RoutineResponse> getRoutineById(@PathVariable Long id) {
+        return ApiResponse.<RoutineResponse>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy routine thành công")
+                .result(service.getRoutineById(id))
+                .build();
+    }
+
+    @GetMapping("/customer")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Routine cua thằng customer", description = "")
+    public ApiResponse<List<RoutineResponse>> getRoutineOfCustomer() {
+        return ApiResponse.<List<RoutineResponse>>builder()
+                .code(HttpStatus.OK.value())
+                .message("Lấy routine thành công")
+                .result(service.getRoutineOfCustomer())
+                .build();
+    }
+
+
+
 }

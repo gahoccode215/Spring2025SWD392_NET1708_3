@@ -1,7 +1,10 @@
-package com.swd392.skincare_products_sales_system.entity;
+package com.swd392.skincare_products_sales_system.entity.quiz;
 
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.entity.user.User;
+
+import com.swd392.skincare_products_sales_system.entity.AbstractEntity;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -27,7 +30,7 @@ public class Result extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false)
-     Quiz quiz;
+    Quiz quiz;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
