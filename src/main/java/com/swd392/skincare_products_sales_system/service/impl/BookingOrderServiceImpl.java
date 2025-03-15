@@ -199,6 +199,20 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
+    public BookingOrder getBookingOrderById(Long bookingOrderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+        return bookingOrder;
+    }
+
+    @Override
     public List<BookingOrder> getBookingOrder() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -411,9 +425,17 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
-            bookingOrder.setResponse(bookingOrder.getResponse());
+            bookingOrder.setResponse(status.getResponse());
         }
-
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .bookingOrder(bookingOrder)
+                .user(user)
+                .status(bookingOrder.getStatus())
+                .time(LocalDateTime.now())
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
+        bookingOrder.setStatus(status.getStatus());
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }

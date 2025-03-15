@@ -3,6 +3,7 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.swd392.skincare_products_sales_system.dto.request.routine.DailyRoutineRequest;
 import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCreateRequest;
 import com.swd392.skincare_products_sales_system.dto.request.routine.StepRequest;
+import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.DailyRoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.StepResponse;
@@ -18,14 +19,19 @@ import com.swd392.skincare_products_sales_system.entity.routine.Routine;
 import com.swd392.skincare_products_sales_system.entity.routine.Step;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +73,7 @@ public class RoutineServiceImpl implements RoutineService {
                 .startDate(request.getStartDate().toLocalDate())
                 .endDate(request.getEndDate().toLocalDate())
                 .user(user)
+                .bookingOrder(bookingOrder)
                 .build();
 
         routine.setIsDeleted(false);
@@ -122,6 +129,7 @@ public class RoutineServiceImpl implements RoutineService {
     private RoutineResponse convertToRoutineResponse(Routine routine) {
         RoutineResponse response = new RoutineResponse();
         response.setId(routine.getId());
+        response.setBookingOrderId(routine.getBookingOrder().getId());
         response.setRoutineName(routine.getRoutineName());
         response.setDescription(routine.getDescription());
         response.setStartDate(routine.getStartDate());
@@ -174,6 +182,27 @@ public class RoutineServiceImpl implements RoutineService {
     }
 
     @Override
+    public Routine updateStatusRoutine(Long routineId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        Routine routine = routineRepository.findByIdAndIsDeletedFalse(routineId)
+                .orElseThrow(() -> new AppException(ErrorCode.ROUTINE_NOT_EXISTED));
+        routine.setRoutineStatus(RoutineStatusEnum.DONE);
+        routineRepository.save(routine);
+        BookingOrder bookingOrder = bookingRepository.findById(routine.getBookingOrderId())
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+        bookingOrder.setStatus(BookingStatus.FINISHED_ROUTINE);
+        bookingRepository.save(bookingOrder);
+        return routine;
+    }
+
+    @Override
     public List<RoutineResponse> getAllRoutines() {
         return routineRepository.findAll()
                 .stream()
@@ -206,6 +235,8 @@ public class RoutineServiceImpl implements RoutineService {
                 .map(this::convertToRoutineResponse)
                 .collect(Collectors.toList());
     }
+
+
 
 
 

@@ -110,6 +110,8 @@ public enum ErrorCode {
     STEP_NOT_TODAY(2101, "Step not today", HttpStatus.BAD_REQUEST),
     INVALID_DAILY_ROUTINE(2102, "Step not today", HttpStatus.BAD_REQUEST),
     ROUTINE_NOT_EXISTED(2103, "Routine not existed", HttpStatus.BAD_REQUEST),
+    DAILY_ROUTINE_EXISTED(2104, "Daily routine existed", HttpStatus.BAD_REQUEST),
+    PRODUCT_NOT_IN_ROUTINE(2105, "Product not in routine", HttpStatus.BAD_REQUEST),
     ;
 
 

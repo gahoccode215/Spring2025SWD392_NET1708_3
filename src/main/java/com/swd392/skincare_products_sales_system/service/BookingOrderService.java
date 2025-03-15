@@ -22,5 +22,6 @@ public interface BookingOrderService {
     List<BookingOrder> listAllBookingOrder();
     BookingOrder cancelBookingOrder(Long bookingOrderId, String note);
     String updateBookingOrderStatus(PaymentBack paymentBack);
+    BookingOrder getBookingOrderById(Long bookingOrderId);
 
 }

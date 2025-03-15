@@ -79,6 +79,7 @@ public class QuizServiceImpl implements QuizService {
                 .title(quiz.getTitle())
                 .description(quiz.getDescription())
                 .status(Status.ACTIVE)
+                .isDeleted(false)
                 .build();
     }
 
@@ -180,12 +181,15 @@ public class QuizServiceImpl implements QuizService {
                             .map(answer -> AnswerResponse.builder()
                                     .answerId(answer.getId())
                                     .answerText(answer.getAnswerText())
+                                    .skinType(answer.getSkinType())
+                                    .isDeleted(answer.getIsDeleted())
                                     .build())
                             .collect(Collectors.toList());
 
                     return QuestionResponse.builder()
                             .questionId(question.getId())
                             .title(question.getTitle())
+                            .isDeleted(question.getIsDeleted())
                             .answers(answerResponses)
                             .build();
                 })
@@ -196,6 +200,7 @@ public class QuizServiceImpl implements QuizService {
                 .title(quiz.getTitle())
                 .description(quiz.getDescription())
                 .status(quiz.getStatus())
+                .isDeleted(quiz.getIsDeleted())
                 .question(questionResponses)
                 .build();
     }
@@ -300,12 +305,15 @@ public class QuizServiceImpl implements QuizService {
                             .map(answer -> AnswerResponse.builder()
                                     .answerId(answer.getId())
                                     .answerText(answer.getAnswerText())
+                                    .skinType(answer.getSkinType())
+                                    .isDeleted(answer.getIsDeleted())
                                     .build())
                             .collect(Collectors.toList());
 
                     return QuestionResponse.builder()
                             .questionId(question.getId())
                             .title(question.getTitle())
+                            .isDeleted(question.getIsDeleted())
                             .answers(answerResponses)
                             .build();
                 })
@@ -314,6 +322,7 @@ public class QuizServiceImpl implements QuizService {
         return QuizResponse.builder()
                 .id(quiz.getId())
                 .title(quiz.getTitle())
+                .isDeleted(quiz.getIsDeleted())
                 .description(quiz.getDescription())
                 .status(quiz.getStatus())
                 .question(questionResponses)

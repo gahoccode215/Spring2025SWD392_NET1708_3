@@ -71,5 +71,16 @@ public class AdminBookingOrderController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get Booking Order By Expert", description = "API này là để list ra những đơn liên quan tới thằng expert được giao ")
+    public ApiResponse<BookingOrder> getBookingOrderById(@PathVariable Long id) {
+        return ApiResponse.<BookingOrder>builder()
+                .code(HttpStatus.OK.value())
+                .message("Get BookingOrder successfully")
+                .result(service.getBookingOrderById(id))
+                .build();
+    }
+
 
 }
