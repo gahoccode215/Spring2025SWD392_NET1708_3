@@ -2,9 +2,11 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
+import com.swd392.skincare_products_sales_system.dto.response.BookingOrderResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -42,6 +44,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     SkincareServiceRepository serviceRepository;
     ProcessBookingOrderRepository processBookingOrderRepository;
     ImageSkinRepository imageSkinRepository;
+    ProductRepository productRepository;
     @Override
     public List<ExpertResponse> filterListExpert() {
         List<User> listUser = userRepository.findAll().stream()
@@ -199,7 +202,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
-    public BookingOrder getBookingOrderById(Long bookingOrderId) {
+    public BookingOrderResponse getBookingOrderById(Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -209,7 +212,29 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
         BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
-        return bookingOrder;
+        List<ImageSkin> imageSkins = imageSkinRepository.findAllByBookingOrderId(bookingOrderId);
+
+        BookingOrderResponse bookingOrderResponse = new BookingOrderResponse();
+        bookingOrderResponse.setBookingOrder(bookingOrder);
+        bookingOrderResponse.setImageSkin(imageSkins);
+        return bookingOrderResponse;
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        List<Product> list = productRepository.findAll()
+                .stream()
+                .filter(e -> !e.getIsDeleted() && e.getStatus().equals(Status.ACTIVE))
+                .toList();
+
+        return list;
     }
 
     @Override

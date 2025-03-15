@@ -183,6 +183,7 @@ public class QuizServiceImpl implements QuizService {
                                     .answerText(answer.getAnswerText())
                                     .skinType(answer.getSkinType())
                                     .isDeleted(answer.getIsDeleted())
+                                    .skinType(answer.getSkinType())
                                     .build())
                             .collect(Collectors.toList());
 
