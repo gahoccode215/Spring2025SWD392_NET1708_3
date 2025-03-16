@@ -330,6 +330,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .age(request.getAge())
                 .firstName(request.getFirstName())
                 .user(user)
+                .paymentStatus(PaymentStatus.NOT_PAID)
                 .date(LocalDateTime.now())
                 .serviceName(service.getServiceName())
                 .build();
