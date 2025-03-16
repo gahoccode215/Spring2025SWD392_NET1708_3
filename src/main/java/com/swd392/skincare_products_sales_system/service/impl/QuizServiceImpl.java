@@ -149,12 +149,15 @@ public class QuizServiceImpl implements QuizService {
                             .map(answer -> AnswerResponse.builder()
                                     .answerId(answer.getId())
                                     .answerText(answer.getAnswerText())
+                                    .skinType(answer.getSkinType())
+                                    .isDeleted(answer.getIsDeleted())
                                     .build())
                             .collect(Collectors.toList());
 
                     return QuestionResponse.builder()
                             .questionId(question.getId())
                             .title(question.getTitle())
+                            .isDeleted(question.getIsDeleted())
                             .answers(answerResponses)
                             .build();
                 })
