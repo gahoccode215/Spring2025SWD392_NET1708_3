@@ -11,30 +11,15 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: caubenhatnhut@gmail.com
-    password: nhatnhut123
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-  #  data:
-  #    redis:
-  #      port: 6379
-  #      host: localhost
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
   datasource:
-    url: jdbc:mysql://${AZURE_DB_HOST:azure-mysql-fpt.mysql.database.azure.com}:${AZURE_DB_PORT:3306}/${AZURE_DB_NAME:swp391-skincare-products-sales-system}?useSSL=true&requireSSL=false&serverTimezone=UTC
-    username: ${AZURE_DB_USERNAME:crosoficelldan}
-    password: ${AZURE_DB_PASSWORD:Sokaboy215}
+    url: jdbc:mysql://${AZURE_DB_HOST}:${AZURE_DB_PORT}/${AZURE_DB_NAME}?useSSL=true&requireSSL=false&serverTimezone=UTC
+    username: ${AZURE_DB_USERNAME}
+    password: ${AZURE_DB_PASSWORD}
     hikari:
       maximum-pool-size: 20
       connection-timeout: 30000
@@ -60,17 +45,12 @@ jwt:
   valid-duration: ${JWT_VALID_DURATION:3600} # in seconds
   refreshable-duration: ${JWT_REFRESHABLE_DURATION:36000} # in seconds
 vnpay:
-  tmnCode: M0R9Z6E1
-  hashSecret: 6Z3AGDLVVDYXEAE3JKBNI6LN2ARZXXST
+  tmnCode: ${VNPAY_TMN_CODE}
+  hashSecret: ${VNPAY_HASH_SECRET}
   url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
   returnUrl: http://localhost:8080/api/v1/swd392-skincare-products-sales-system/orders/payment-callback
 postmark:
   api:
-    key: ba355e86-7ee0-44c3-94fb-809826d15af5
+    key: ${POSTMART_API_KEY}
   from:
     address: minhdlcnse173451@fpt.edu.vn
-base:
-  be:
-    url: http://localhost:8080/api/v1/swd392-skincare-products-sales-system
-  fe:
-    url: http://localhost:5173
