@@ -122,6 +122,7 @@ public class QuizServiceImpl implements QuizService {
         quiz.setStatus(quizUpdateRequest.getStatus());
         quiz.setDescription(quizUpdateRequest.getDescription());
         quiz.setIsDeleted(false);
+        quiz.setStatus(quizUpdateRequest.getStatus());
         quizRepository.save(quiz);
 
         for (QuestionRequest questionRequest : quizUpdateRequest.getQuestions()) {
@@ -170,6 +171,7 @@ public class QuizServiceImpl implements QuizService {
                 .description(quiz.getDescription())
                 .status(quiz.getStatus())
                 .question(questionResponses)
+                .isDeleted(quiz.getIsDeleted())
                 .build();
     }
 
