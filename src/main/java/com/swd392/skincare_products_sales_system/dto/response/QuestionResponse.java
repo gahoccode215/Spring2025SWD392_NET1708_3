@@ -10,5 +10,6 @@ import java.util.List;
 public class QuestionResponse {
     private Long questionId;
     private String title;
+    Boolean isDeleted;
     private List<AnswerResponse> answers;
 }

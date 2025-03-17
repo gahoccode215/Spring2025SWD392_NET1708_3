@@ -11,6 +11,21 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: caubenhatnhut@gmail.com
+    password: nhatnhut123
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  #  data:
+  #    redis:
+  #      port: 6379
+  #      host: localhost
   servlet:
     multipart:
       enabled: true
@@ -54,8 +69,8 @@ postmark:
     key: ba355e86-7ee0-44c3-94fb-809826d15af5
   from:
     address: minhdlcnse173451@fpt.edu.vn
-
-
-
-
-
+base:
+  be:
+    url: http://localhost:8080/api/v1/swd392-skincare-products-sales-system
+  fe:
+    url: http://localhost:5173
