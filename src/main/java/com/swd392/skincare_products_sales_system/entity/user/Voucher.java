@@ -45,9 +45,6 @@ public class Voucher {
     @Enumerated(EnumType.STRING)
     Status status;
 
-    @Column(name = "quantity")
-    Integer quantity;
-
     @ManyToMany(mappedBy = "vouchers", cascade = CascadeType.ALL)
     @JsonIgnore
     List<User> users;

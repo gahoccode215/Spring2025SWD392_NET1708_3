@@ -1,6 +1,7 @@
 package com.swd392.skincare_products_sales_system.repository;
 
 import com.swd392.skincare_products_sales_system.entity.order.Order;
+import com.swd392.skincare_products_sales_system.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Modifying
     @Query("DELETE FROM Order o WHERE o.paymentMethod = com.swd392.skincare_products_sales_system.enums.PaymentMethod.VNPAY AND o.paymentStatus = com.swd392.skincare_products_sales_system.enums.PaymentStatus.NOT_PAID")
     void deleteUnpaidVnpayOrders();
+
+    @Query("SELECT SUM(o.totalAmount) FROM Order o WHERE o.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DONE")
+    Double sumTotalAmount();
+
+    @Query("SELECT COUNT(x) FROM Order x WHERE x.status = :status")
+    Long countOrdersByStatus(@Param("status") OrderStatus status);
 }

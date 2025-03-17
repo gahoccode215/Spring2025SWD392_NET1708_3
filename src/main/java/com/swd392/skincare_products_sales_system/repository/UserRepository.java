@@ -68,4 +68,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Modifying
     @Query("UPDATE User x SET x.status = :status WHERE x.id = :id AND x.isDeleted = false")
     void updateUserStatus(@Param("id") String id, @Param("status") Status status);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE u.isDeleted = false AND u.role.name = 'CUSTOMER'")
+    Long countByRoleCustomer();
 }

@@ -56,7 +56,6 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND));
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AppException(ErrorCode.ADDRESS_NOT_FOUND));
-//        Voucher findVoucher = voucherRepository.fin
         if (paymentMethod == null) {
             throw new AppException(ErrorCode.INVALID_PAYMENT_METHOD);
         }
@@ -77,11 +76,14 @@ public class OrderServiceImpl implements OrderService {
                 throw new AppException(ErrorCode.VOUCHER_MIN_ORDER_INVALID);
             }
             if (voucher.getDiscountType() == DiscountType.FIXED_AMOUNT) {
+                log.info("{}", voucher.getDiscount());
                 double newTotal = order.getTotalAmount() - voucher.getDiscount();
                 order.setTotalAmount(Math.max(newTotal, 0));
             }
             if (voucher.getDiscountType() == DiscountType.PERCENTAGE) {
-                double discountAmount = order.getTotalAmount() * (voucher.getDiscount() / 100);
+                log.info("{}", voucher.getDiscount());
+                double discountAmount = order.getTotalAmount() * ((double) voucher.getDiscount() / 100);
+                log.info("DISCOUNT NHIEU DAY {}", discountAmount);
                 order.setTotalAmount(Math.max(order.getTotalAmount() - discountAmount, 0));
             }
             user.removeVoucher(voucher);
@@ -271,7 +273,6 @@ public class OrderServiceImpl implements OrderService {
                 .username(cart.getUser().getUsername())
                 .orderDate(LocalDateTime.now())
                 .paymentMethod(paymentMethod)
-                .shippingFee(0.0)
                 .address(address)
                 .paymentStatus(PaymentStatus.NOT_PAID)
                 .status(OrderStatus.PENDING)
