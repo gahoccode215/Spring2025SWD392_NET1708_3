@@ -2,9 +2,8 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
-import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
-import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
+import com.swd392.skincare_products_sales_system.dto.response.*;
+import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.*;
 import com.swd392.skincare_products_sales_system.exception.AppException;
@@ -29,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +42,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     SkincareServiceRepository serviceRepository;
     ProcessBookingOrderRepository processBookingOrderRepository;
     ImageSkinRepository imageSkinRepository;
+    ProductRepository productRepository;
     @Override
     public List<ExpertResponse> filterListExpert() {
         List<User> listUser = userRepository.findAll().stream()
@@ -199,6 +200,42 @@ public class BookingOrderServiceImpl implements BookingOrderService {
     }
 
     @Override
+    public BookingOrderResponse getBookingOrderById(Long bookingOrderId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
+        List<ImageSkin> imageSkins = imageSkinRepository.findAllByBookingOrderId(bookingOrderId);
+
+        BookingOrderResponse bookingOrderResponse = new BookingOrderResponse();
+        bookingOrderResponse.setBookingOrder(bookingOrder);
+        bookingOrderResponse.setImageSkin(imageSkins);
+        return bookingOrderResponse;
+    }
+
+    @Override
+    public List<Product> getProducts() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        List<Product> list = productRepository.findAll()
+                .stream()
+                .filter(e -> !e.getIsDeleted() && e.getStatus().equals(Status.ACTIVE))
+                .toList();
+
+        return list;
+    }
+
+    @Override
     public List<BookingOrder> getBookingOrder() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -210,21 +247,48 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         List<BookingOrder> list = bookingRepository.findByUserAndIsDeletedFalse(user);
         return list;
     }
-
     @Override
-    public List<BookingOrder> getBookingOrderByExpertId() {
+    public List<BookingOrderResponse> getBookingOrderByExpertId() {
+        // Get authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
+        // Get current user
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        List<BookingOrder> list = bookingRepository.findAll()
+
+        // Get all booking orders for this expert
+        List<BookingOrder> bookingOrders = bookingRepository.findAll()
                 .stream()
-                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
-                .toList();
-        return list;
+                .filter(bookingOrder -> Objects.equals(bookingOrder.getExpertName(), user.getId()))
+                .collect(Collectors.toList());
+
+        // Get all related image skins
+        List<ImageSkin> imageSkins = imageSkinRepository.findAll()
+                .stream()
+                .filter(imageSkin -> bookingOrders.contains(imageSkin.getBookingOrder()))
+                .collect(Collectors.toList());
+
+        // Build response list
+        List<BookingOrderResponse> responseList = new ArrayList<>();
+
+        for (BookingOrder bookingOrder : bookingOrders) {
+            List<ImageSkin> relatedImageSkins = imageSkins.stream()
+                    .filter(imageSkin -> Objects.equals(imageSkin.getBookingOrder(), bookingOrder))
+                    .collect(Collectors.toList());
+
+            BookingOrderResponse response = BookingOrderResponse.builder()
+                    .bookingOrder(bookingOrder)
+                    .imageSkin(relatedImageSkins)
+                    .build();
+
+            responseList.add(response);
+        }
+
+        return responseList;
     }
 
     @Override
@@ -291,6 +355,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .age(request.getAge())
                 .firstName(request.getFirstName())
                 .user(user)
+                .paymentStatus(PaymentStatus.NOT_PAID)
                 .date(LocalDateTime.now())
                 .serviceName(service.getServiceName())
                 .build();
@@ -411,9 +476,17 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         if(bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT){
-            bookingOrder.setResponse(bookingOrder.getResponse());
+            bookingOrder.setResponse(status.getResponse());
         }
-
+        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
+                .bookingOrder(bookingOrder)
+                .user(user)
+                .status(bookingOrder.getStatus())
+                .time(LocalDateTime.now())
+                .build();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrderRepository.save(processBookingOrder);
+        bookingOrder.setStatus(status.getStatus());
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }

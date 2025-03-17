@@ -4,6 +4,8 @@ import com.swd392.skincare_products_sales_system.dto.request.routine.RoutineCrea
 import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
 import com.swd392.skincare_products_sales_system.entity.product.Product;
+import com.swd392.skincare_products_sales_system.entity.routine.DailyRoutine;
+import com.swd392.skincare_products_sales_system.entity.routine.Routine;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.service.RoutineService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,17 +29,17 @@ public class RoutineController {
     RoutineService service;
     ProductRepository productRepository;
 
-    @PostMapping("")
+    @PostMapping("/{bookingOrderId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a routine skincare for customer",
             description = "A Booking Order have only one routine skincare of customer"
     )
-    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest) {
+    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest,@PathVariable Long bookingOrderId) {
         return ApiResponse.<RoutineResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Submit Quiz successfully")
-                .result(service.makeRoutine(routineCreateRequest))
+                .result(service.makeRoutine(routineCreateRequest,bookingOrderId))
                 .build();
     }
 
@@ -86,6 +88,17 @@ public class RoutineController {
                 .code(HttpStatus.OK.value())
                 .message("Lấy routine thành công")
                 .result(service.getRoutineOfCustomer())
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Cap nhat trang thai routine", description = "")
+    public ApiResponse<Routine> updateStatusStep(@PathVariable Long id) {
+        return ApiResponse.<Routine>builder()
+                .code(HttpStatus.OK.value())
+                .message("Cap nhat thành công")
+                .result(service.updateStatusRoutine(id))
                 .build();
     }
 

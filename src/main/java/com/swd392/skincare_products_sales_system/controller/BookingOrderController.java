@@ -50,7 +50,7 @@ public class BookingOrderController {
                 .build();
     }
 
-    @PutMapping
+    @PutMapping("/{bookingOrderId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Change a status to do Booking Order", description = "API retrieve Booking Order ")
     public ApiResponse<BookingOrder> changeStatus(@RequestBody @Valid ChangeStatus status, @PathVariable Long bookingOrderId) {

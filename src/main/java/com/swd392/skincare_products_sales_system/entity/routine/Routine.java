@@ -48,6 +48,9 @@ public class Routine extends AbstractEntity {
     @Column
     String expertId;
 
+    @Column
+    Long bookingOrderId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "routine_status")
     RoutineStatusEnum routineStatus;

@@ -16,6 +16,7 @@ public class QuizResponse {
     String description;
     String title;
     Status status;
+    Boolean isDeleted;
     List<QuestionResponse> question;
 
 }
