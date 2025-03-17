@@ -29,17 +29,17 @@ public class RoutineController {
     RoutineService service;
     ProductRepository productRepository;
 
-    @PostMapping("")
+    @PostMapping("/{bookingOrderId}")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Create a routine skincare for customer",
             description = "A Booking Order have only one routine skincare of customer"
     )
-    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest) {
+    public ApiResponse<RoutineResponse> makeRoutine (@Valid @RequestBody RoutineCreateRequest routineCreateRequest,@PathVariable Long bookingOrderId) {
         return ApiResponse.<RoutineResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Submit Quiz successfully")
-                .result(service.makeRoutine(routineCreateRequest))
+                .result(service.makeRoutine(routineCreateRequest,bookingOrderId))
                 .build();
     }
 

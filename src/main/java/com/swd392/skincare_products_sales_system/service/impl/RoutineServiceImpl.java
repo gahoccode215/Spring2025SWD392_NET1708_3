@@ -52,7 +52,7 @@ public class RoutineServiceImpl implements RoutineService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public RoutineResponse makeRoutine(RoutineCreateRequest request) {
+    public RoutineResponse makeRoutine(RoutineCreateRequest request, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -63,7 +63,7 @@ public class RoutineServiceImpl implements RoutineService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(request.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findByIdAndIsDeletedFalse(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
 
         Routine routine = Routine.builder()
