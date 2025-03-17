@@ -147,7 +147,6 @@ public class VoucherServiceImpl implements VoucherService {
                 .minOrderValue(voucher.getMinOrderValue())
                 .description(voucher.getDescription())
                 .point(voucher.getPoint())
-                .quantity(voucher.getQuantity())
                 .build();
     }
     private User getAuthenticatedUser() {

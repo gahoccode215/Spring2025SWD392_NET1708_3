@@ -46,8 +46,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteBatch(String batchId) {
+        log.info("{}", batchId);
         Batch batch = batchRepository.findById(batchId).orElseThrow(() -> new AppException(ErrorCode.BATCH_NOT_FOUND));
-        batchRepository.delete(batch);
+        batchRepository.deleteById(batchId);
     }
 
     @Override
@@ -324,7 +325,7 @@ public class ProductServiceImpl implements ProductService {
                 .build();
     }
 
-    private SpecificationResponse toSpecificationResponse(Specification specification){
+    private SpecificationResponse toSpecificationResponse(Specification specification) {
         return SpecificationResponse.builder()
                 .origin(specification.getOrigin())
                 .brandOrigin(specification.getBrandOrigin())
@@ -359,6 +360,7 @@ public class ProductServiceImpl implements ProductService {
                 .userResponse(toUserResponse(feedBack.getUser()))
                 .build();
     }
+
     private UserResponse toUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())

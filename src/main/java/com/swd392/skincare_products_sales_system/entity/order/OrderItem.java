@@ -22,12 +22,12 @@ import java.util.List;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id; // Mã sản phẩm trong đơn hàng
+    Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnore
     @JoinColumn(name = "order_id", nullable = false)
-    Order order; // Liên kết với đơn hàng
+    Order order;
 
     @OneToMany(mappedBy = "orderItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
@@ -36,13 +36,12 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     @JoinColumn(name = "product_id", nullable = false)
-    Product product; // Liên kết với sản phẩm
+    Product product;
 
-    Integer quantity; // Số lượng sản phẩm
-    Double price; // Giá sản phẩm
-    Double totalPrice; // Tổng giá trị của sản phẩm trong đơn hàng
+    Integer quantity;
+    Double price;
+    Double totalPrice;
 
-    // Tính tổng giá trị của sản phẩm (price * quantity)
     public Double calculateTotalPrice() {
         return this.price * this.quantity;
     }

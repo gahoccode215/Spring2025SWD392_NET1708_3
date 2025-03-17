@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/products/**",
             "/brands/**",
             "/categories/**",
-            "/orders/payment-callback/**"
+            "/orders/payment-callback/**",
+            "/**"
     };
 
 

@@ -29,10 +29,10 @@ public class Order {
 
     @Column(name = "total_amount")
     Double totalAmount;
-    @Column(name = "order_info")
-    String orderInfo;
+
     @Column(name = "username")
     String username;
+
     @Column(name = "order_date")
     LocalDateTime orderDate;
 
@@ -57,16 +57,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     PaymentMethod paymentMethod;
 
-
-    Double shippingFee;
-
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     List<OrderItem> orderItems;
-
-    String discountCode;
-    Double discountAmount;
-    String deliveryTime;
 
     @Column(name = "image_order_success")
     String imageOrderSuccess;
