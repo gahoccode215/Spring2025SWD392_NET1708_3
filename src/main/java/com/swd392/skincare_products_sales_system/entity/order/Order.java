@@ -30,9 +30,6 @@ public class Order {
     @Column(name = "total_amount")
     Double totalAmount;
 
-    @Column(name = "order_info")
-    String orderInfo;
-
     @Column(name = "username")
     String username;
 
