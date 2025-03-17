@@ -255,24 +255,20 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
-        // Get current user
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        // Get all booking orders for this expert
         List<BookingOrder> bookingOrders = bookingRepository.findAll()
                 .stream()
                 .filter(bookingOrder -> Objects.equals(bookingOrder.getExpertName(), user.getId()))
                 .collect(Collectors.toList());
 
-        // Get all related image skins
         List<ImageSkin> imageSkins = imageSkinRepository.findAll()
                 .stream()
                 .filter(imageSkin -> bookingOrders.contains(imageSkin.getBookingOrder()))
                 .collect(Collectors.toList());
 
-        // Build response list
         List<BookingOrderResponse> responseList = new ArrayList<>();
 
         for (BookingOrder bookingOrder : bookingOrders) {
@@ -303,27 +299,30 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        if (!checkValidSpam()){
+        if (!checkValidSpam()) {
             throw new AppException(ErrorCode.BOOKING_VALID_SPAM);
         }
-        User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
+
+        User expert = userRepository.findUserById(request.getExpertId())
                 .orElse(null);
+
 
         SkincareService service = serviceRepository.findById(request.getSkincareServiceId())
                 .orElseThrow(() -> new AppException(ErrorCode.SERVICE_NOT_EXIST));
-        String expertName = "";
-        if(expert != null){
-            if (expert.getStatus().equals(Status.INACTIVE.name())) {
+
+        String expertName = null;
+
+        if (expert != null) {
+            if (expert.getStatus().equals(Status.INACTIVE)) {
                 throw new AppException(ErrorCode.USER_INACTIVE);
             }
             expertName = expert.getId();
-            if(!checkTimeOfExpert(expertName,request.getBookDate())){
+            if (!checkTimeOfExpert(expertName, request.getBookDate())) {
                 throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
             }
-        }else {
-            expertName = null;
         }
-        if (service.getStatus().equals(Status.INACTIVE.name())) {
+
+        if (service.getStatus().equals(Status.INACTIVE)) {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
@@ -339,8 +338,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                     })
                     .collect(Collectors.toList());
         }
-        List<User> list = new ArrayList<>();
 
+        // BookingOrder object creation
         BookingOrder bookingOrder = BookingOrder.builder()
                 .note(request.getNote())
                 .orderDate(LocalDateTime.now())
@@ -376,11 +375,12 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .build();
         processBookingOrder.setIsDeleted(false);
         processBookingOrderRepository.save(processBookingOrder);
+
         return FormResponse.builder()
                 .bookingOrderId(bookingOrder.getId())
                 .note(bookingOrder.getNote())
                 .skinType(bookingOrder.getSkinType())
-                .expertName(bookingOrder.getExpertName())
+                .expertName(expertName)
                 .allergy(bookingOrder.getAllergy())
                 .bookDate(bookingOrder.getOrderDate())
                 .price(bookingOrder.getPrice())
@@ -512,7 +512,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         long bookingCount = bookingRepository.countByUserAndOrderDateBetween(user,
                 currentDate.atStartOfDay(), currentDate.atTime(23, 59, 59));
 
-        return bookingCount <= 2;
+        return bookingCount <= 30;
     }
 
     private Boolean checkValidDatePayment(long bookingOrderId) {
@@ -532,6 +532,38 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         return true;
     }
 
+//    private Boolean checkTimeOfExpert(String expertId, LocalDateTime bookDate) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null || !authentication.isAuthenticated()) {
+//            throw new AppException(ErrorCode.UNAUTHENTICATED);
+//        }
+//
+//        String username = authentication.getName();
+//
+//        User user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+//
+//        User expert = userRepository.findByIdAndIsDeletedFalse(expertId)
+//                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+//
+//        LocalDateTime endTime = bookDate.plusHours(1);
+//        log.info("{}", endTime);
+//        List<BookingOrder> list = bookingRepository.findAll()
+//                .stream()
+//                .filter(bookingOrder -> bookingOrder.getExpertName().equals(expert.getId()))
+//                .toList();
+//
+//        for (BookingOrder existingBooking : list) {
+//            LocalDateTime existingStartTime = existingBooking.getOrderDate();
+//            LocalDateTime existingEndTime = existingStartTime.plusHours(1);
+//
+//            if (bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) {
+//                throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
+//            }
+//        }
+//
+//        return true;
+//    }
     private Boolean checkTimeOfExpert(String expertId, LocalDateTime bookDate) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -547,14 +579,20 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
 
         LocalDateTime endTime = bookDate.plusHours(1);
+        log.info("Checking availability for expert {} from {} to {}", expertId, bookDate, endTime);
 
-        List<BookingOrder> list = bookingRepository.findAll()
+        List<BookingOrder> conflictingBookings = bookingRepository.findAllByExpertNameAndIsDeletedFalse(expertId)
                 .stream()
-                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
                 .toList();
 
-        for (BookingOrder existingBooking : list) {
-            LocalDateTime existingStartTime = existingBooking.getOrderDate();
+        for (BookingOrder bookingOrder : conflictingBookings) {
+            String bookingExpertName = bookingOrder.getExpertName();
+
+            if (bookingExpertName == null || !bookingExpertName.equals(expertId)) {
+                continue;
+            }
+
+            LocalDateTime existingStartTime = bookingOrder.getOrderDate();
             LocalDateTime existingEndTime = existingStartTime.plusHours(1);
 
             if (bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) {
@@ -564,6 +602,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         return true;
     }
+
+
 
 
 

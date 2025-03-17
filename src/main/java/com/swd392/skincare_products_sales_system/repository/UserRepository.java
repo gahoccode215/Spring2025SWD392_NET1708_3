@@ -26,10 +26,12 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     User findByEmailAndStatus(String email, Status status);
 
+
     default User findByUsernameOrThrow(String username) {
         return findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
     }
+    Optional<User> findUserById(String id);
 
     Optional<User> findByUsername(String username);
 
@@ -71,4 +73,5 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.isDeleted = false AND u.role.name = 'CUSTOMER'")
     Long countByRoleCustomer();
+
 }
