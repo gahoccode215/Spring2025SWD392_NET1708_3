@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.entity.authentication.Role;
 import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.entity.booking.ImageSkin;
-import com.swd392.skincare_products_sales_system.entity.product.FeedBack;
+import com.swd392.skincare_products_sales_system.entity.product.Feedback;
 import com.swd392.skincare_products_sales_system.entity.quiz.Result;
 import com.swd392.skincare_products_sales_system.entity.routine.Routine;
 import com.swd392.skincare_products_sales_system.enums.Gender;
@@ -118,7 +118,7 @@ public class User extends AbstractEntity {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonIgnore
-    List<FeedBack> feedBacks;
+    List<Feedback> feedbacks;
 
 
     public void addOtp(Otp obj) {

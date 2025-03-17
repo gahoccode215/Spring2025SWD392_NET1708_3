@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     CategoryRepository categoryRepository;
     BatchRepository batchRepository;
     SpecificationRepository specificationRepository;
-    FeedBackRepository feedBackRepository;
+    FeedbackRepository feedBackRepository;
 
     @Override
     public void deleteBatch(String batchId) {
@@ -268,9 +268,9 @@ public class ProductServiceImpl implements ProductService {
     private ProductResponse toProductResponse(Product product) {
         Batch batch = batchRepository.findFirstBatchByProductIdAndQuantityGreaterThanZero(product.getId());
 
-        List<FeedBack> feedBacks = feedBackRepository.findAllByProductId(product.getId());
+        List<Feedback> feedbacks = feedBackRepository.findAllByProductId(product.getId());
 
-        List<FeedBackResponse> feedBackResponses = feedBacks.stream()
+        List<FeedBackResponse> feedBackResponses = feedbacks.stream()
                 .map(this::toFeedBackResponse)
                 .toList();
 
@@ -351,7 +351,7 @@ public class ProductServiceImpl implements ProductService {
         return stock;
     }
 
-    private FeedBackResponse toFeedBackResponse(FeedBack feedBack) {
+    private FeedBackResponse toFeedBackResponse(Feedback feedBack) {
         return FeedBackResponse.builder()
                 .id(feedBack.getId())
 //                .product(feedBack.getProduct())

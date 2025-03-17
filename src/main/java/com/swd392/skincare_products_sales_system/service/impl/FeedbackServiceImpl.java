@@ -5,10 +5,10 @@ import com.swd392.skincare_products_sales_system.dto.response.product.FeedBackRe
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.entity.product.FeedBack;
+import com.swd392.skincare_products_sales_system.entity.product.Feedback;
 import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.entity.user.User;
-import com.swd392.skincare_products_sales_system.repository.FeedBackRepository;
+import com.swd392.skincare_products_sales_system.repository.FeedbackRepository;
 import com.swd392.skincare_products_sales_system.repository.ProductRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
 import com.swd392.skincare_products_sales_system.service.FeedBackService;
@@ -26,9 +26,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class FeedBackServiceImpl implements FeedBackService {
+public class FeedbackServiceImpl implements FeedBackService {
     ProductRepository productRepository;
-    FeedBackRepository feedBackRepository;
+    FeedbackRepository feedBackRepository;
     UserRepository userRepository;
 
     @Override
@@ -36,7 +36,7 @@ public class FeedBackServiceImpl implements FeedBackService {
     public FeedBackResponse createFeedBack(FeedBackCreationRequest request, String productId) {
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         User user = getAuthenticatedUser();
-        FeedBack feedBack = FeedBack.builder()
+        Feedback feedBack = Feedback.builder()
                 .description(request.getDescription())
                 .rating(request.getRating())
                 .product(product)
@@ -54,14 +54,14 @@ public class FeedBackServiceImpl implements FeedBackService {
     }
     private void updateProductRating(Product product) {
         // Lấy tất cả rating của sản phẩm
-        List<FeedBack> feedbacks = feedBackRepository.findByProduct(product);
+        List<Feedback> feedbacks = feedBackRepository.findByProduct(product);
 
         // Tính tổng số rating
 //        int totalRatings = feedbacks.size();
 
         // Tính điểm trung bình của sản phẩm
         double averageRating = feedbacks.stream()
-                .mapToInt(FeedBack::getRating)
+                .mapToInt(Feedback::getRating)
                 .average()
                 .orElse(0.0);
 
