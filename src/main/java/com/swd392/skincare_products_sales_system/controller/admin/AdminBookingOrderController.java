@@ -6,6 +6,7 @@ import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.BookingOrderResponse;
 import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
 
+import com.swd392.skincare_products_sales_system.dto.response.ListBookingOrderResponse;
 import com.swd392.skincare_products_sales_system.entity.booking.BookingOrder;
 import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.service.BookingOrderService;
@@ -65,8 +66,8 @@ public class AdminBookingOrderController {
     @GetMapping("/booking-order-expert")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get Booking Order By Expert", description = "API này là để list ra những đơn liên quan tới thằng expert được giao ")
-    public ApiResponse<List<BookingOrder>> getAllBookingOrderOfExpert() {
-        return ApiResponse.<List<BookingOrder>>builder()
+    public ApiResponse<List<BookingOrderResponse>> getAllBookingOrderOfExpert() {
+        return ApiResponse.<List<BookingOrderResponse>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Get BookingOrder successfully")
                 .result(service.getBookingOrderByExpertId())

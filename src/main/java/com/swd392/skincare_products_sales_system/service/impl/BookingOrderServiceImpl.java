@@ -2,10 +2,7 @@
 package com.swd392.skincare_products_sales_system.service.impl;
 
 import com.swd392.skincare_products_sales_system.dto.request.booking_order.*;
-import com.swd392.skincare_products_sales_system.dto.response.BookingOrderResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ExpertResponse;
-import com.swd392.skincare_products_sales_system.dto.response.FormResponse;
-import com.swd392.skincare_products_sales_system.dto.response.PaymentOrderResponse;
+import com.swd392.skincare_products_sales_system.dto.response.*;
 import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.*;
@@ -250,21 +247,48 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         List<BookingOrder> list = bookingRepository.findByUserAndIsDeletedFalse(user);
         return list;
     }
-
     @Override
-    public List<BookingOrder> getBookingOrderByExpertId() {
+    public List<BookingOrderResponse> getBookingOrderByExpertId() {
+        // Get authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
+
+        // Get current user
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
-        return bookingRepository.findAll()
+        // Get all booking orders for this expert
+        List<BookingOrder> bookingOrders = bookingRepository.findAll()
                 .stream()
                 .filter(bookingOrder -> Objects.equals(bookingOrder.getExpertName(), user.getId()))
-                .toList();
+                .collect(Collectors.toList());
+
+        // Get all related image skins
+        List<ImageSkin> imageSkins = imageSkinRepository.findAll()
+                .stream()
+                .filter(imageSkin -> bookingOrders.contains(imageSkin.getBookingOrder()))
+                .collect(Collectors.toList());
+
+        // Build response list
+        List<BookingOrderResponse> responseList = new ArrayList<>();
+
+        for (BookingOrder bookingOrder : bookingOrders) {
+            List<ImageSkin> relatedImageSkins = imageSkins.stream()
+                    .filter(imageSkin -> Objects.equals(imageSkin.getBookingOrder(), bookingOrder))
+                    .collect(Collectors.toList());
+
+            BookingOrderResponse response = BookingOrderResponse.builder()
+                    .bookingOrder(bookingOrder)
+                    .imageSkin(relatedImageSkins)
+                    .build();
+
+            responseList.add(response);
+        }
+
+        return responseList;
     }
 
     @Override
