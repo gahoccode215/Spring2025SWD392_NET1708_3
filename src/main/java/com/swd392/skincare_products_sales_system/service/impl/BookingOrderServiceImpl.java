@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -259,11 +260,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-        List<BookingOrder> list = bookingRepository.findAll()
+
+        return bookingRepository.findAll()
                 .stream()
-                .filter(bookingOrder -> bookingOrder.getExpertName().equals(user.getId()))
+                .filter(bookingOrder -> Objects.equals(bookingOrder.getExpertName(), user.getId()))
                 .toList();
-        return list;
     }
 
     @Override
