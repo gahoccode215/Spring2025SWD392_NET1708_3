@@ -61,7 +61,7 @@ public class Product extends AbstractEntity {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonIgnore
-    List<FeedBack> feedBacks;
+    List<Feedback> feedbacks;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore

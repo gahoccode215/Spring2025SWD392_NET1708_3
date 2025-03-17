@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.swd392.skincare_products_sales_system.entity.user.User;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.swd392.skincare_products_sales_system.entity.product.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -19,7 +17,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @Table(name = "tbl_feedback")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FeedBack {
+public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

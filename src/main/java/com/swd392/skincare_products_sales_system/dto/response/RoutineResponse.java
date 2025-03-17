@@ -24,5 +24,6 @@ public class RoutineResponse {
      LocalDate endDate;
      RoutineStatusEnum routineStatus;
      String userId;
+     Long bookingOrderId;
      List<DailyRoutineResponse> dailyRoutines;
 }

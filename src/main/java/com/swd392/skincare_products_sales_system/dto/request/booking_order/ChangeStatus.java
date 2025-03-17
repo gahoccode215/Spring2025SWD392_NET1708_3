@@ -12,7 +12,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChangeStatus {
-    Long bookingOrderId;
     @Enumerated(EnumType.STRING)
     BookingStatus status;
     @NotNull
