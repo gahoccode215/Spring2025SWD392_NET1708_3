@@ -94,11 +94,11 @@ public class RoutineController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Cap nhat trang thai routine", description = "")
-    public ApiResponse<Routine> updateStatusStep(@PathVariable Long id) {
+    public ApiResponse<Routine> updateStatusStep(@PathVariable Long id, @RequestBody Long bookingOrderId ) {
         return ApiResponse.<Routine>builder()
                 .code(HttpStatus.OK.value())
                 .message("Cap nhat thành công")
-                .result(service.updateStatusRoutine(id))
+                .result(service.updateStatusRoutine(id,bookingOrderId))
                 .build();
     }
 
