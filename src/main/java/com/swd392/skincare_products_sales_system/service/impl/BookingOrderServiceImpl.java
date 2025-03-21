@@ -512,7 +512,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         long bookingCount = bookingRepository.countByUserAndOrderDateBetween(user,
                 currentDate.atStartOfDay(), currentDate.atTime(23, 59, 59));
 
-        return bookingCount <= 30;
+        return bookingCount <= 50;
     }
 
     private Boolean checkValidDatePayment(long bookingOrderId) {
@@ -595,7 +595,8 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             LocalDateTime existingStartTime = bookingOrder.getOrderDate();
             LocalDateTime existingEndTime = existingStartTime.plusHours(1);
 
-            if (bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) {
+            if ((bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) ||
+                    bookDate.isEqual(existingStartTime) || endTime.isEqual(existingEndTime)) {
                 throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
             }
         }
