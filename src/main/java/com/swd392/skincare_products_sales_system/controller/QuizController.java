@@ -5,6 +5,7 @@ import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
 import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
 import com.swd392.skincare_products_sales_system.entity.quiz.Question;
+import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.repository.QuestionRepository;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,8 +49,8 @@ public class QuizController {
             summary = "Submit an quiz",
             description = "API to get an existing quiz by providing the quiz ID and updated attributes such as title, questions, and answers."
     )
-    public ApiResponse<ResultResponse> submitQuiz(@Valid @PathVariable Long quizId, @RequestBody SubmitQuiz submitQuiz) {
-        return ApiResponse.<ResultResponse>builder()
+    public ApiResponse<SkinType> submitQuiz(@Valid @PathVariable Long quizId, @RequestBody SubmitQuiz submitQuiz) {
+        return ApiResponse.<SkinType>builder()
                 .code(HttpStatus.OK.value())
                 .message("Submit Quiz successfully")
                 .result(service.submitQuiz(submitQuiz, quizId))

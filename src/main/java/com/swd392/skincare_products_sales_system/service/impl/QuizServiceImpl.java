@@ -4,25 +4,19 @@ import com.swd392.skincare_products_sales_system.dto.request.quiz.*;
 import com.swd392.skincare_products_sales_system.dto.response.AnswerResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuestionResponse;
 import com.swd392.skincare_products_sales_system.dto.response.QuizResponse;
-import com.swd392.skincare_products_sales_system.dto.response.ResultResponse;
-import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.enums.SkinType;
 import com.swd392.skincare_products_sales_system.enums.Status;
 import com.swd392.skincare_products_sales_system.exception.AppException;
-import com.swd392.skincare_products_sales_system.entity.*;
 import com.swd392.skincare_products_sales_system.entity.quiz.Answer;
 import com.swd392.skincare_products_sales_system.entity.quiz.Question;
 import com.swd392.skincare_products_sales_system.entity.quiz.Quiz;
-import com.swd392.skincare_products_sales_system.entity.quiz.Result;
 import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.QuizService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
@@ -139,6 +133,7 @@ public class QuizServiceImpl implements QuizService {
 
                 answer.setAnswerText(answerRequest.getAnswerText());
                 answer.setQuestion(question);
+                answer.setSkinType(answerRequest.getSkinType());
                 answerRepository.save(answer);
             }
         }
@@ -212,28 +207,14 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public ResultResponse submitQuiz(SubmitQuiz submitQuiz, Long quizId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
+    public SkinType submitQuiz(SubmitQuiz submitQuiz, Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
 
         SkinType result = calculateQuizResult(quiz, submitQuiz.getAnswers());
 
-        Result resultEntity = new Result();
-        resultEntity.setQuiz(quiz);
-        resultEntity.setSkinType(result);
-        resultEntity.setUser(user);
-        resultRepository.save(resultEntity);
-        ResultResponse resultResponse = new ResultResponse();
-        resultResponse.setResult(result.toString());
-        return resultResponse;
+
+        return result;
     }
 
     @Override
@@ -279,26 +260,10 @@ public class QuizServiceImpl implements QuizService {
 
     @Override
     public List<QuizResponse> getAllQuiz() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
         List<Quiz> quizzes;
-        if (user.getRole().getId() == 2 || user.getRole().getId() == 6) {
             quizzes = quizRepository.findAll()
                     .stream()
                     .toList();
-        } else {
-            quizzes = quizRepository.findAll()
-                    .stream()
-                    .filter(quiz -> !quiz.getIsDeleted() && quiz.getStatus() == Status.ACTIVE)
-                    .collect(Collectors.toList());
-        }
-
         return quizzes.stream()
                 .map(this::convertToQuizResponse)
                 .collect(Collectors.toList());

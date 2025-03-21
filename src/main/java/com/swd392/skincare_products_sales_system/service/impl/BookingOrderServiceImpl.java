@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -512,7 +513,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         long bookingCount = bookingRepository.countByUserAndOrderDateBetween(user,
                 currentDate.atStartOfDay(), currentDate.atTime(23, 59, 59));
 
-        return bookingCount <= 2;
+        return bookingCount <= 10;
     }
 
     private Boolean checkValidDatePayment(long bookingOrderId) {
@@ -564,49 +565,51 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 //
 //        return true;
 //    }
-    private Boolean checkTimeOfExpert(String expertId, LocalDateTime bookDate) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
-        }
-
-        String username = authentication.getName();
-
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
-
-        User expert = userRepository.findByIdAndIsDeletedFalse(expertId)
-                .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
-
-        LocalDateTime endTime = bookDate.plusHours(1);
-        log.info("Checking availability for expert {} from {} to {}", expertId, bookDate, endTime);
-
-        List<BookingOrder> conflictingBookings = bookingRepository.findAllByExpertNameAndIsDeletedFalse(expertId)
-                .stream()
-                .toList();
-
-        for (BookingOrder bookingOrder : conflictingBookings) {
-            String bookingExpertName = bookingOrder.getExpertName();
-
-            if (bookingExpertName == null || !bookingExpertName.equals(expertId)) {
-                continue;
-            }
-
-            LocalDateTime existingStartTime = bookingOrder.getOrderDate();
-            LocalDateTime existingEndTime = existingStartTime.plusHours(1);
-
-            if ((bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) ||
-                    bookDate.isEqual(existingStartTime) || endTime.isEqual(existingEndTime)) {
-                throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
-            }
-        }
-
-        return true;
+private Boolean checkTimeOfExpert(String expertId, LocalDateTime bookDate) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated()) {
+        throw new AppException(ErrorCode.UNAUTHENTICATED);
     }
 
+    String username = authentication.getName();
+
+    User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+
+    User expert = userRepository.findByIdAndIsDeletedFalse(expertId)
+            .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
+
+    // Thời gian cuộc hẹn là 1 giờ (có thể thay đổi)
+    LocalDateTime endTime = bookDate.plusHours(1); // Hoặc plusMinutes(30), plusSeconds(3600), v.v.
+    log.info("Checking availability for expert {} from {} to {}", expertId, bookDate, endTime);
+
+    List<BookingOrder> conflictingBookings = bookingRepository.findAllByExpertNameAndIsDeletedFalse(expertId)
+            .stream()
+            .toList();
+
+    for (BookingOrder bookingOrder : conflictingBookings) {
+        log.info("Existing booking for expert {}: start {}, end {}",
+                bookingOrder.getExpertName(),
+                bookingOrder.getOrderDate(),
+                bookingOrder.getOrderDate().plusHours(1));
+
+        String bookingExpertName = bookingOrder.getExpertName();
+
+        if (bookingExpertName == null || !bookingExpertName.equals(expertId)) {
+            continue;
+        }
+
+        LocalDateTime existingStartTime = bookingOrder.getOrderDate();
+        LocalDateTime existingEndTime = existingStartTime.plusHours(1);
 
 
+        if (bookDate.isBefore(existingEndTime) && endTime.isAfter(existingStartTime)) {
+            throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
+        }
+    }
 
+    return true;
+}
 
 
 }

@@ -194,6 +194,7 @@ public class RoutineServiceImpl implements RoutineService {
 
         Routine routine = routineRepository.findByIdAndIsDeletedFalse(routineId)
                 .orElseThrow(() -> new AppException(ErrorCode.ROUTINE_NOT_EXISTED));
+
         routine.setRoutineStatus(RoutineStatusEnum.DONE);
         routineRepository.save(routine);
         BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
