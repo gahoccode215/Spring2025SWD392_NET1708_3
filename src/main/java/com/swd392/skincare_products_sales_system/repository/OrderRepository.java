@@ -9,6 +9,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT x FROM Order x WHERE x.username = :username")
@@ -31,4 +35,24 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(x) FROM Order x WHERE x.status = :status")
     Long countOrdersByStatus(@Param("status") OrderStatus status);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = com.swd392.skincare_products_sales_system.enums.OrderStatus.DONE")
+    Long countByStatusDone();
+
+    @Query("SELECT MIN(o.orderDate) FROM Order o WHERE o.status = :status")
+    LocalDate getMinOrderDate(OrderStatus status);
+
+    @Query("SELECT MAX(o.orderDate) FROM Order o WHERE o.status = :status")
+    LocalDate getMaxOrderDate(OrderStatus status);
+
+    @Query("SELECT o.orderDate, SUM(o.totalAmount) " +
+            "FROM Order o " +
+            "WHERE o.status = :status " +
+            "AND o.orderDate >= :startDate " +
+            "AND o.orderDate <= :endDate " +
+            "GROUP BY o.orderDate ORDER BY o.orderDate")
+    List<Object[]> getRevenueByDateRange(
+            @Param("status") OrderStatus status,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }

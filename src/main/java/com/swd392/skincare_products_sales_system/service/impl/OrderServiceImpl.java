@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
         });
         orderItemRepository.saveAll(orderItems);
         order.setOrderItems(orderItems);
-        if (voucherCode != null  ) {
+        if (voucherCode != null) {
             Voucher voucher = voucherRepository.findByCode(voucherCode).orElseThrow(() -> new AppException(ErrorCode.VOUCHER_NOT_FOUND));
             if (!user.getVouchers().contains(voucher)) {
                 throw new AppException(ErrorCode.VOUCHER_NOT_OWNED_BY_USER);
@@ -91,7 +91,7 @@ public class OrderServiceImpl implements OrderService {
         }
         log.info("TOTAL AMOUNT: {}", order.getTotalAmount());
         orderRepository.save(order);
-        if(order.getPaymentMethod() == PaymentMethod.COD){
+        if (order.getPaymentMethod() == PaymentMethod.COD) {
             clearCart(cart);
         }
         return mapToOrderResponse(order);
@@ -141,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
         if (user.getRole().getName().equals(PredefinedRole.STAFF)) {
             Page<Order> orders = orderRepository.findAll(pageable);
             List<OrderResponse> orderResponses = orders.getContent().stream()
-                    .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                    .map(this::mapToOrderResponse)
                     .collect(Collectors.toList());
             OrderPageResponse response = new OrderPageResponse();
             response.setOrderResponseList(orderResponses);
@@ -154,7 +154,7 @@ public class OrderServiceImpl implements OrderService {
         if (user.getRole().getName().equals(PredefinedRole.DELIVERY)) {
             Page<Order> orders = orderRepository.findAllByFiltersDelivery(pageable);
             List<OrderResponse> orderResponses = orders.getContent().stream()
-                    .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                    .map(this::mapToOrderResponse)
                     .collect(Collectors.toList());
             OrderPageResponse response = new OrderPageResponse();
             response.setOrderResponseList(orderResponses);
@@ -166,7 +166,7 @@ public class OrderServiceImpl implements OrderService {
         }
         Page<Order> orders = orderRepository.findAll(pageable);
         List<OrderResponse> orderResponses = orders.getContent().stream()
-                .map(this::mapToOrderResponse)  // FIX lỗi orderResponseItemList = null
+                .map(this::mapToOrderResponse)
                 .collect(Collectors.toList());
         OrderPageResponse response = new OrderPageResponse();
         response.setOrderResponseList(orderResponses);
@@ -192,7 +192,7 @@ public class OrderServiceImpl implements OrderService {
                 List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
                 int quantityDu = 0;
                 for (Batch batch : batchList) {
-                    if(batch.getQuantity() > 0){
+                    if (batch.getQuantity() > 0) {
                         if (orderItem.getQuantity() > batch.getQuantity()) {
                             quantityDu = orderItem.getQuantity() - batch.getQuantity();
                             batch.setQuantity(batch.getQuantity() - orderItem.getQuantity() - quantityDu);
@@ -207,6 +207,12 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
             });
+            User user = getAuthenticatedUser();
+            order.setStatus(orderStatus);
+            order.setUpdatedAt(LocalDateTime.now());
+            order.setUpdatedBy(user.getUsername());
+        }
+        if (orderStatus == OrderStatus.CANCELLED) {
             User user = getAuthenticatedUser();
             order.setStatus(orderStatus);
             order.setUpdatedAt(LocalDateTime.now());
@@ -230,7 +236,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void deliveryOrder(Long id, OrderStatus orderStatus, DeliveryRequest request) {
         Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
-        User user = getAuthenticatedUser();
+        User user = userRepository.findByUsernameOrThrow(order.getUsername());
         if (orderStatus.equals(OrderStatus.DELIVERING_FAIL)) {
             order.getOrderItems().forEach(orderItem -> {
                 List<Batch> batchList = batchRepository.findAllByProductId(orderItem.getProduct().getId());
@@ -242,8 +248,17 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
             });
+            order.setStatus(orderStatus);
+            order.setUpdatedAt(LocalDateTime.now());
+            order.setUpdatedBy(user.getUsername());
+            orderRepository.save(order);
+            return;
         }
-        user.setPoint((int) Math.round(order.getTotalAmount() / 1000));
+        if (order.getTotalAmount() > 0 && orderStatus.equals(OrderStatus.DONE)) {
+            int points = (int) Math.round(order.getTotalAmount() / 1000);
+            user.addPoint(points);
+        }
+        userRepository.save(user);
         order.setStatus(orderStatus);
         order.setPaymentStatus(PaymentStatus.PAID);
         order.setUpdatedAt(LocalDateTime.now());

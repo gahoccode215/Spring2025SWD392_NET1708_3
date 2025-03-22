@@ -98,6 +98,7 @@ public class ApplicationInitConfig {
                 .point(0)
                 .lastName("")
                 .firstName("")
+                .phone("")
                 .avatar("https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg")
                 .status(Status.ACTIVE)
                 .build();

@@ -37,17 +37,17 @@ public class User extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(name = "first_name", length = 255)
+    @Column(name = "first_name")
     String firstName;
 
-    @Column(name = "last_name", length = 255)
+    @Column(name = "last_name")
     String lastName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "gender")
     Gender gender;
 
-    @Column(name = "email", length = 255)
+    @Column(name = "email")
     String email;
 
     @Column(name = "phone", length = 15)
@@ -63,10 +63,10 @@ public class User extends AbstractEntity {
     @Column(name = "point")
     Integer point;
 
-    @Column(name = "username", unique = true, nullable = false, length = 255)
+    @Column(name = "username", unique = true, nullable = false)
     String username;
 
-    @Column(name = "password", length = 255)
+    @Column(name = "password")
     String password;
 
     @Column(name = "status")
@@ -112,7 +112,7 @@ public class User extends AbstractEntity {
     List<Routine> routines;
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     List<Otp> otps;
 
@@ -136,13 +136,17 @@ public class User extends AbstractEntity {
         vouchers.add(obj);
         obj.addUser(this);
     }
-    public void removeVoucher(Voucher obj){
-        for(Voucher voucher : vouchers){
-            if(voucher.getCode().equals(obj.getCode())) {
+
+    public void removeVoucher(Voucher obj) {
+        for (Voucher voucher : vouchers) {
+            if (voucher.getCode().equals(obj.getCode())) {
                 vouchers.remove(voucher);
                 obj.getUsers().remove(this);
                 break;
             }
         }
+    }
+    public void addPoint(Integer point) {
+        this.point += point;
     }
 }
