@@ -38,9 +38,17 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
+    @Column(name = "quantity")
     Integer quantity;
+
+    @Column(name = "price")
     Double price;
+
+    @Column(name = "total_price")
     Double totalPrice;
+
+    @Column(name = "is_feedback")
+    Boolean isFeedback;
 
     public Double calculateTotalPrice() {
         return this.price * this.quantity;

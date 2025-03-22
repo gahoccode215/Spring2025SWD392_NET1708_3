@@ -47,7 +47,6 @@ public class Batch {
     @Column(name = "expiration_date", nullable = false)
     LocalDate expirationDate;
 
-
     @Column(name = "created_at", length = 255)
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp

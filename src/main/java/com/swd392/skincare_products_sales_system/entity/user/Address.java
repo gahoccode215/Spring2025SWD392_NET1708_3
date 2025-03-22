@@ -22,13 +22,29 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+
+    @Column(name = "name")
     String name;
+
+    @Column(name = "phone")
     String phone;
+
+    @Column(name = "city")
     String city;
+
+    @Column(name = "district")
     String district;
+
+    @Column(name = "ward")
     String ward;
+
+    @Column(name = "street")
     String street;
+
+    @Column(name = "address_line")
     String addressLine;
+
+    @Column(name = "is_default")
     Boolean isDefault;
 
 

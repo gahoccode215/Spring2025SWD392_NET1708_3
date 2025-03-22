@@ -63,7 +63,7 @@ public class AdminOrderController {
         orderService.confirmOrder(orderId, orderStatus);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Đổi trạng thái sang" + orderStatus + " Thành công")
+                .message("Đổi trạng thái sang " + orderStatus + " Thành công")
                 .build();
     }
 
@@ -75,7 +75,7 @@ public class AdminOrderController {
         orderService.deliveringOrder(orderId, orderStatus);
         return ApiResponse.<Void>builder()
                 .code(HttpStatus.OK.value())
-                .message("Đổi trạng thái sang" + orderStatus + " Thành công")
+                .message("Đổi trạng thái sang " + orderStatus + " Thành công")
                 .build();
     }
 
@@ -84,6 +84,7 @@ public class AdminOrderController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DELIVERY')")
     public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus
             orderStatus, @RequestBody DeliveryRequest request) {
+        log.info("VAO DAY");
         orderService.removeUnpaidVnpayOrders();
         orderService.deliveryOrder(orderId, orderStatus, request);
         return ApiResponse.<Void>builder()

@@ -56,7 +56,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
         if(userRepository.existsByEmailAndStatus(request.getEmail(), Status.INACTIVE)){
-            userRepository.delete(userRepository.findByEmailAndStatus(request.getEmail(), Status.INACTIVE));
+            otpService.resendOtp(request.getUsername());
+             return null;
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);

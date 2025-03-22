@@ -3,14 +3,14 @@ package com.swd392.skincare_products_sales_system.service.impl;
 import com.swd392.skincare_products_sales_system.dto.request.product.FeedBackCreationRequest;
 import com.swd392.skincare_products_sales_system.dto.response.product.FeedBackResponse;
 import com.swd392.skincare_products_sales_system.dto.response.user.UserResponse;
+import com.swd392.skincare_products_sales_system.entity.order.Order;
+import com.swd392.skincare_products_sales_system.entity.order.OrderItem;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
 import com.swd392.skincare_products_sales_system.exception.AppException;
 import com.swd392.skincare_products_sales_system.entity.product.Feedback;
 import com.swd392.skincare_products_sales_system.entity.product.Product;
 import com.swd392.skincare_products_sales_system.entity.user.User;
-import com.swd392.skincare_products_sales_system.repository.FeedbackRepository;
-import com.swd392.skincare_products_sales_system.repository.ProductRepository;
-import com.swd392.skincare_products_sales_system.repository.UserRepository;
+import com.swd392.skincare_products_sales_system.repository.*;
 import com.swd392.skincare_products_sales_system.service.FeedBackService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +30,14 @@ public class FeedbackServiceImpl implements FeedBackService {
     ProductRepository productRepository;
     FeedbackRepository feedBackRepository;
     UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     @Transactional
-    public FeedBackResponse createFeedBack(FeedBackCreationRequest request, String productId) {
+    public FeedBackResponse createFeedBack(FeedBackCreationRequest request, String productId, Long orderId, Long orderItemId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        OrderItem orderItem = orderItemRepository.findById(orderItemId).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         Product product = productRepository.findByIdAndIsDeletedFalse(productId).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         User user = getAuthenticatedUser();
         Feedback feedBack = Feedback.builder()
@@ -44,6 +48,7 @@ public class FeedbackServiceImpl implements FeedBackService {
                 .build();
         feedBackRepository.save(feedBack);
         updateProductRating(product);
+        orderItem.setIsFeedback(true);
         return FeedBackResponse.builder()
                 .id(feedBack.getId())
                 .rating(feedBack.getRating())

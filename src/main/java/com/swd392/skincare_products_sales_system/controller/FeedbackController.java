@@ -20,12 +20,14 @@ import org.springframework.web.bind.annotation.*;
 public class FeedbackController {
     FeedBackService feedBackService;
 
-    @PostMapping("/{productId}")
+    @PostMapping("/{orderId}/{orderItemId}/{productId}")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('CUSTOMER')")
     public ApiResponse<FeedBackResponse> createFeedback(@RequestBody FeedBackCreationRequest request,
+                                                        @PathVariable Long orderId,
+                                                        @PathVariable Long orderItemId,
                                                         @PathVariable("productId") String productId) {
-        FeedBackResponse response = feedBackService.createFeedBack(request, productId);
+        FeedBackResponse response = feedBackService.createFeedBack(request, productId, orderId, orderItemId);
         return ApiResponse.<FeedBackResponse>builder()
                 .code(HttpStatus.OK.value())
                 .message("Đánh giá sản phẩm thành công")
