@@ -10,7 +10,7 @@ public interface RoutineService {
     RoutineResponse makeRoutine (RoutineCreateRequest request, Long bookingOrderId);
     RoutineResponse cancelRoutine (RoutineCreateRequest request, Long bookingOrderId);
     RoutineResponse updateRoutine (RoutineCreateRequest request, Long bookingOrderId);
-    Routine updateStatusRoutine(Long routineId);
+    Routine updateStatusRoutine(Long routineId, Long bookingOrderId);
     List<RoutineResponse> getAllRoutines();
     RoutineResponse getRoutineById(Long id);
     List<RoutineResponse> getRoutineOfCustomer();

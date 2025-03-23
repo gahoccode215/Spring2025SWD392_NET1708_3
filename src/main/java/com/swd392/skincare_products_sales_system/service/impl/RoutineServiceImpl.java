@@ -72,7 +72,8 @@ public class RoutineServiceImpl implements RoutineService {
                 .routineStatus(RoutineStatusEnum.PROCESSING)
                 .startDate(request.getStartDate().toLocalDate())
                 .endDate(request.getEndDate().toLocalDate())
-                .user(user)
+                .user(bookingOrder.getUser())
+                .expertId(user.getId())
                 .bookingOrder(bookingOrder)
                 .build();
 
@@ -182,7 +183,7 @@ public class RoutineServiceImpl implements RoutineService {
     }
 
     @Override
-    public Routine updateStatusRoutine(Long routineId) {
+    public Routine updateStatusRoutine(Long routineId, Long bookingOrderId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
@@ -195,7 +196,7 @@ public class RoutineServiceImpl implements RoutineService {
                 .orElseThrow(() -> new AppException(ErrorCode.ROUTINE_NOT_EXISTED));
         routine.setRoutineStatus(RoutineStatusEnum.DONE);
         routineRepository.save(routine);
-        BookingOrder bookingOrder = bookingRepository.findById(routine.getBookingOrderId())
+        BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
         bookingOrder.setStatus(BookingStatus.FINISHED_ROUTINE);
         bookingRepository.save(bookingOrder);
