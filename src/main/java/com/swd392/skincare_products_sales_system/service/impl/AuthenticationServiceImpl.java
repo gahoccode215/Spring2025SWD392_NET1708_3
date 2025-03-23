@@ -113,6 +113,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .authenticated(true)
                 .firstName(user.getFirstName())
                 .roleName(user.getRole().getName())
+                .firstName(user.getFirstName())
                 .build();
     }
 
