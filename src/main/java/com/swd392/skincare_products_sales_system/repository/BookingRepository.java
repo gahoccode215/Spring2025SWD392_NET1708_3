@@ -16,4 +16,6 @@ public interface BookingRepository extends JpaRepository<BookingOrder , Long> {
     long countByUserAndOrderDateBetween(User user, LocalDateTime startDate, LocalDateTime endDate);
     List<BookingOrder> findByUserAndIsDeletedFalse(User user);
     BookingOrder findByRoutine(Routine routine);
+    List<BookingOrder> findAllByExpertNameAndIsDeletedFalse(String expertName);
+
 }
