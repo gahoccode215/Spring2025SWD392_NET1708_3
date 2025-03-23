@@ -34,38 +34,37 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public DashboardResponse getDashboardData(LocalDate startDate, LocalDate endDate) {
-//        log.info("Getting dashboard data");
-//        DashboardResponse dashboard = new DashboardResponse();
-//
-//        // Lấy tổng doanh thu từ các đơn hàng
-//        Double totalRevenue = orderRepository.sumTotalAmount();
-//        dashboard.setTotalRevenue(totalRevenue != null ? totalRevenue : 0);
-//
-//        Long totalOrdersDone = orderRepository.countByStatusDone();
-//        dashboard.setTotalOrdersDone(totalOrdersDone != null ? totalOrdersDone.intValue() : 0);
-//
-//        Long totalCustomers = userRepository.countByRoleCustomer();
-//        dashboard.setTotalCustomers(totalCustomers != null ? totalCustomers.intValue() : 0);
-//
-//        Long totalProductsSold = orderItemRepository.getTotalQuantitySold();
-//        dashboard.setTotalProductsSold(totalProductsSold != null ? totalProductsSold.intValue() : 0);
-//
-////        List<Double> monthlyRevenue = getMonthlyRevenueData();
-////        dashboard.setMonthlyRevenue(monthlyRevenue);
-//
-//        List<RevenueByTime> revenueByTimes = getRevenueByDateRange(startDate, endDate);
-//        dashboard.setRevenueByTimes(revenueByTimes);
-//
-//        dashboard.setRevenueByTimes(getRevenueByDateRange(startDate, endDate));
-//
-//
-//        List<OrderStatusDTO> orderStatuses = getOrderStatuses();
-//        dashboard.setOrderStatuses(orderStatuses);
-//
-//        List<TopSellingProductDTO> topSellingProducts = getTopSellingProducts(5);
-//        dashboard.setTopSellingProducts(topSellingProducts);
-//        return dashboard;
-        return null;
+        log.info("Getting dashboard data");
+        DashboardResponse dashboard = new DashboardResponse();
+
+        // Lấy tổng doanh thu từ các đơn hàng
+        Double totalRevenue = orderRepository.sumTotalAmount();
+        dashboard.setTotalRevenue(totalRevenue != null ? totalRevenue : 0);
+
+        Long totalOrdersDone = orderRepository.countByStatusDone();
+        dashboard.setTotalOrdersDone(totalOrdersDone != null ? totalOrdersDone.intValue() : 0);
+
+        Long totalCustomers = userRepository.countByRoleCustomer();
+        dashboard.setTotalCustomers(totalCustomers != null ? totalCustomers.intValue() : 0);
+
+        Long totalProductsSold = orderItemRepository.getTotalQuantitySold();
+        dashboard.setTotalProductsSold(totalProductsSold != null ? totalProductsSold.intValue() : 0);
+
+//        List<Double> monthlyRevenue = getMonthlyRevenueData();
+//        dashboard.setMonthlyRevenue(monthlyRevenue);
+
+        List<RevenueByTime> revenueByTimes = getRevenueByDateRange(startDate, endDate);
+        dashboard.setRevenueByTimes(revenueByTimes);
+
+        dashboard.setRevenueByTimes(getRevenueByDateRange(startDate, endDate));
+
+
+        List<OrderStatusDTO> orderStatuses = getOrderStatuses();
+        dashboard.setOrderStatuses(orderStatuses);
+
+        List<TopSellingProductDTO> topSellingProducts = getTopSellingProducts(5);
+        dashboard.setTopSellingProducts(topSellingProducts);
+        return dashboard;
     }
 
 
