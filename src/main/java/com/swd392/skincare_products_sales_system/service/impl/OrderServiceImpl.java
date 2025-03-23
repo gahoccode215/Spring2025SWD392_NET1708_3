@@ -311,6 +311,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderResponse mapToOrderResponse(Order order) {
         List<OrderItemResponse> itemResponses = order.getOrderItems().stream()
                 .map(item -> OrderItemResponse.builder()
+                        .id(item.getId())
+                        .productId(item.getProduct().getId())
                         .productName(item.getProduct().getName())
                         .quantity(item.getQuantity())
                         .price(item.getPrice())
@@ -328,7 +330,6 @@ public class OrderServiceImpl implements OrderService {
         return OrderResponse.builder()
                 .orderId(order.getId())
                 .totalAmount(order.getTotalAmount())
-                .orderInfo("Order placed successfully for " + order.getUsername())
                 .username(order.getUsername())
                 .orderDate(order.getOrderDate())
                 .paymentMethod(order.getPaymentMethod())
