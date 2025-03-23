@@ -74,7 +74,7 @@ public class OrderController {
 //                    .build();
 //        }
 
-        String orderId = params.get("vnp_TxnRef");
+        String orderId = params.get("orderId");
         String responseCode = params.get("vnp_ResponseCode");
         boolean isPaid = "00" .equals(responseCode);
 

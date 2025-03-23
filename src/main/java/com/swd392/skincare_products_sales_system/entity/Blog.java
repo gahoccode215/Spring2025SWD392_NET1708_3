@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Entity
 @Table(name = "tbl_blog")
-public class Blog extends AbstractEntity{
+public class Blog extends AbstractEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +35,7 @@ public class Blog extends AbstractEntity{
     @Column
     @NotNull(message = "Description cannot be null")
     @Size(min = 5)
+    @Lob
     String description;
 
     @Column
@@ -49,6 +50,5 @@ public class Blog extends AbstractEntity{
 
     @Column
     String createdBy;
-
 
 }

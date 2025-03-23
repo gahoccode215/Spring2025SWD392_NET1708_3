@@ -34,4 +34,4 @@ public class Role extends AbstractEntity {
     @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
     Set<User> users;
 
-    }
+}

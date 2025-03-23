@@ -73,10 +73,6 @@ public class Product extends AbstractEntity {
     @JoinColumn(name = "category_id")
     Category category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JsonIgnore
-    @JoinColumn(name = "skin_type_id")
-    SkinType skinType;
 
     @OneToMany(mappedBy = "product")
     List<Step> steps;
