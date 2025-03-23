@@ -83,8 +83,7 @@ public class AdminOrderController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'DELIVERY')")
     public ApiResponse<Void> deliveryOrder(@PathVariable Long orderId, @RequestParam OrderStatus
-            orderStatus, @RequestBody DeliveryRequest request) {
-        log.info("VAO DAY");
+            orderStatus, @RequestBody(required = false) DeliveryRequest request) {
         orderService.removeUnpaidVnpayOrders();
         orderService.deliveryOrder(orderId, orderStatus, request);
         return ApiResponse.<Void>builder()

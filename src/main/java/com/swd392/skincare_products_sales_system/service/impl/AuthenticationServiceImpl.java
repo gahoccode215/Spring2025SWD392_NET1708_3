@@ -55,9 +55,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        if(userRepository.existsByEmailAndStatus(request.getEmail(), Status.INACTIVE)){
-            otpService.resendOtp(request.getUsername());
-             return null;
+        User user1 = userRepository.findByEmailAndStatus(request.getEmail(), Status.INACTIVE);
+        log.info("{}", user1);
+        if (user1 != null) {
+            userRepository.deleteById(user1.getId());
         }
         if (userRepository.findByEmail(request.getEmail()).isPresent())
             throw new AppException(ErrorCode.EMAIL_EXISTED);
@@ -110,6 +111,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return LoginResponse.builder()
                 .token(jwtUtil.generateToken(user))
                 .authenticated(true)
+                .firstName(user.getFirstName())
                 .roleName(user.getRole().getName())
                 .build();
     }
@@ -210,7 +212,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
         Otp otp = otpService.generateAndSaveOtp(user.getId());
         try {
-            postmarkService.sendForgotPassword(user.getEmail(),user.getUsername() ,otp.getOtp());
+            postmarkService.sendForgotPassword(user.getEmail(), user.getUsername(), otp.getOtp());
         } catch (Exception e) {
             throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
         }

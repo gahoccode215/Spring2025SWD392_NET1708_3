@@ -6,6 +6,8 @@ import com.swd392.skincare_products_sales_system.dto.TopSellingProductDTO;
 import com.swd392.skincare_products_sales_system.dto.response.DashboardResponse;
 import com.swd392.skincare_products_sales_system.dto.response.TopSellingProductResponse;
 import com.swd392.skincare_products_sales_system.enums.OrderStatus;
+import com.swd392.skincare_products_sales_system.enums.PaymentStatus;
+import com.swd392.skincare_products_sales_system.repository.BookingRepository;
 import com.swd392.skincare_products_sales_system.repository.OrderItemRepository;
 import com.swd392.skincare_products_sales_system.repository.OrderRepository;
 import com.swd392.skincare_products_sales_system.repository.UserRepository;
@@ -31,6 +33,7 @@ public class DashboardServiceImpl implements DashboardService {
     UserRepository userRepository;
     OrderRepository orderRepository;
     OrderItemRepository orderItemRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public DashboardResponse getDashboardData(LocalDate startDate, LocalDate endDate) {
@@ -49,9 +52,6 @@ public class DashboardServiceImpl implements DashboardService {
 
         Long totalProductsSold = orderItemRepository.getTotalQuantitySold();
         dashboard.setTotalProductsSold(totalProductsSold != null ? totalProductsSold.intValue() : 0);
-
-//        List<Double> monthlyRevenue = getMonthlyRevenueData();
-//        dashboard.setMonthlyRevenue(monthlyRevenue);
 
         List<RevenueByTime> revenueByTimes = getRevenueByDateRange(startDate, endDate);
         dashboard.setRevenueByTimes(revenueByTimes);
@@ -115,6 +115,11 @@ public class DashboardServiceImpl implements DashboardService {
 
         // Lấy dữ liệu doanh thu từ repository
         List<Object[]> result = orderRepository.getRevenueByDateRange(OrderStatus.DONE, startDateTime, endDateTime);
+
+        List<Object[]> bookingResults = bookingRepository.getRevenueByDateRange(PaymentStatus.PAID, startDateTime, endDateTime);
+
+        // Thêm bookingResults vào result
+        result.addAll(bookingResults);
 
         // Ánh xạ kết quả vào DTO RevenueByTime
         return result.stream()
