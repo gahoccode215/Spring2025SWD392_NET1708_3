@@ -65,8 +65,34 @@ public class OtpServiceImpl implements OtpService {
     @Override
     @Transactional
     public void resendOtp(String userId) {
-        // Lấy người dùng từ ID
         User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        // Vô hiệu hóa OTP cũ (nếu có)
+        Optional<Otp> existingOtp = otpRepository.findByUser(user);
+        existingOtp.ifPresent(otp -> {
+            otp.setExpirationTime(new Date()); // Thay đổi thời gian hết hạn để đánh dấu OTP cũ là không hợp lệ
+            otpRepository.save(otp); // Lưu lại OTP đã vô hiệu hóa
+        });
+
+        // Tạo OTP mới
+        Otp newOtp = generateOtpForUser(user);
+
+        // Gửi OTP mới qua email
+        try {
+            postmarkService.sendVerificationEmailWithOTP(user.getEmail(), user.getUsername(), newOtp.getOtp());
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.EMAIL_SEND_FAILED);
+        }
+
+        // Lưu OTP mới vào cơ sở dữ liệu
+        otpRepository.save(newOtp);
+    }
+
+    @Override
+    @Transactional
+    public void resendOtpByEmail(String email) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         // Vô hiệu hóa OTP cũ (nếu có)

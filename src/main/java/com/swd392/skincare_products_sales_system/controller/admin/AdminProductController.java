@@ -54,7 +54,7 @@ public class AdminProductController {
                 .build();
     }
 
-    @PutMapping("{productId}")
+    @PutMapping("/{productId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Cập nhật sản phẩm (ADMIN, MANAGER)", description = "API Cập nhật sản phẩm bằng Id")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

@@ -12,4 +12,5 @@ public class LoginResponse {
     String token;
     boolean authenticated;
     String roleName;
+    String firstName;
 }

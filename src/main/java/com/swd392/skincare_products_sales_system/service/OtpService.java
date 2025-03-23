@@ -7,4 +7,5 @@ public interface OtpService {
     boolean validateOtp(String userId, String otp);
     void resendOtp(String userId);
     void verifyOtp(String userId, String otpCode);
+    void resendOtpByEmail(String email);
 }

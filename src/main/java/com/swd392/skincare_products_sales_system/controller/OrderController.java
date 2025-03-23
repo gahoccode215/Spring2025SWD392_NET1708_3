@@ -49,6 +49,7 @@ public class OrderController {
         String clientIp = getClientIp(request);
         if (paymentMethod == PaymentMethod.VNPAY) {
             OrderResponse orderResponse = orderService.createOrder(cartId, addressId, paymentMethod, voucherCode);
+            log.info("{}", vnPayService.createPaymentUrl(orderResponse.getOrderId(), orderResponse.getTotalAmount(), clientIp));
             return ApiResponse.<Void>builder()
                     .code(HttpStatus.OK.value())
                     .message("Chuyển hướng sang VNPay")

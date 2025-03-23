@@ -27,8 +27,6 @@ public class VNPayService {
     @Value("${vnpay.url}")
     private String vnpUrl;
 
-    @Value("${vnpay.returnUrl}")
-    private String returnUrl;
 
     public String createPaymentUrl(Long orderId, Double amount, String ipAddress) throws UnsupportedEncodingException {
         Map<String, String> params = new HashMap<>();
@@ -51,7 +49,7 @@ public class VNPayService {
 
         Calendar expireCalendar = Calendar.getInstance();
         expireCalendar.setTime(new Date());
-        expireCalendar.add(Calendar.MINUTE, 20);
+        expireCalendar.add(Calendar.MINUTE, 50);
         String expireDate = sdf.format(expireCalendar.getTime());
         params.put("vnp_ExpireDate", expireDate);
 
