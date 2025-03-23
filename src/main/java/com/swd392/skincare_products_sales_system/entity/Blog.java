@@ -22,7 +22,7 @@ public class Blog extends AbstractEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "content", columnDefinition = "TEXT")
+    @Column(name = "content", columnDefinition = "TEXT", length = 200000)
     @NotNull(message = "Content cannot be null")
     @Size(min = 20)
     String content;
@@ -32,7 +32,7 @@ public class Blog extends AbstractEntity {
     @Size(min = 5)
     String blogName;
 
-    @Column
+    @Column(length = 200000)
     @NotNull(message = "Description cannot be null")
     @Size(min = 5)
     @Lob
