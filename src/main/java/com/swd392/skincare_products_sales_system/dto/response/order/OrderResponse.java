@@ -19,7 +19,6 @@ import java.util.List;
 public class OrderResponse {
     Long orderId;
     Double totalAmount;
-    String orderInfo;
     OrderStatus status;
     String username;
     LocalDateTime orderDate;
