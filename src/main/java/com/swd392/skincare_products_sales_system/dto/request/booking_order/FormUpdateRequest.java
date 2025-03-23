@@ -30,6 +30,6 @@ public class FormUpdateRequest {
     String expertId;
     String firstName;
     String lastName;
-    Integer age;
+    LocalDateTime age;
     List<ImageSkinRequest> imageSkin;
 }

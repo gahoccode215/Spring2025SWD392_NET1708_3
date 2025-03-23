@@ -352,13 +352,15 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .expertName(expertName)
                 .skincareService(service)
                 .lastName(request.getLastName())
-                .age(request.getAge())
                 .firstName(request.getFirstName())
                 .user(user)
                 .paymentStatus(PaymentStatus.NOT_PAID)
                 .date(LocalDateTime.now())
                 .serviceName(service.getServiceName())
                 .build();
+
+        LocalDateTime dateTime = request.getAge();
+        bookingOrder.setAge(dateTime.getYear());
         bookingOrder.setIsDeleted(false);
         bookingRepository.save(bookingOrder);
 
@@ -445,6 +447,9 @@ public class BookingOrderServiceImpl implements BookingOrderService {
                 .date(booking.getDate())
                 .serviceName(service.getServiceName())
                 .build();
+        LocalDateTime dateTime = request.getAge();
+        bookingOrder.setAge(dateTime.getYear());
+        bookingOrder.setIsDeleted(false);
         bookingRepository.save(bookingOrder);
         return FormResponse.builder()
                 .note(bookingOrder.getNote())

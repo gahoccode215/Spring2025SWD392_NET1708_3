@@ -35,7 +35,7 @@ public class FormCreateRequest {
     String lastName;
     @NotNull(message = "FirstName cannot be null")
     String firstName;
-    Integer age;
+    LocalDateTime age;
     List<ImageSkinRequest> imageSkins;
     PaymentStatus paymentStatus;
 
