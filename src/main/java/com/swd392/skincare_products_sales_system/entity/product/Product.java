@@ -32,7 +32,7 @@ public class Product extends AbstractEntity {
     @Column(name = "slug")
     String slug;
 
-    @Column(name = "description", columnDefinition = "TEXT", length = 20000)
+    @Column(name = "description", columnDefinition = "TEXT", length = 16000)
     String description;
 
     @Column(name = "ingredient")
