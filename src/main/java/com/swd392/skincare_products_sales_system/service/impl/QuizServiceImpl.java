@@ -210,10 +210,7 @@ public class QuizServiceImpl implements QuizService {
     public SkinType submitQuiz(SubmitQuiz submitQuiz, Long quizId) {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new AppException(ErrorCode.QUIZ_NOT_FOUND));
-
         SkinType result = calculateQuizResult(quiz, submitQuiz.getAnswers());
-
-
         return result;
     }
 
@@ -263,6 +260,7 @@ public class QuizServiceImpl implements QuizService {
         List<Quiz> quizzes;
             quizzes = quizRepository.findAll()
                     .stream()
+                    .filter(quiz -> !quiz.getIsDeleted())
                     .toList();
         return quizzes.stream()
                 .map(this::convertToQuizResponse)

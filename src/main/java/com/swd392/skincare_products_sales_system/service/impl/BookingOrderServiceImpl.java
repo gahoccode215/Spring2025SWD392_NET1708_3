@@ -513,7 +513,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         long bookingCount = bookingRepository.countByUserAndOrderDateBetween(user,
                 currentDate.atStartOfDay(), currentDate.atTime(23, 59, 59));
 
-        return bookingCount <= 10;
+        return bookingCount <= 2;
     }
 
     private Boolean checkValidDatePayment(long bookingOrderId) {
