@@ -87,6 +87,7 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         if (!checkTimeOfExpert(expertName, bookingOrder.getOrderDate())) {
             throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
         }
+        bookingOrder.setExpertName(expertName);
         ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
                 .user(user)
                 .bookingOrder(bookingOrder)
