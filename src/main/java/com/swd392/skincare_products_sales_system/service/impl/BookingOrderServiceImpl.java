@@ -83,8 +83,10 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         User expert = userRepository.findByIdAndIsDeletedFalse(request.getExpertId())
                 .orElseThrow(() -> new AppException(ErrorCode.EXPERT_NOT_EXIST));
-
-        bookingOrder.setExpertName(expert.getId());
+       String expertName = request.getExpertId();
+        if (!checkTimeOfExpert(expertName, bookingOrder.getOrderDate())) {
+            throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
+        }
         ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
                 .user(user)
                 .bookingOrder(bookingOrder)
