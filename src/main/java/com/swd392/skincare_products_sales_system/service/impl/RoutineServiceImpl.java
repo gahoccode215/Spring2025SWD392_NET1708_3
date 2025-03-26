@@ -7,6 +7,7 @@ import com.swd392.skincare_products_sales_system.dto.response.ApiResponse;
 import com.swd392.skincare_products_sales_system.dto.response.DailyRoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.RoutineResponse;
 import com.swd392.skincare_products_sales_system.dto.response.StepResponse;
+import com.swd392.skincare_products_sales_system.entity.booking.ProcessBookingOrder;
 import com.swd392.skincare_products_sales_system.entity.user.User;
 import com.swd392.skincare_products_sales_system.enums.BookingStatus;
 import com.swd392.skincare_products_sales_system.enums.ErrorCode;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +51,7 @@ public class RoutineServiceImpl implements RoutineService {
     StepRepository stepRepository;
     DailyRoutineRepository dailyRoutineRepository;
     ProductRepository productRepository;
+    ProcessBookingOrderRepository processBookingOrderRepository;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -121,6 +124,13 @@ public class RoutineServiceImpl implements RoutineService {
 
         bookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
         bookingOrder.setRoutine(routine);
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setUser(user);
+        processBookingOrder.setBookingOrder(bookingOrder);
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrder.setStatus(BookingStatus.IN_PROGRESS_ROUTINE);
+        processBookingOrder.setTime(LocalDateTime.now());
+        processBookingOrderRepository.save(processBookingOrder);
         bookingRepository.save(bookingOrder);
 
         return convertToRoutineResponse(routine);
@@ -200,6 +210,13 @@ public class RoutineServiceImpl implements RoutineService {
         BookingOrder bookingOrder = bookingRepository.findById(bookingOrderId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKING_NOT_EXIST));
         bookingOrder.setStatus(BookingStatus.FINISHED_ROUTINE);
+        ProcessBookingOrder  processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setIsDeleted(false);
+        processBookingOrder.setStatus(bookingOrder.getStatus());
+        processBookingOrder.setTime(LocalDateTime.now());
+        processBookingOrder.setUser(user);
+        processBookingOrder.setBookingOrder(bookingOrder);
+        processBookingOrderRepository.save(processBookingOrder);
         bookingRepository.save(bookingOrder);
         return routine;
     }
