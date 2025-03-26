@@ -76,14 +76,11 @@ public class OrderServiceImpl implements OrderService {
                 throw new AppException(ErrorCode.VOUCHER_MIN_ORDER_INVALID);
             }
             if (voucher.getDiscountType() == DiscountType.FIXED_AMOUNT) {
-                log.info("{}", voucher.getDiscount());
                 double newTotal = order.getTotalAmount() - voucher.getDiscount();
                 order.setTotalAmount(Math.max(newTotal, 0));
             }
             if (voucher.getDiscountType() == DiscountType.PERCENTAGE) {
-                log.info("{}", voucher.getDiscount());
                 double discountAmount = order.getTotalAmount() * ((double) voucher.getDiscount() / 100);
-                log.info("DISCOUNT NHIEU DAY {}", discountAmount);
                 order.setTotalAmount(Math.max(order.getTotalAmount() - discountAmount, 0));
             }
             user.removeVoucher(voucher);
