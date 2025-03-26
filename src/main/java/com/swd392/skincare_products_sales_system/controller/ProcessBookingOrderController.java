@@ -41,8 +41,8 @@ public class ProcessBookingOrderController {
             summary = "Lấy tất cả Process Booking",
             description = "Lấy tất cả Process"
     )
-    public ApiResponse<ProcessBookingOrder> getProcessBookingOrderById (@PathVariable Long id) {
-        return ApiResponse.<ProcessBookingOrder>builder()
+    public ApiResponse<List<ProcessBookingOrder>> getProcessBookingOrderById (@PathVariable Long id) {
+        return ApiResponse.<List<ProcessBookingOrder>>builder()
                 .code(HttpStatus.OK.value())
                 .message("Lấy tất cả Process Booking thành công")
                 .result(processBookingOrderService.getProcessBookingOrderServiceById(id))

@@ -28,7 +28,7 @@ public class FormResponse {
     LocalDateTime date;
     String firstName;
     String lastName;
-    Integer age;
+    LocalDateTime age;
     List<ImageSkin> imageSkins;
     String serviceName;
     Long bookingOrderId;

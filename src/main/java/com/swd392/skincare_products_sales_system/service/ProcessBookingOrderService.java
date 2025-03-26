@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ProcessBookingOrderService {
     List<ProcessBookingOrder> getProcessBookingOrderService();
-    ProcessBookingOrder getProcessBookingOrderServiceById(Long id);
+    List<ProcessBookingOrder> getProcessBookingOrderServiceById(Long id);
 }
