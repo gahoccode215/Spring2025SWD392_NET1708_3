@@ -37,8 +37,8 @@ public class VNPayService {
         params.put("vnp_Amount", String.valueOf(amount.longValue() * 100));
         params.put("vnp_CurrCode", "VND");
         params.put("vnp_TxnRef", orderId.toString());
-        params.put("vnp_OrderInfo", "Thanh toan don hang#" + orderId );
-        params.put("vnp_OrderType", "other"); // Loại hàng hóa, dịch vụ
+        params.put("vnp_OrderInfo", "Thanh toan don hang#" + orderId);
+        params.put("vnp_OrderType", "beauty"); // Loại hàng hóa, dịch vụ
         params.put("vnp_Locale", "vn");
         params.put("vnp_ReturnUrl", returnUrl1);
         params.put("vnp_IpAddr", ipAddress);
@@ -61,21 +61,20 @@ public class VNPayService {
         for (String fieldName : fieldNames) {
             String fieldValue = params.get(fieldName);
             if (fieldValue != null && !fieldValue.isEmpty()) {
-                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString())).append('&');
-                query.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8.toString())).append('&');
+                hashData.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8)).append('&');
+                query.append(fieldName).append('=').append(URLEncoder.encode(fieldValue, StandardCharsets.UTF_8)).append('&');
             }
         }
         hashData.deleteCharAt(hashData.length() - 1); // Xóa ký tự '&' cuối cùng
         query.deleteCharAt(query.length() - 1); // Xóa ký tự '&' cuối cùng
         String secureHash = hmacSHA512(hashSecret, hashData.toString());
-        query.append("&vnp_SecureHash=").append(URLEncoder.encode(secureHash, StandardCharsets.UTF_8.toString()));
+        query.append("&vnp_SecureHash=").append(URLEncoder.encode(secureHash, StandardCharsets.UTF_8));
         return vnpUrl + "?" + query;
     }
 
 
-
     public String createPaymentUrlBookingOrder(Long bookingOrderId, Double amount, String isAddress) throws UnsupportedEncodingException {
-        String orderId = UUID.randomUUID().toString().substring(0,6);
+        String orderId = UUID.randomUUID().toString().substring(0, 6);
         String returnUrl1 = "http://localhost:5173/payment-success-booking?bookingOrderId=" + bookingOrderId;
         Map<String, String> params = new HashMap<>();
         params.put("vnp_Version", "2.1.0");
@@ -84,7 +83,7 @@ public class VNPayService {
         params.put("vnp_Amount", String.valueOf(amount.longValue() * 100));
         params.put("vnp_CurrCode", "VND");
         params.put("vnp_TxnRef", bookingOrderId.toString());
-        params.put("vnp_OrderInfo", "Thanh toan don hang#" + bookingOrderId );
+        params.put("vnp_OrderInfo", "Thanh toan don hang#" + bookingOrderId);
         params.put("vnp_OrderType", "other");
         params.put("vnp_Locale", "vn");
         params.put("vnp_ReturnUrl", returnUrl1);
@@ -118,7 +117,6 @@ public class VNPayService {
         query.append("&vnp_SecureHash=").append(URLEncoder.encode(secureHash, StandardCharsets.UTF_8.toString()));
         return vnpUrl + "?" + query;
     }
-
 
 
     private String hmacSHA512(String key, String data) {

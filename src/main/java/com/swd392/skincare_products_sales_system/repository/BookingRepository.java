@@ -24,7 +24,7 @@ public interface BookingRepository extends JpaRepository<BookingOrder , Long> {
 
     @Query("SELECT o.orderDate, SUM(o.price) " +
             "FROM BookingOrder o " +
-            "WHERE o.status = :status " +
+            "WHERE o.paymentStatus = :status " +
             "AND o.orderDate >= :startDate " +
             "AND o.orderDate <= :endDate " +
             "GROUP BY o.orderDate ORDER BY o.orderDate")

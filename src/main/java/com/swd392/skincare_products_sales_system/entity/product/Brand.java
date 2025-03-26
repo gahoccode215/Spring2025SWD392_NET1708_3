@@ -28,7 +28,8 @@ public class Brand extends AbstractEntity {
     @Column(name = "slug", unique = true)
     String slug;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 16000)
+    @Lob
     String description;
 
     @Column(name = "thumbnail")
