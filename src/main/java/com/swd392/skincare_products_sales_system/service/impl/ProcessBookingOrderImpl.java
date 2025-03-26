@@ -27,8 +27,11 @@ public class ProcessBookingOrderImpl implements ProcessBookingOrderService {
     }
 
     @Override
-    public ProcessBookingOrder getProcessBookingOrderServiceById(Long id) {
-        Optional<ProcessBookingOrder> processBookingOrder = processBookingOrderRepository.findById(id);
-        return processBookingOrder.orElse(null);
+    public List<ProcessBookingOrder> getProcessBookingOrderServiceById(Long id) {
+        List<ProcessBookingOrder> processBookingOrder = processBookingOrderRepository.findAll()
+                .stream()
+                .filter(processBookingOrder1 -> processBookingOrder1.getId().equals(id))
+                .toList();
+        return processBookingOrder;
     }
 }
