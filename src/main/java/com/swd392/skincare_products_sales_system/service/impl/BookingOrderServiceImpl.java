@@ -88,12 +88,12 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             throw new AppException(ErrorCode.EXPERT_TIME_SLOT_UNAVAILABLE);
         }
         bookingOrder.setExpertName(expertName);
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .user(user)
-                .bookingOrder(bookingOrder)
-                .status(BookingStatus.ASSIGNED_EXPERT)
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setUser(user);
+        processBookingOrder.setBookingOrder(bookingOrder);
+        processBookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
         processBookingOrder.setIsDeleted(false);
+        processBookingOrder.setTime(LocalDateTime.now());
         processBookingOrderRepository.save(processBookingOrder);
         bookingRepository.save(bookingOrder);
         return bookingOrder;
@@ -146,13 +146,12 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         bookingOrder.setStatus(BookingStatus.CANCELED);
         bookingOrder.setNote(note);
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .bookingOrder(bookingOrder)
-                .user(user)
-                .time(LocalDateTime.now())
-                .status(BookingStatus.CANCELED)
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setUser(user);
+        processBookingOrder.setBookingOrder(bookingOrder);
         processBookingOrder.setIsDeleted(false);
+        processBookingOrder.setStatus(BookingStatus.CANCELED);
+        processBookingOrder.setTime(LocalDateTime.now());
         processBookingOrderRepository.save(processBookingOrder);
         return bookingRepository.save(bookingOrder);
     }
@@ -172,34 +171,31 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         bookingOrder.setPaymentStatus(paymentBack.getIsPaid() ? PaymentStatus.PAID : PaymentStatus.NOT_PAID);
         if (bookingOrder.getExpertName() != null) {
             bookingOrder.setStatus(BookingStatus.ASSIGNED_EXPERT);
-            ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                    .user(user)
-                    .bookingOrder(bookingOrder)
-                    .status(BookingStatus.PAYMENT)
-                    .time(LocalDateTime.now())
-                    .build();
+            ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+            processBookingOrder.setUser(user);
+            processBookingOrder.setBookingOrder(bookingOrder);
             processBookingOrder.setIsDeleted(false);
+            processBookingOrder.setTime(LocalDateTime.now());
+            processBookingOrder.setStatus(BookingStatus.PAYMENT);
             processBookingOrderRepository.save(processBookingOrder);
 
-            ProcessBookingOrder processBookingOrder1 = ProcessBookingOrder.builder()
-                    .user(user)
-                    .bookingOrder(bookingOrder)
-                    .status(BookingStatus.ASSIGNED_EXPERT)
-                    .time(LocalDateTime.now())
-                    .build();
+            ProcessBookingOrder processBookingOrder1 = new ProcessBookingOrder();
+            processBookingOrder1.setUser(user);
+            processBookingOrder1.setBookingOrder(bookingOrder);
             processBookingOrder1.setIsDeleted(false);
+            processBookingOrder1.setTime(LocalDateTime.now());
+            processBookingOrder1.setStatus(BookingStatus.ASSIGNED_EXPERT);
             processBookingOrderRepository.save(processBookingOrder1);
             return "Đã cập nhật trạngt thái đơn thành công";
         }
         bookingOrder.setStatus(BookingStatus.PAYMENT);
         bookingRepository.save(bookingOrder);
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .user(user)
-                .bookingOrder(bookingOrder)
-                .status(BookingStatus.PAYMENT)
-                .time(LocalDateTime.now())
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setUser(user);
+        processBookingOrder.setBookingOrder(bookingOrder);
         processBookingOrder.setIsDeleted(false);
+        processBookingOrder.setTime(LocalDateTime.now());
+        processBookingOrder.setStatus(BookingStatus.PAYMENT);
         processBookingOrderRepository.save(processBookingOrder);
         return "Đơn của bạn đã đươc cập nhập";
     }
@@ -374,12 +370,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
 
         imageSkinRepository.saveAll(imageSkinList);
 
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .bookingOrder(bookingOrder)
-                .user(user)
-                .status(BookingStatus.PENDING)
-                .time(LocalDateTime.now())
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setBookingOrder(bookingOrder);
+        processBookingOrder.setStatus(BookingStatus.PENDING);
+        processBookingOrder.setTime(LocalDateTime.now());
+        processBookingOrder.setUser(user);
         processBookingOrder.setIsDeleted(false);
         processBookingOrderRepository.save(processBookingOrder);
 
@@ -427,12 +422,11 @@ public class BookingOrderServiceImpl implements BookingOrderService {
             throw new AppException(ErrorCode.SERVICE_INACTIVE);
         }
 
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .bookingOrder(booking)
-                .user(user)
-                .status(BookingStatus.EXPERT_UPDATE_ORDER)
-                .time(LocalDateTime.now())
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setBookingOrder(booking);
+        processBookingOrder.setStatus(BookingStatus.EXPERT_UPDATE_ORDER);
+        processBookingOrder.setTime(LocalDateTime.now());
+        processBookingOrder.setUser(user);
         processBookingOrder.setIsDeleted(false);
         processBookingOrderRepository.save(processBookingOrder);
 
@@ -487,15 +481,14 @@ public class BookingOrderServiceImpl implements BookingOrderService {
         if (bookingOrder.getStatus() == BookingStatus.ASSIGNED_EXPERT) {
             bookingOrder.setResponse(status.getResponse());
         }
-        ProcessBookingOrder processBookingOrder = ProcessBookingOrder.builder()
-                .bookingOrder(bookingOrder)
-                .user(user)
-                .status(bookingOrder.getStatus())
-                .time(LocalDateTime.now())
-                .build();
+        ProcessBookingOrder processBookingOrder = new ProcessBookingOrder();
+        processBookingOrder.setUser(user);
         processBookingOrder.setIsDeleted(false);
-        processBookingOrderRepository.save(processBookingOrder);
+        processBookingOrder.setBookingOrder(bookingOrder);
+        processBookingOrder.setIsDeleted(false);
         bookingOrder.setStatus(status.getStatus());
+        processBookingOrder.setStatus(bookingOrder.getStatus());
+        processBookingOrderRepository.save(processBookingOrder);
         bookingRepository.save(bookingOrder);
         return bookingOrder;
     }
